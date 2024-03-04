@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  ViewController.h                                              DB48X project
+//  ScreenView.h                                                  DB48X project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     View controller deals with keyboard
+//     The view where we render the DMCP screen
 //
 //
 //
@@ -27,16 +27,12 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-#import "ScreenView.h"
 #import <UIKit/UIKit.h>
-#import <UIKit/UIImageView.h>
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
-// ----------------------------------------------------------------------------
-//   View controller interface
-// ----------------------------------------------------------------------------
-{
-    __weak IBOutlet ScreenView *screenView;
-    __weak IBOutlet UIImageView *keyboardView;
-}
+NS_ASSUME_NONNULL_BEGIN
+
+@interface ScreenView : UIView
+
 @end
+
+NS_ASSUME_NONNULL_END

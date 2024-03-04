@@ -14,6 +14,7 @@
 		1F9D29791C72B9BB000025E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */; };
 		1F9D29841C72B9BB000025E6 /* DB48XTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29831C72B9BB000025E6 /* DB48XTests.m */; };
 		1F9D298F1C72B9BB000025E6 /* DB48XUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */; };
+		6F5A77BE2B96862200C8357F /* ScreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A77BD2B96862200C8357F /* ScreenView.m */; };
 		6FCED4962B95E4C000C8357F /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF432B95E4BE00C8357F /* recorder.c */; };
 		6FCED49D2B95E4C000C8357F /* recorder_ring.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */; };
 		6FCED4F12B95E4C000C8357F /* build-macosx-clang-opt-20240229-180344.log in Resources */ = {isa = PBXBuildFile; fileRef = 6FCECFAC2B95E4BE00C8357F /* build-macosx-clang-opt-20240229-180344.log */; };
@@ -1312,6 +1313,8 @@
 		1F9D298A1C72B9BB000025E6 /* DB48XUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DB48XUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DB48XUITests.m; sourceTree = "<group>"; };
 		1F9D29901C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F5A77BC2B96862200C8357F /* ScreenView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenView.h; sourceTree = "<group>"; };
+		6F5A77BD2B96862200C8357F /* ScreenView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenView.m; sourceTree = "<group>"; };
 		6FCECF432B95E4BE00C8357F /* recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder.c; sourceTree = "<group>"; };
 		6FCECF462B95E4BE00C8357F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder_ring.c; sourceTree = "<group>"; };
@@ -2687,6 +2690,8 @@
 		1F9D29681C72B9BB000025E6 /* DB48X */ = {
 			isa = PBXGroup;
 			children = (
+				6F5A77BC2B96862200C8357F /* ScreenView.h */,
+				6F5A77BD2B96862200C8357F /* ScreenView.m */,
 				6FE7EFE12B95E2F600C8357F /* Runtime */,
 				6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */,
 				6FE7EFDE2B95DDF100C8357F /* Screen.cpp */,
@@ -5463,6 +5468,7 @@
 				6FE7F0682B95E37400C8357F /* font.cc in Sources */,
 				6FE7F0582B95E37400C8357F /* text.cc in Sources */,
 				6FCEDA972B95F28F00C8357F /* catalog.cc in Sources */,
+				6F5A77BE2B96862200C8357F /* ScreenView.m in Sources */,
 				6FE7F0672B95E37400C8357F /* integer.cc in Sources */,
 				6FE7F05E2B95E37400C8357F /* expression.cc in Sources */,
 				6FE7F06A2B95E37400C8357F /* compare.cc in Sources */,

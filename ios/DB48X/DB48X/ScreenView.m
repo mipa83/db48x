@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  ViewController.h                                              DB48X project
+//  ScreenView.m                                                  DB48X project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     View controller deals with keyboard
+//     Draw the DMCP screen
 //
 //
 //
@@ -27,16 +27,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-#import "ScreenView.h"
-#import <UIKit/UIKit.h>
-#import <UIKit/UIImageView.h>
+#import "ScreenView.h"
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
-// ----------------------------------------------------------------------------
-//   View controller interface
-// ----------------------------------------------------------------------------
-{
-    __weak IBOutlet ScreenView *screenView;
-    __weak IBOutlet UIImageView *keyboardView;
+@implementation ScreenView
+
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+    NSLog(@"Drawing!");
 }
+
 @end
