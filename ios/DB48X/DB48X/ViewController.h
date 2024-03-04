@@ -28,7 +28,15 @@
 // ****************************************************************************
 
 #import <UIKit/UIKit.h>
+#import <MetalKit/MTKView.h>
+#import <UIKit/UIImageView.h>
 
 @interface ViewController : UIViewController
-
+// ----------------------------------------------------------------------------
+//   View controller interface
+// ----------------------------------------------------------------------------
+{
+    __weak IBOutlet MTKView *screenView;
+    __weak IBOutlet UIImageView *keyboardView;
+}
 @end

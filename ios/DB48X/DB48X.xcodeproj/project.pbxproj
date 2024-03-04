@@ -1229,7 +1229,6 @@
 		6FE7F0582B95E37400C8357F /* text.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE42B95E37200C8357F /* text.cc */; };
 		6FE7F0592B95E37400C8357F /* stack.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE82B95E37200C8357F /* stack.cc */; };
 		6FE7F05A2B95E37400C8357F /* decimal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFEC2B95E37200C8357F /* decimal.cc */; };
-		6FE7F05B2B95E37400C8357F /* stm32_program.ld in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFF22B95E37200C8357F /* stm32_program.ld */; };
 		6FE7F05C2B95E37400C8357F /* ignored_help.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFF62B95E37200C8357F /* ignored_help.csv */; };
 		6FE7F05D2B95E37400C8357F /* functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFA2B95E37200C8357F /* functions.cc */; };
 		6FE7F05E2B95E37400C8357F /* expression.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFB2B95E37200C8357F /* expression.cc */; };
@@ -2541,9 +2540,6 @@
 		6FE7EFEC2B95E37200C8357F /* decimal.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = decimal.cc; path = ../../../src/decimal.cc; sourceTree = "<group>"; };
 		6FE7EFED2B95E37200C8357F /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tests.h; path = ../../../src/tests.h; sourceTree = "<group>"; };
 		6FE7EFEE2B95E37200C8357F /* symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = symbol.h; path = ../../../src/symbol.h; sourceTree = "<group>"; };
-		6FE7EFF02B95E37200C8357F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		6FE7EFF12B95E37200C8357F /* qspi_crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qspi_crc.h; sourceTree = "<group>"; };
-		6FE7EFF22B95E37200C8357F /* stm32_program.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stm32_program.ld; sourceTree = "<group>"; };
 		6FE7EFF32B95E37200C8357F /* loops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = loops.h; path = ../../../src/loops.h; sourceTree = "<group>"; };
 		6FE7EFF42B95E37200C8357F /* precedence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = precedence.h; path = ../../../src/precedence.h; sourceTree = "<group>"; };
 		6FE7EFF52B95E37200C8357F /* menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = menu.h; path = ../../../src/menu.h; sourceTree = "<group>"; };
@@ -4016,7 +4012,6 @@
 				6FE7EFEC2B95E37200C8357F /* decimal.cc */,
 				6FE7F03D2B95E37400C8357F /* decimal.h */,
 				6FE7F0202B95E37300C8357F /* dm32 */,
-				6FE7EFEF2B95E37200C8357F /* dm42 */,
 				6FE7F0472B95E37400C8357F /* dmcp */,
 				6FE7EFE22B95E37200C8357F /* errors.tbl */,
 				6FE7EFFB2B95E37200C8357F /* expression.cc */,
@@ -4097,17 +4092,6 @@
 				6FE7F0102B95E37300C8357F /* variables.h */,
 			);
 			name = Runtime;
-			sourceTree = "<group>";
-		};
-		6FE7EFEF2B95E37200C8357F /* dm42 */ = {
-			isa = PBXGroup;
-			children = (
-				6FE7EFF02B95E37200C8357F /* main.h */,
-				6FE7EFF12B95E37200C8357F /* qspi_crc.h */,
-				6FE7EFF22B95E37200C8357F /* stm32_program.ld */,
-			);
-			name = dm42;
-			path = ../../../src/dm42;
 			sourceTree = "<group>";
 		};
 		6FE7F0202B95E37300C8357F /* dm32 */ = {
@@ -5431,7 +5415,6 @@
 				6FCED5D62B95E4C000C8357F /* build-macosx-clang-opt-20240301-153449.log in Resources */,
 				6FCED78A2B95E4C100C8357F /* build-macosx-clang-opt-20240227-172215.log in Resources */,
 				6FCED9132B95E4C100C8357F /* build-macosx-clang-opt-20240219-164733.log in Resources */,
-				6FE7F05B2B95E37400C8357F /* stm32_program.ld in Resources */,
 				6FCED78D2B95E4C100C8357F /* build-macosx-clang-opt-20240222-172825.log in Resources */,
 				6FCED60E2B95E4C000C8357F /* build-macosx-clang-opt-20240205-002735.log in Resources */,
 				6FCED8DE2B95E4C100C8357F /* build-macosx-clang-opt-20240127-010229.log in Resources */,
@@ -5624,7 +5607,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -5662,7 +5645,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -5685,6 +5668,7 @@
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5703,6 +5687,7 @@
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

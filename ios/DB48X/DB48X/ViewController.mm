@@ -31,6 +31,8 @@
 #import "Screen.hpp"
 #import "Keyboard.hpp"
 
+
+
 @interface ViewController ()
 // ----------------------------------------------------------------------------
 //    The view controller sets up the various elements
@@ -38,7 +40,6 @@
 {
     Screen             screen;
     Keyboard           keyboard;
-    IBOutlet UIButton *helloButton;
 }
 @end
 
