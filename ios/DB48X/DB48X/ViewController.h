@@ -31,7 +31,7 @@
 #import <MetalKit/MTKView.h>
 #import <UIKit/UIImageView.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 // ----------------------------------------------------------------------------
 //   View controller interface
 // ----------------------------------------------------------------------------
