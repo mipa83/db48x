@@ -102,6 +102,7 @@ struct mousemap
     { 0,  0,      0.0,      0.0,      0.0,      0.0}
 };
 
+extern "C" void program_main();
 
 
 @implementation ViewController
@@ -114,7 +115,24 @@ struct mousemap
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
 
+
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
+    dispatch_async(queue, ^{
+            program_main();
+        });
+
 }
+
+
+-(void) refreshScreen
+// ----------------------------------------------------------------------------
+//  Refresh the screen
+// ----------------------------------------------------------------------------
+{
+    UIImage *image = [screenView imageFromLCD];
+    screenView.image = image;
+}
+
 - (IBAction)keyboardWasTapped:(UITapGestureRecognizer *)sender
 // ----------------------------------------------------------------------------
 //   Tap event on the keyboard
@@ -127,11 +145,15 @@ struct mousemap
     CGFloat rely = pos.y / keyboardView.frame.size.height;
 
     for (mousemap *ptr = mouseMap; ptr->key; ptr++)
+    {
         if ((relx >= ptr->left) && (relx <= ptr->right) &&
             (rely >= ptr->top) && (rely <= ptr->bot))
         {
             NSLog(@"Found key %d", ptr->keynum);
         }
+    }
+
+    [self refreshScreen];
 }
 
 

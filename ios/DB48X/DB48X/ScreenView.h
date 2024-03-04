@@ -31,7 +31,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ScreenView : UIView
+@interface ScreenView : UIImageView
+
+- (UIImage *) imageFromLCD;
 
 @end
 

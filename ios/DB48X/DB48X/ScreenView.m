@@ -29,13 +29,55 @@
 
 #import "ScreenView.h"
 
+#include <stdint.h>
+
+#define LCD_W           400
+#define LCD_H           240
+#define LCD_SCANLINE    416
+
+
+typedef uint8_t byte;
+
+extern uint8_t  lcd_buffer[LCD_SCANLINE * LCD_H / 8];
+
+
 @implementation ScreenView
 
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-    NSLog(@"Drawing!");
+-(UIImage *)imageFromLCD
+{
+    byte pixelData[LCD_W * LCD_H * 4];
+    size_t bytesPerRow = LCD_W * 4;
+
+    for (int y = 0; y < LCD_H; y++)
+    {
+        for (int x = 0; x < LCD_W; x++)
+        {
+            unsigned bo = y * LCD_SCANLINE + x;
+            int on = (lcd_buffer[bo/8] >> (bo % 8)) & 1;
+            byte *pixel = &pixelData[(y * LCD_W + (LCD_W - 1 - x)) * 4];
+            pixel[0] = pixel[1] = pixel[2] = pixel[3] = on ? 255 : 0;
+        }
+    }
+    void *baseAddress = &pixelData;
+
+
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef    context     = CGBitmapContextCreate(
+        baseAddress,
+        LCD_W, LCD_H,
+        8,
+        bytesPerRow,
+        colorSpace,
+        kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst);
+
+    CGImageRef cgImage = CGBitmapContextCreateImage(context);
+    UIImage *image = [UIImage imageWithCGImage:cgImage];
+
+    CGImageRelease(cgImage);
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+
+    return image;
 }
 
 @end
