@@ -29,11 +29,6 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-struct Screen
-// ----------------------------------------------------------------------------
-//   Screen class representing the DB48X screen
-// ----------------------------------------------------------------------------
-{
-};
+#include "sim-dmcp.h"
 
-#endif /* Greeting_hpp */
+#endif // SCREEN_HPP

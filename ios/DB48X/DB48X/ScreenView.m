@@ -31,15 +31,6 @@
 
 #include <stdint.h>
 
-#define LCD_W           400
-#define LCD_H           240
-#define LCD_SCANLINE    416
-
-
-typedef uint8_t byte;
-
-extern uint8_t  lcd_buffer[LCD_SCANLINE * LCD_H / 8];
-
 
 @implementation ScreenView
 

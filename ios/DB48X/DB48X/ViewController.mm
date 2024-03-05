@@ -42,7 +42,11 @@
 }
 @end
 
+
 struct mousemap
+// ----------------------------------------------------------------------------
+//   Conversion between in-image coordinates and keys
+// ----------------------------------------------------------------------------
 {
     int key, keynum;
     float left, right, top, bot;
@@ -132,6 +136,7 @@ extern "C" void program_main();
     UIImage *image = [screenView imageFromLCD];
     screenView.image = image;
 }
+
 
 - (IBAction)keyboardWasTapped:(UITapGestureRecognizer *)sender
 // ----------------------------------------------------------------------------

@@ -5671,6 +5671,7 @@
 					DM32,
 					"HELPFILE_NAME=\\\"HELP/DM42.md\\\"",
 					SIMULATOR,
+					USE_IOS,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -5689,6 +5690,7 @@
 					"__packed=",
 					DM32,
 					"HELPFILE_NAME=\\\"HELP/DM42.md\\\"",
+					USE_IOS,
 					SIMULATOR,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
