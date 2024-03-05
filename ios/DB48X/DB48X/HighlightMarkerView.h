@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  ViewController.h                                              DB48X project
+//  HighlightMarkerView.h                                         DB48X project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     View controller deals with keyboard
+//     A highlight marker used to show keys that are pressed
 //
 //
 //
@@ -27,18 +27,12 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-#import "ScreenView.h"
-#import "HighlightMarkerView.h"
 #import <UIKit/UIKit.h>
-#import <UIKit/UIImageView.h>
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
-// ----------------------------------------------------------------------------
-//   View controller interface
-// ----------------------------------------------------------------------------
-{
-    __weak IBOutlet ScreenView *screenView;
-    __weak IBOutlet UIImageView *keyboardView;
-    __weak IBOutlet HighlightMarkerView *highlightView;
-}
+NS_ASSUME_NONNULL_BEGIN
+
+@interface HighlightMarkerView : UIView
+
 @end
+
+NS_ASSUME_NONNULL_END

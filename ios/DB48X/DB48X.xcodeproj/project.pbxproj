@@ -1223,6 +1223,29 @@
 		6FCEDA932B95EE2E00C8357F /* dmcp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA922B95EE2D00C8357F /* dmcp.cpp */; };
 		6FCEDA952B95F23600C8357F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA942B95F23600C8357F /* main.mm */; };
 		6FCEDA972B95F28F00C8357F /* catalog.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA962B95F28F00C8357F /* catalog.cc */; };
+		6FE775252B97966E00C8357F /* units.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
+		6FE775262B97966E00C8357F /* constants.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
+		6FE775272B97966E00C8357F /* left-shift.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750F2B97966E00C8357F /* left-shift.png */; };
+		6FE775282B97966E00C8357F /* keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775102B97966E00C8357F /* keyboard.png */; };
+		6FE775292B97966E00C8357F /* db48x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
+		6FE7752A2B97966E00C8357F /* 6-trigonometrics.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775132B97966E00C8357F /* 6-trigonometrics.png */; };
+		6FE7752B2B97966E00C8357F /* 7-display-modes.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775142B97966E00C8357F /* 7-display-modes.png */; };
+		6FE7752C2B97966E00C8357F /* 11-units.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775152B97966E00C8357F /* 11-units.png */; };
+		6FE7752D2B97966E00C8357F /* 10-complex.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775162B97966E00C8357F /* 10-complex.png */; };
+		6FE7752E2B97966E00C8357F /* command-line-and-catalog.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775172B97966E00C8357F /* command-line-and-catalog.png */; };
+		6FE7752F2B97966E00C8357F /* 1-arithmetic-rpl.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775182B97966E00C8357F /* 1-arithmetic-rpl.png */; };
+		6FE775302B97966E00C8357F /* 5-mixing-rpl-alg.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775192B97966E00C8357F /* 5-mixing-rpl-alg.png */; };
+		6FE775312B97966E00C8357F /* 9-angles.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751A2B97966E00C8357F /* 9-angles.png */; };
+		6FE775322B97966E00C8357F /* stack-and-menus.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751B2B97966E00C8357F /* stack-and-menus.png */; };
+		6FE775332B97966E00C8357F /* 8-help.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751C2B97966E00C8357F /* 8-help.png */; };
+		6FE775342B97966E00C8357F /* 3-fractions.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751D2B97966E00C8357F /* 3-fractions.png */; };
+		6FE775352B97966E00C8357F /* 4-basic-math.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751E2B97966E00C8357F /* 4-basic-math.png */; };
+		6FE775362B97966E00C8357F /* 2-arithmetic-cmd.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7751F2B97966E00C8357F /* 2-arithmetic-cmd.png */; };
+		6FE775372B97966E00C8357F /* db50x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
+		6FE775382B97966E00C8357F /* Hello.48s in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775222B97966E00C8357F /* Hello.48s */; };
+		6FE775392B97966E00C8357F /* Hello.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775232B97966E00C8357F /* Hello.txt */; };
+		6FE7753A2B97966E00C8357F /* Hello.48b in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775242B97966E00C8357F /* Hello.48b */; };
+		6FE7753D2B979AFF00C8357F /* HighlightMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */; };
 		6FE7EFDF2B95DDF100C8357F /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */; };
 		6FE7EFE02B95DDF100C8357F /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDE2B95DDF100C8357F /* Screen.cpp */; };
 		6FE7F0562B95E37400C8357F /* errors.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE22B95E37200C8357F /* errors.tbl */; };
@@ -2529,6 +2552,30 @@
 		6FCEDA922B95EE2D00C8357F /* dmcp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dmcp.cpp; sourceTree = "<group>"; };
 		6FCEDA942B95F23600C8357F /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		6FCEDA962B95F28F00C8357F /* catalog.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = catalog.cc; path = ../../../src/catalog.cc; sourceTree = "<group>"; };
+		6FE7750C2B97966E00C8357F /* units.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = units.csv; sourceTree = "<group>"; };
+		6FE7750D2B97966E00C8357F /* constants.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constants.csv; sourceTree = "<group>"; };
+		6FE7750F2B97966E00C8357F /* left-shift.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left-shift.png"; sourceTree = "<group>"; };
+		6FE775102B97966E00C8357F /* keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyboard.png; sourceTree = "<group>"; };
+		6FE775112B97966E00C8357F /* db48x.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = db48x.md; sourceTree = "<group>"; };
+		6FE775132B97966E00C8357F /* 6-trigonometrics.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "6-trigonometrics.png"; sourceTree = "<group>"; };
+		6FE775142B97966E00C8357F /* 7-display-modes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "7-display-modes.png"; sourceTree = "<group>"; };
+		6FE775152B97966E00C8357F /* 11-units.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "11-units.png"; sourceTree = "<group>"; };
+		6FE775162B97966E00C8357F /* 10-complex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "10-complex.png"; sourceTree = "<group>"; };
+		6FE775172B97966E00C8357F /* command-line-and-catalog.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "command-line-and-catalog.png"; sourceTree = "<group>"; };
+		6FE775182B97966E00C8357F /* 1-arithmetic-rpl.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1-arithmetic-rpl.png"; sourceTree = "<group>"; };
+		6FE775192B97966E00C8357F /* 5-mixing-rpl-alg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "5-mixing-rpl-alg.png"; sourceTree = "<group>"; };
+		6FE7751A2B97966E00C8357F /* 9-angles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "9-angles.png"; sourceTree = "<group>"; };
+		6FE7751B2B97966E00C8357F /* stack-and-menus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stack-and-menus.png"; sourceTree = "<group>"; };
+		6FE7751C2B97966E00C8357F /* 8-help.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "8-help.png"; sourceTree = "<group>"; };
+		6FE7751D2B97966E00C8357F /* 3-fractions.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3-fractions.png"; sourceTree = "<group>"; };
+		6FE7751E2B97966E00C8357F /* 4-basic-math.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "4-basic-math.png"; sourceTree = "<group>"; };
+		6FE7751F2B97966E00C8357F /* 2-arithmetic-cmd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "2-arithmetic-cmd.png"; sourceTree = "<group>"; };
+		6FE775202B97966E00C8357F /* db50x.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = db50x.md; sourceTree = "<group>"; };
+		6FE775222B97966E00C8357F /* Hello.48s */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Hello.48s; sourceTree = "<group>"; };
+		6FE775232B97966E00C8357F /* Hello.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Hello.txt; sourceTree = "<group>"; };
+		6FE775242B97966E00C8357F /* Hello.48b */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hello.48b; sourceTree = "<group>"; };
+		6FE7753B2B979AFF00C8357F /* HighlightMarkerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HighlightMarkerView.h; sourceTree = "<group>"; };
+		6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HighlightMarkerView.m; sourceTree = "<group>"; };
 		6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Keyboard.cpp; sourceTree = "<group>"; };
 		6FE7EFDE2B95DDF100C8357F /* Screen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Screen.cpp; sourceTree = "<group>"; };
 		6FE7EFE22B95E37200C8357F /* errors.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = errors.tbl; path = ../../../src/errors.tbl; sourceTree = "<group>"; };
@@ -2706,6 +2753,8 @@
 				1F9D297A1C72B9BB000025E6 /* Info.plist */,
 				6FCEDA532B95E5AB00C8357F /* Pictures */,
 				1F9D29691C72B9BB000025E6 /* Supporting Files */,
+				6FE7753B2B979AFF00C8357F /* HighlightMarkerView.h */,
+				6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */,
 			);
 			path = DB48X;
 			sourceTree = "<group>";
@@ -3987,9 +4036,33 @@
 			path = ../../../fonts;
 			sourceTree = "<group>";
 		};
+		6FE7750B2B97966E00C8357F /* config */ = {
+			isa = PBXGroup;
+			children = (
+				6FE7750C2B97966E00C8357F /* units.csv */,
+				6FE7750D2B97966E00C8357F /* constants.csv */,
+			);
+			name = config;
+			path = ../../../config;
+			sourceTree = "<group>";
+		};
+		6FE7750E2B97966E00C8357F /* help */ = {
+			isa = PBXGroup;
+			children = (
+				6FE7750F2B97966E00C8357F /* left-shift.png */,
+				6FE775102B97966E00C8357F /* keyboard.png */,
+				6FE775112B97966E00C8357F /* db48x.md */,
+				6FE775202B97966E00C8357F /* db50x.md */,
+			);
+			name = help;
+			path = ../../../help;
+			sourceTree = "<group>";
+		};
 		6FE7EFE12B95E2F600C8357F /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
+				6FE7750B2B97966E00C8357F /* config */,
+				6FE7750E2B97966E00C8357F /* help */,
 				6FCEDA592B95ED9600C8357F /* fonts */,
 				6FCED99E2B95E51E00C8357F /* sim */,
 				6FCECEF62B95E4BE00C8357F /* recorder */,
@@ -4231,6 +4304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FE7752C2B97966E00C8357F /* 11-units.png in Resources */,
 				6FCED5922B95E4C000C8357F /* build-macosx-clang-opt-20240226-231550.log in Resources */,
 				6FCED7582B95E4C100C8357F /* build-macosx-clang-opt-20240222-232114.log in Resources */,
 				6FCED7D32B95E4C100C8357F /* build-macosx-clang-opt-20240126-232215.log in Resources */,
@@ -4242,6 +4316,7 @@
 				6FCED5C42B95E4C000C8357F /* build-macosx-clang-opt-20240126-214915.log in Resources */,
 				6FCED5B82B95E4C000C8357F /* build-macosx-clang-opt-20240221-213556.log in Resources */,
 				6FCED5002B95E4C000C8357F /* build-macosx-clang-opt-20240226-231218.log in Resources */,
+				6FE775382B97966E00C8357F /* Hello.48s in Resources */,
 				6FCED74E2B95E4C100C8357F /* build-macosx-clang-opt-20240226-105345.log in Resources */,
 				6FCED9822B95E4C100C8357F /* build-macosx-clang-opt-20240226-122428.log in Resources */,
 				6FCED6712B95E4C000C8357F /* build-macosx-clang-opt-20240125-222410.log in Resources */,
@@ -4396,6 +4471,7 @@
 				6FCED52A2B95E4C000C8357F /* build-macosx-clang-opt-20240221-110036.log in Resources */,
 				6FCED7412B95E4C100C8357F /* build-macosx-clang-opt-20240227-000116.log in Resources */,
 				6FCED8F12B95E4C100C8357F /* build-macosx-clang-opt-20240304-015749.log in Resources */,
+				6FE7752B2B97966E00C8357F /* 7-display-modes.png in Resources */,
 				6FCED7BF2B95E4C100C8357F /* build-macosx-clang-opt-20240219-174341.log in Resources */,
 				6FCED8772B95E4C100C8357F /* build-macosx-clang-opt-20240301-230303.log in Resources */,
 				6FCED7672B95E4C100C8357F /* build-macosx-clang-opt-20240221-082852.log in Resources */,
@@ -4411,6 +4487,7 @@
 				6FCED8A72B95E4C100C8357F /* build-macosx-clang-opt-20240222-094721.log in Resources */,
 				6FCED70E2B95E4C100C8357F /* build-macosx-clang-opt-20240226-185039.log in Resources */,
 				6FCED6CB2B95E4C100C8357F /* build-macosx-clang-opt-20240227-162800.log in Resources */,
+				6FE775392B97966E00C8357F /* Hello.txt in Resources */,
 				6FCED7302B95E4C100C8357F /* build-macosx-clang-opt-20240223-214207.log in Resources */,
 				6FCED73B2B95E4C100C8357F /* build-macosx-clang-opt-20240220-171950.log in Resources */,
 				6FCED5602B95E4C000C8357F /* build-macosx-clang-opt-20240224-010018.log in Resources */,
@@ -4513,6 +4590,7 @@
 				6FCED9272B95E4C100C8357F /* build-macosx-clang-opt-20240223-112301.log in Resources */,
 				6FCED9342B95E4C100C8357F /* build-macosx-clang-opt-20240220-191239.log in Resources */,
 				6FCED50C2B95E4C000C8357F /* build-macosx-clang-opt-20240222-083057.log in Resources */,
+				6FE775282B97966E00C8357F /* keyboard.png in Resources */,
 				6FCED7552B95E4C100C8357F /* build-macosx-clang-opt-20240220-224728.log in Resources */,
 				6FCED67B2B95E4C000C8357F /* build-macosx-clang-opt-20240211-234923.log in Resources */,
 				6FCED7602B95E4C100C8357F /* build-macosx-clang-opt-20240220-004905.log in Resources */,
@@ -4562,6 +4640,7 @@
 				6FCED7982B95E4C100C8357F /* build-macosx-clang-opt-20240227-163656.log in Resources */,
 				6FCED52D2B95E4C000C8357F /* build-macosx-clang-opt-20240228-110841.log in Resources */,
 				6FCED7442B95E4C100C8357F /* build-macosx-clang-opt-20240227-161503.log in Resources */,
+				6FE775272B97966E00C8357F /* left-shift.png in Resources */,
 				6FCED6BE2B95E4C100C8357F /* build-macosx-clang-opt-20240227-190117.log in Resources */,
 				6FCED7482B95E4C100C8357F /* build-macosx-clang-opt-20240205-010439.log in Resources */,
 				6FCED8AB2B95E4C100C8357F /* build-macosx-clang-opt-20240219-002328.log in Resources */,
@@ -4573,6 +4652,7 @@
 				6FCED80E2B95E4C100C8357F /* build-macosx-clang-opt-20240224-231001.log in Resources */,
 				6FCED76F2B95E4C100C8357F /* build-macosx-clang-opt-20240125-233502.log in Resources */,
 				6FCED5B52B95E4C000C8357F /* build-macosx-clang-opt-20240219-174514.log in Resources */,
+				6FE7752A2B97966E00C8357F /* 6-trigonometrics.png in Resources */,
 				6FCED7AD2B95E4C100C8357F /* build-macosx-clang-opt-20240301-104810.log in Resources */,
 				6FCED93D2B95E4C100C8357F /* build-macosx-clang-opt-20240222-175254.log in Resources */,
 				6FCED8D62B95E4C100C8357F /* build-macosx-clang-opt-20240222-084727.log in Resources */,
@@ -4613,6 +4693,7 @@
 				6FCED7C42B95E4C100C8357F /* build-macosx-clang-opt-20240211-224906.log in Resources */,
 				6FCED8452B95E4C100C8357F /* build-macosx-clang-opt-20240301-112319.log in Resources */,
 				6FCED5CB2B95E4C000C8357F /* build-macosx-clang-opt-20240227-165707.log in Resources */,
+				6FE775312B97966E00C8357F /* 9-angles.png in Resources */,
 				6FCED5432B95E4C000C8357F /* build-macosx-clang-opt-20240218-133757.log in Resources */,
 				6FCED8D72B95E4C100C8357F /* build-macosx-clang-opt-20240222-011502.log in Resources */,
 				6FCED68C2B95E4C000C8357F /* build-macosx-clang-opt-20240219-160315.log in Resources */,
@@ -4634,6 +4715,7 @@
 				6FCED9262B95E4C100C8357F /* build-macosx-clang-opt-20240228-112453.log in Resources */,
 				6FCED6562B95E4C000C8357F /* build-macosx-clang-opt-20240222-083141.log in Resources */,
 				6FCED8DB2B95E4C100C8357F /* build-macosx-clang-opt-20240220-093629.log in Resources */,
+				6FE775302B97966E00C8357F /* 5-mixing-rpl-alg.png in Resources */,
 				1F9D29791C72B9BB000025E6 /* LaunchScreen.storyboard in Resources */,
 				6FCED51F2B95E4C000C8357F /* build-macosx-clang-opt-20240219-193000.log in Resources */,
 				6FCED84C2B95E4C100C8357F /* build-macosx-clang-opt-20240227-000526.log in Resources */,
@@ -4714,6 +4796,7 @@
 				6FCED77C2B95E4C100C8357F /* build-macosx-clang-opt-20240227-170827.log in Resources */,
 				6FCED7B52B95E4C100C8357F /* build-macosx-clang-opt-20240221-001542.log in Resources */,
 				6FCED55C2B95E4C000C8357F /* build-macosx-clang-opt-20240226-104620.log in Resources */,
+				6FE775362B97966E00C8357F /* 2-arithmetic-cmd.png in Resources */,
 				6FCED6F92B95E4C100C8357F /* build-macosx-clang-opt-20240224-010136.log in Resources */,
 				6FCED5482B95E4C000C8357F /* build-macosx-clang-opt-20240127-173816.log in Resources */,
 				6FCED9732B95E4C100C8357F /* build-macosx-clang-opt-20240126-153554.log in Resources */,
@@ -4789,6 +4872,7 @@
 				6FCED64C2B95E4C000C8357F /* build-macosx-clang-opt-20240222-001817.log in Resources */,
 				6FCED73E2B95E4C100C8357F /* build-macosx-clang-opt-20240225-000202.log in Resources */,
 				6FCED6E42B95E4C100C8357F /* build-macosx-clang-opt-20240218-151214.log in Resources */,
+				6FE7752E2B97966E00C8357F /* command-line-and-catalog.png in Resources */,
 				6FCED88B2B95E4C100C8357F /* build-macosx-clang-opt-20240226-105124.log in Resources */,
 				6FCED9362B95E4C100C8357F /* build-macosx-clang-opt-20240225-222304.log in Resources */,
 				6FCED87C2B95E4C100C8357F /* build-macosx-clang-opt-20240220-004806.log in Resources */,
@@ -4824,9 +4908,11 @@
 				6FCED6632B95E4C000C8357F /* build-macosx-clang-opt-20240227-123253.log in Resources */,
 				6FCED66A2B95E4C000C8357F /* build-macosx-clang-opt-20240301-183427.log in Resources */,
 				6FCED8982B95E4C100C8357F /* build-macosx-clang-opt-20240301-221447.log in Resources */,
+				6FE775262B97966E00C8357F /* constants.csv in Resources */,
 				6FCED61C2B95E4C000C8357F /* build-macosx-clang-opt-20240219-222605.log in Resources */,
 				6FCED6E72B95E4C100C8357F /* build-macosx-clang-opt-20240222-164509.log in Resources */,
 				6FCED5F62B95E4C000C8357F /* build-macosx-clang-opt-20240220-180841.log in Resources */,
+				6FE775332B97966E00C8357F /* 8-help.png in Resources */,
 				6FCED5552B95E4C000C8357F /* build-macosx-clang-opt-20240212-001024.log in Resources */,
 				6FCED9472B95E4C100C8357F /* build-macosx-clang-opt-20240211-215820.log in Resources */,
 				6FCED6072B95E4C000C8357F /* build-macosx-clang-opt-20240222-165313.log in Resources */,
@@ -4858,6 +4944,7 @@
 				6FCED7EA2B95E4C100C8357F /* build-macosx-clang-opt-20240225-221531.log in Resources */,
 				6FCED7232B95E4C100C8357F /* build-macosx-clang-opt-20240212-102945.log in Resources */,
 				6FCED61F2B95E4C000C8357F /* build-macosx-clang-opt-20240221-235442.log in Resources */,
+				6FE7752F2B97966E00C8357F /* 1-arithmetic-rpl.png in Resources */,
 				6FCED6AE2B95E4C000C8357F /* build-macosx-clang-opt-20240229-221225.log in Resources */,
 				6FCED5162B95E4C000C8357F /* build-macosx-clang-opt-20240220-005325.log in Resources */,
 				6FCED81B2B95E4C100C8357F /* build-macosx-clang-opt-20240228-115606.log in Resources */,
@@ -4872,6 +4959,8 @@
 				6FCED5AA2B95E4C000C8357F /* build-macosx-clang-opt-20240129-081451.log in Resources */,
 				6FCED7382B95E4C100C8357F /* build-macosx-clang-opt-20240126-092955.log in Resources */,
 				6FCED9782B95E4C100C8357F /* build-macosx-clang-opt-20240228-181239.log in Resources */,
+				6FE7752D2B97966E00C8357F /* 10-complex.png in Resources */,
+				6FE775352B97966E00C8357F /* 4-basic-math.png in Resources */,
 				6FCED9032B95E4C100C8357F /* build-macosx-clang-opt-20240224-231117.log in Resources */,
 				6FCED5F02B95E4C000C8357F /* build-macosx-clang-opt-20240303-213707.log in Resources */,
 				6FCED61E2B95E4C000C8357F /* build-macosx-clang-opt-20240301-212226.log in Resources */,
@@ -5008,6 +5097,7 @@
 				6FCED50A2B95E4C000C8357F /* build-macosx-clang-opt-20240303-215819.log in Resources */,
 				6FCED6442B95E4C000C8357F /* build-macosx-clang-opt-20240211-185029.log in Resources */,
 				6FCED54A2B95E4C000C8357F /* build-macosx-clang-opt-20240226-202606.log in Resources */,
+				6FE775342B97966E00C8357F /* 3-fractions.png in Resources */,
 				6FCED8E02B95E4C100C8357F /* build-macosx-clang-opt-20240228-110730.log in Resources */,
 				6FCED8012B95E4C100C8357F /* build-macosx-clang-opt-20240223-154848.log in Resources */,
 				6FCED4F32B95E4C000C8357F /* build-macosx-clang-opt-20240221-093855.log in Resources */,
@@ -5017,6 +5107,7 @@
 				6FCED7562B95E4C100C8357F /* build-macosx-clang-opt-20240211-184317.log in Resources */,
 				6FCED7A22B95E4C100C8357F /* build-macosx-clang-opt-20240229-233215.log in Resources */,
 				6FCED7702B95E4C100C8357F /* build-macosx-clang-opt-20240229-222332.log in Resources */,
+				6FE775292B97966E00C8357F /* db48x.md in Resources */,
 				6FCED9422B95E4C100C8357F /* build-macosx-clang-opt-20240226-123721.log in Resources */,
 				6FCED58D2B95E4C000C8357F /* build-macosx-clang-opt-20240211-185918.log in Resources */,
 				6FCED65B2B95E4C000C8357F /* build-macosx-clang-opt-20240302-140304.log in Resources */,
@@ -5061,6 +5152,7 @@
 				6FCED5D52B95E4C000C8357F /* build-macosx-clang-opt-20240302-022043.log in Resources */,
 				6FCED6552B95E4C000C8357F /* build-macosx-clang-opt-20240219-214942.log in Resources */,
 				6FCED4F12B95E4C000C8357F /* build-macosx-clang-opt-20240229-180344.log in Resources */,
+				6FE775372B97966E00C8357F /* db50x.md in Resources */,
 				6FCED9962B95E4C100C8357F /* build-macosx-clang-opt-20240301-163019.log in Resources */,
 				6FCED6612B95E4C000C8357F /* build-macosx-clang-opt-20240302-022542.log in Resources */,
 				6FCED9882B95E4C100C8357F /* build-macosx-clang-opt-20240229-120302.log in Resources */,
@@ -5123,6 +5215,7 @@
 				6FCED58C2B95E4C000C8357F /* build-macosx-clang-opt-20240227-161012.log in Resources */,
 				6FCED8172B95E4C100C8357F /* build-macosx-clang-opt-20240226-183537.log in Resources */,
 				6FCED5422B95E4C000C8357F /* build-macosx-clang-opt-20240220-003636.log in Resources */,
+				6FE7753A2B97966E00C8357F /* Hello.48b in Resources */,
 				6FCED56F2B95E4C000C8357F /* build-macosx-clang-opt-20240301-223307.log in Resources */,
 				6FCED7342B95E4C100C8357F /* build-macosx-clang-opt-20240223-151052.log in Resources */,
 				6FCED59F2B95E4C000C8357F /* build-macosx-clang-opt-20240219-220507.log in Resources */,
@@ -5347,6 +5440,7 @@
 				6FCED5762B95E4C000C8357F /* build-macosx-clang-opt-20240126-095534.log in Resources */,
 				6FCED55F2B95E4C000C8357F /* build-macosx-clang-opt-20240220-194417.log in Resources */,
 				6FCED6642B95E4C000C8357F /* build-macosx-clang-opt-20240227-173316.log in Resources */,
+				6FE775322B97966E00C8357F /* stack-and-menus.png in Resources */,
 				6FCED67D2B95E4C000C8357F /* build-macosx-clang-opt-20240222-001008.log in Resources */,
 				6FCED90F2B95E4C100C8357F /* build-macosx-clang-opt-20240220-173134.log in Resources */,
 				6FCED83B2B95E4C100C8357F /* build-macosx-clang-opt-20240303-215719.log in Resources */,
@@ -5429,6 +5523,7 @@
 				6FCED7E02B95E4C100C8357F /* build-macosx-clang-opt-20240218-142116.log in Resources */,
 				6FCED7F62B95E4C100C8357F /* build-macosx-clang-opt-20240302-022823.log in Resources */,
 				6FCED5352B95E4C000C8357F /* build-macosx-clang-opt-20240220-234034.log in Resources */,
+				6FE775252B97966E00C8357F /* units.csv in Resources */,
 				6FCED65D2B95E4C000C8357F /* build-macosx-clang-opt-20240226-200502.log in Resources */,
 				6FCED6D22B95E4C100C8357F /* build-macosx-clang-opt-20240228-181250.log in Resources */,
 				6FCED8DC2B95E4C100C8357F /* build-macosx-clang-opt-20240301-150012.log in Resources */,
@@ -5493,6 +5588,7 @@
 				6FE7F0612B95E37400C8357F /* loops.cc in Sources */,
 				6FE7F05D2B95E37400C8357F /* functions.cc in Sources */,
 				6FE7F05F2B95E37400C8357F /* array.cc in Sources */,
+				6FE7753D2B979AFF00C8357F /* HighlightMarkerView.m in Sources */,
 				6FE7F0822B95E37400C8357F /* user_interface.cc in Sources */,
 				6FE7F0632B95E37400C8357F /* locals.cc in Sources */,
 				6FE7F0782B95E37400C8357F /* arithmetic.cc in Sources */,

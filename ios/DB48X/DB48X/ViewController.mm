@@ -163,6 +163,37 @@ extern ViewController *theViewController = nullptr;
     return [screenView refreshCount];
 }
 
+
+- (void) pushKeyHighlight:(int) key
+// ----------------------------------------------------------------------------
+//   Highlight the rectangle
+// ----------------------------------------------------------------------------
+{
+    CGRect rect = CGRect();
+    CGFloat width = keyboardView.frame.size.width;
+    CGFloat height = keyboardView.frame.size.height;
+    CGFloat x0 = keyboardView.frame.origin.x;
+    CGFloat y0 = keyboardView.frame.origin.y;
+    bool hidden = true;
+    for (mousemap *ptr = mouseMap; ptr->key; ptr++)
+    {
+        if (ptr->keynum == key)
+        {
+            CGFloat x = ptr->left * width + x0;
+            CGFloat y = ptr->top * height + y0;
+            CGFloat w = (ptr->right - ptr->left) * width;
+            CGFloat h = (ptr->bot - ptr->top) * height;
+            rect = CGRectMake(x, y, w, h);
+            hidden = false;
+            break;
+        }
+    }
+    
+    [highlightView setFrame:rect];
+    highlightView.hidden = hidden;
+}
+
+
 - (IBAction)keyboardWasTouched:(UILongPressGestureRecognizer *)sender
 // ----------------------------------------------------------------------------
 //   Tap event on the keyboard
@@ -261,11 +292,12 @@ uint ui_refresh_count()
 }
 
 
-void ui_push_key(int k)
+void ui_push_key(int key)
 // ----------------------------------------------------------------------------
 //   Draw a rectangle indicating we pushed the key
 // ----------------------------------------------------------------------------
 {
+    [theViewController pushKeyHighlight:key];
 }
 
 

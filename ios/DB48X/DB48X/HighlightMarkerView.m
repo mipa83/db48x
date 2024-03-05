@@ -1,10 +1,10 @@
 // ****************************************************************************
-//  ViewController.h                                              DB48X project
+//  HighlightMarkerView.m                                         DB48X project
 // ****************************************************************************
 //
 //   File Description:
 //
-//     View controller deals with keyboard
+//
 //
 //
 //
@@ -27,18 +27,22 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-#import "ScreenView.h"
 #import "HighlightMarkerView.h"
-#import <UIKit/UIKit.h>
-#import <UIKit/UIImageView.h>
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
+@implementation HighlightMarkerView
+
+- (void)drawRect:(CGRect)rect
 // ----------------------------------------------------------------------------
-//   View controller interface
+//    Draw in the given rectangle
 // ----------------------------------------------------------------------------
 {
-    __weak IBOutlet ScreenView *screenView;
-    __weak IBOutlet UIImageView *keyboardView;
-    __weak IBOutlet HighlightMarkerView *highlightView;
+    CGRect bounds = CGRectInset([self bounds], 2, 2);
+    UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect: bounds cornerRadius: 4];
+    [[UIColor systemYellowColor] setFill];
+    [roundedRect fillWithBlendMode: kCGBlendModeNormal alpha:0.3];
+    [[UIColor systemYellowColor] setStroke];
+    [roundedRect setLineWidth:4.0];
+    [roundedRect strokeWithBlendMode:kCGBlendModeNormal alpha:0.9];
 }
+
 @end
