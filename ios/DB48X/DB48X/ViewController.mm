@@ -29,6 +29,7 @@
 
 #import "ViewController.h"
 
+
 #include "sim-dmcp.h"
 #include "dmcp.h"
 
@@ -135,7 +136,6 @@ extern ViewController *theViewController = nullptr;
 //  Refresh the screen
 // ----------------------------------------------------------------------------
 {
-    NSLog(@"Creating image");
     UIImage *image = [screenView imageFromLCD];
     screenView.image = image;
 }
@@ -146,10 +146,18 @@ extern ViewController *theViewController = nullptr;
 //   Mark the screen as needing a refresh
 // ----------------------------------------------------------------------------
 {
-    NSLog(@"Refreshed");
     dispatch_async(dispatch_get_main_queue(), ^{
         [self refreshScreen];
     });
+}
+
+
+-(unsigned) refreshCount
+// ----------------------------------------------------------------------------
+//   Return the refresh count for the view
+// ----------------------------------------------------------------------------
+{
+    return [screenView refreshCount];
 }
 
 
@@ -159,7 +167,6 @@ extern ViewController *theViewController = nullptr;
 // ----------------------------------------------------------------------------
 {
     CGPoint pos = [sender locationInView:keyboardView];
-    NSLog(@"Position was %f, %f", pos.x, pos.y);
 
     CGFloat relx = pos.x / keyboardView.frame.size.width;
     CGFloat rely = pos.y / keyboardView.frame.size.height;
@@ -169,7 +176,6 @@ extern ViewController *theViewController = nullptr;
         if ((relx >= ptr->left) && (relx <= ptr->right) &&
             (rely >= ptr->top) && (rely <= ptr->bot))
         {
-            NSLog(@"Found key %d", ptr->keynum);
             key_push(ptr->keynum);
         }
     }
@@ -185,13 +191,11 @@ extern ViewController *theViewController = nullptr;
 //   Physical key being pressed
 // ----------------------------------------------------------------------------
 {
-    NSLog(@"Physical keyboard got ");
     for(UIPress* press in presses) {
         UIKey *key = press.key;
         if (!key)
             continue;
         NSString *chars = key.charactersIgnoringModifiers;
-        NSLog(@"Got keys %@", chars);
     }
 }
 
@@ -217,7 +221,18 @@ void ui_refresh()
         [theViewController refresh];
 }
 
-void ui_screenshot()
+uint ui_refresh_count()
+// ----------------------------------------------------------------------------
+//   Return the number of actual refresh
+// ----------------------------------------------------------------------------
+{
+    if (theViewController)
+        return [theViewController refreshCount];
+    return 0;
+}
+
+
+    void ui_screenshot()
 // ----------------------------------------------------------------------------
 //   Save an image from the current screenshot
 // ----------------------------------------------------------------------------
@@ -273,4 +288,29 @@ size_t ui_read_setting(const char *name, char *value, size_t maxlen)
 // ----------------------------------------------------------------------------
 {
     return 0;
+}
+
+
+uint ui_battery()
+// ----------------------------------------------------------------------------
+//   Return the battery voltage
+// ----------------------------------------------------------------------------
+{
+    if (!UIDevice.currentDevice.isBatteryMonitoringEnabled)
+        UIDevice.currentDevice.batteryMonitoringEnabled = true;
+
+    NSLog(@"Battery level is %f", UIDevice.currentDevice.batteryLevel);
+    if (UIDevice.currentDevice.batteryLevel <= 0)
+        return 500;
+    uint level = uint(1000 * UIDevice.currentDevice.batteryLevel);
+    return level;
+}
+
+
+bool ui_charging()
+// ----------------------------------------------------------------------------
+//   Return true if USB-powered or not
+// ----------------------------------------------------------------------------
+{
+    return UIDevice.currentDevice.batteryState == UIDeviceBatteryStateCharging;
 }

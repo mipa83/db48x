@@ -34,6 +34,22 @@
 
 
 @implementation ScreenView
+{
+    uint refreshed;
+}
+
+- (id) init
+{
+    self = [super init];
+    if (self)
+        refreshed = 0;
+    return self;
+}
+
+- (unsigned) refreshCount
+{
+    return refreshed;
+}
 
 -(UIImage *)imageFromLCD
 {
@@ -68,6 +84,8 @@
     CGImageRelease(cgImage);
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
+
+    refreshed++;
 
     return image;
 }

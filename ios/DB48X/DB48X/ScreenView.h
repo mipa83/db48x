@@ -33,7 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ScreenView : UIImageView
 
-- (UIImage *) imageFromLCD;
+- (UIImage *)imageFromLCD;
+- (unsigned) refreshCount;
 
 @end
 
