@@ -29,6 +29,7 @@
 
 #import "ScreenView.h"
 
+#include "sim-dmcp.h"
 #include <stdint.h>
 
 
@@ -36,16 +37,16 @@
 
 -(UIImage *)imageFromLCD
 {
-    byte pixelData[LCD_W * LCD_H * 4];
-    size_t bytesPerRow = LCD_W * 4;
+    byte pixelData[SIM_LCD_W * SIM_LCD_H * 4];
+    size_t bytesPerRow = SIM_LCD_W * 4;
 
-    for (int y = 0; y < LCD_H; y++)
+    for (int y = 0; y < SIM_LCD_H; y++)
     {
-        for (int x = 0; x < LCD_W; x++)
+        for (int x = 0; x < SIM_LCD_W; x++)
         {
-            unsigned bo = y * LCD_SCANLINE + x;
+            unsigned bo = y * SIM_LCD_SCANLINE + x;
             int on = (lcd_buffer[bo/8] >> (bo % 8)) & 1;
-            byte *pixel = &pixelData[(y * LCD_W + (LCD_W - 1 - x)) * 4];
+            byte *pixel = &pixelData[(y * SIM_LCD_W + (SIM_LCD_W - 1 - x)) * 4];
             pixel[0] = pixel[1] = pixel[2] = pixel[3] = on ? 255 : 0;
         }
     }
@@ -55,7 +56,7 @@
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef    context     = CGBitmapContextCreate(
         baseAddress,
-        LCD_W, LCD_H,
+                                                        SIM_LCD_W, SIM_LCD_H,
         8,
         bytesPerRow,
         colorSpace,

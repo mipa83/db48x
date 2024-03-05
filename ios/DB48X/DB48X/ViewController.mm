@@ -28,18 +28,17 @@
 // ****************************************************************************
 
 #import "ViewController.h"
-#import "Screen.hpp"
-#import "Keyboard.hpp"
 
+#include "sim-dmcp.h"
+#include "dmcp.h"
+
+#include <time.h>
 
 @interface ViewController ()
 // ----------------------------------------------------------------------------
 //    The view controller sets up the various elements
 // ----------------------------------------------------------------------------
-{
-    Screen             screen;
-    Keyboard           keyboard;
-}
+
 @end
 
 
@@ -108,6 +107,8 @@ struct mousemap
 
 extern "C" void program_main();
 
+extern ViewController *theViewController = nullptr;
+
 
 @implementation ViewController
 
@@ -117,14 +118,15 @@ extern "C" void program_main();
 // ----------------------------------------------------------------------------
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
 
-
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
+    // Dispatch the RPL thread
+    dispatch_queue_t queue =
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
     dispatch_async(queue, ^{
             program_main();
         });
 
+    theViewController = self;
 }
 
 
@@ -133,8 +135,21 @@ extern "C" void program_main();
 //  Refresh the screen
 // ----------------------------------------------------------------------------
 {
+    NSLog(@"Creating image");
     UIImage *image = [screenView imageFromLCD];
     screenView.image = image;
+}
+
+
+-(void) refresh
+// ----------------------------------------------------------------------------
+//   Mark the screen as needing a refresh
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Refreshed");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self refreshScreen];
+    });
 }
 
 
@@ -155,8 +170,10 @@ extern "C" void program_main();
             (rely >= ptr->top) && (rely <= ptr->bot))
         {
             NSLog(@"Found key %d", ptr->keynum);
+            key_push(ptr->keynum);
         }
     }
+    key_push(0);
 
     [self refreshScreen];
 }
@@ -189,3 +206,71 @@ extern "C" void program_main();
 
 
 @end
+
+
+void ui_refresh()
+// ----------------------------------------------------------------------------
+//   Update the views when they need updating
+// ----------------------------------------------------------------------------
+{
+    if (theViewController)
+        [theViewController refresh];
+}
+
+void ui_screenshot()
+// ----------------------------------------------------------------------------
+//   Save an image from the current screenshot
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void ui_push_key(int k)
+// ----------------------------------------------------------------------------
+//   Draw a rectangle indicating we pushed the key
+// ----------------------------------------------------------------------------
+{
+}
+
+
+void ui_ms_sleep(uint delay)
+// ----------------------------------------------------------------------------
+//   Sleep for the given time
+// ----------------------------------------------------------------------------
+{
+    struct timespec ts;
+    ts.tv_sec  = 0;
+    ts.tv_nsec = delay * 1000000;
+    nanosleep(&ts, nullptr);
+}
+
+
+int ui_file_selector(const char *title,
+                     const char *base_dir,
+                     const char *ext,
+                     file_sel_fn callback,
+                     void       *data,
+                     int         disp_new,
+                     int         overwrite_check)
+// ----------------------------------------------------------------------------
+//   File selector not implemented on iOS yet
+// ----------------------------------------------------------------------------
+{
+    return 0;
+}
+
+void ui_save_setting(const char *name, const char *value)
+// ----------------------------------------------------------------------------
+//   Saving settings not implemented yet
+// ----------------------------------------------------------------------------
+{
+}
+
+
+size_t ui_read_setting(const char *name, char *value, size_t maxlen)
+// ----------------------------------------------------------------------------
+//   Reading settings not implemented yet
+// ----------------------------------------------------------------------------
+{
+    return 0;
+}

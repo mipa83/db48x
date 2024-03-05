@@ -101,6 +101,7 @@
 // ----------------------------------------------------------------------------
 //   Save data if appropriate. See also applicationDidEnterBackground:.
 {
+    // key_push(tests::EXIT_PGM);
 }
 
 @end
