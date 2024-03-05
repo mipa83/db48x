@@ -29,7 +29,6 @@
 
 #import "ViewController.h"
 
-
 #include "sim-dmcp.h"
 #include "dmcp.h"
 
@@ -188,7 +187,7 @@ extern ViewController *theViewController = nullptr;
             break;
         }
     }
-    
+
     [highlightView setFrame:rect];
     highlightView.hidden = hidden;
 }
@@ -247,8 +246,110 @@ extern ViewController *theViewController = nullptr;
         UIKey *key = press.key;
         if (!key)
             continue;
-        NSString *chars = key.charactersIgnoringModifiers;
+        int dkey = 0;
+        switch (key.keyCode)
+        {
+        case UIKeyboardHIDUsageKeyboardA: dkey = KEY_SIGMA; break;
+        case UIKeyboardHIDUsageKeyboardB: dkey = KEY_INV; break;
+        case UIKeyboardHIDUsageKeyboardC: dkey = KEY_SQRT; break;
+        case UIKeyboardHIDUsageKeyboardD: dkey = KEY_LOG; break;
+        case UIKeyboardHIDUsageKeyboardE: dkey = KEY_LN; break;
+        case UIKeyboardHIDUsageKeyboardF: dkey = KEY_XEQ; break;
+        case UIKeyboardHIDUsageKeyboardG: dkey = KEY_STO; break;
+        case UIKeyboardHIDUsageKeyboardH: dkey = KEY_RCL; break;
+        case UIKeyboardHIDUsageKeyboardI: dkey = KEY_RDN; break;
+        case UIKeyboardHIDUsageKeyboardJ: dkey = KEY_SIN; break;
+        case UIKeyboardHIDUsageKeyboardK: dkey = KEY_COS; break;
+        case UIKeyboardHIDUsageKeyboardL: dkey = KEY_TAN; break;
+        case UIKeyboardHIDUsageKeypadEnter:
+        case UIKeyboardHIDUsageKeyboardReturnOrEnter:
+        case UIKeyboardHIDUsageKeyboardReturn: dkey = KEY_ENTER; break;
+        case UIKeyboardHIDUsageKeyboardM: dkey = KEY_SWAP; break;
+        case UIKeyboardHIDUsageKeyboardN: dkey = KEY_CHS; break;
+        case UIKeyboardHIDUsageKeyboardO: dkey = KEY_E; break;
+        case UIKeyboardHIDUsageKeyboardDeleteOrBackspace:
+        case UIKeyboardHIDUsageKeyboardDeleteForward:    dkey = KEY_BSP; break;
+        case UIKeyboardHIDUsageKeyboard7:
+        case UIKeyboardHIDUsageKeypad7:
+        case UIKeyboardHIDUsageKeyboardP: dkey = KEY_7; break;
+        case UIKeyboardHIDUsageKeyboard8:
+        case UIKeyboardHIDUsageKeypad8:
+        case UIKeyboardHIDUsageKeyboardQ: dkey = KEY_8; break;
+        case UIKeyboardHIDUsageKeyboard9:
+        case UIKeyboardHIDUsageKeypad9:
+        case UIKeyboardHIDUsageKeyboardR: dkey = KEY_9; break;
+        case UIKeyboardHIDUsageKeypadSlash:
+        case UIKeyboardHIDUsageKeyboardS: dkey = KEY_DIV; break;
+        case UIKeyboardHIDUsageKeyboardLeftArrow:
+        case UIKeyboardHIDUsageKeyboardUpArrow: dkey = KEY_UP; break;
+        case UIKeyboardHIDUsageKeyboardRightArrow:
+        case UIKeyboardHIDUsageKeyboardDownArrow: dkey = KEY_DOWN; break;
+        case UIKeyboardHIDUsageKeypad4:
+        case UIKeyboardHIDUsageKeyboard4:
+        case UIKeyboardHIDUsageKeyboardT: dkey = KEY_4; break;
+        case UIKeyboardHIDUsageKeyboard5:
+        case UIKeyboardHIDUsageKeypad5:
+        case UIKeyboardHIDUsageKeyboardU: dkey = KEY_5; break;
+        case UIKeyboardHIDUsageKeyboard6:
+        case UIKeyboardHIDUsageKeypad6:
+        case UIKeyboardHIDUsageKeyboardV: dkey = KEY_6; break;
+        case UIKeyboardHIDUsageKeypadAsterisk:
+        case UIKeyboardHIDUsageKeyboardW: dkey = KEY_MUL; break;
+        case UIKeyboardHIDUsageKeyboardCapsLock:
+        case UIKeyboardHIDUsageKeyboardLockingCapsLock:
+        case UIKeyboardHIDUsageKeyboardLeftShift:
+        case UIKeyboardHIDUsageKeyboardRightShift:
+        case UIKeyboardHIDUsageKeyboardLeftControl:
+        case UIKeyboardHIDUsageKeyboardRightControl:
+        case UIKeyboardHIDUsageKeyboardLeftAlt:
+        case UIKeyboardHIDUsageKeyboardRightAlt:
+        case UIKeyboardHIDUsageKeyboardTab: dkey = KEY_SHIFT; break;
+        case UIKeyboardHIDUsageKeyboard1:
+        case UIKeyboardHIDUsageKeypad1:
+        case UIKeyboardHIDUsageKeyboardX: dkey = KEY_1; break;
+        case UIKeyboardHIDUsageKeyboard2:
+        case UIKeyboardHIDUsageKeypad2:
+        case UIKeyboardHIDUsageKeyboardY: dkey = KEY_2; break;
+        case UIKeyboardHIDUsageKeyboard3:
+        case UIKeyboardHIDUsageKeypad3:
+        case UIKeyboardHIDUsageKeyboardZ: dkey = KEY_3; break;
+        case UIKeyboardHIDUsageKeypadHyphen:
+        case UIKeyboardHIDUsageKeyboardHyphen: dkey = KEY_SUB; break;
+        case UIKeyboardHIDUsageKeyboardEscape: dkey = KEY_EXIT; break;
+        case UIKeyboardHIDUsageKeypad0:
+        case UIKeyboardHIDUsageKeyboard0: dkey = KEY_0; break;
+        case UIKeyboardHIDUsageKeyboardComma:
+        case UIKeyboardHIDUsageKeypadComma:
+        case UIKeyboardHIDUsageKeypadPeriod:
+        case UIKeyboardHIDUsageKeyboardPeriod: dkey = KEY_DOT; break;
+        case UIKeyboardHIDUsageKeypadEqualSign:
+        case UIKeyboardHIDUsageKeypadEqualSignAS400:
+        case UIKeyboardHIDUsageKeyboardEqualSign:
+        case UIKeyboardHIDUsageKeyboardSpacebar: dkey = KEY_RUN; break;
+        case UIKeyboardHIDUsageKeypadPlus: dkey = KEY_ADD; break;
+
+        case UIKeyboardHIDUsageKeyboardF1: dkey = KEY_F1; break;
+        case UIKeyboardHIDUsageKeyboardF2: dkey = KEY_F2; break;
+        case UIKeyboardHIDUsageKeyboardF3: dkey = KEY_F3; break;
+        case UIKeyboardHIDUsageKeyboardF4: dkey = KEY_F4; break;
+        case UIKeyboardHIDUsageKeyboardF5: dkey = KEY_F5; break;
+        case UIKeyboardHIDUsageKeyboardF6: dkey = KEY_F6; break;
+
+        default: break;
+        }
+
+        if (dkey)
+            key_push(dkey);
     }
+}
+
+- (void) pressesEnded:(NSSet<UIPress *> *)presses
+            withEvent:(UIPressesEvent *)event
+// ----------------------------------------------------------------------------
+//   Physical key being pressed
+// ----------------------------------------------------------------------------
+{
+    key_push(0);
 }
 
 - (void)didReceiveMemoryWarning
