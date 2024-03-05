@@ -63,16 +63,17 @@
             unsigned bo = y * SIM_LCD_SCANLINE + x;
             int on = (lcd_buffer[bo/8] >> (bo % 8)) & 1;
             byte *pixel = &pixelData[(y * SIM_LCD_W + (SIM_LCD_W - 1 - x)) * 4];
-            pixel[0] = pixel[1] = pixel[2] = pixel[3] = on ? 255 : 0;
+            pixel[0] = pixel[1] = pixel[2] = pixel[3] = on ? 220 : 0;
         }
     }
     void *baseAddress = &pixelData;
 
 
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorSpaceRef colorSpace  = CGColorSpaceCreateDeviceRGB();
     CGContextRef    context     = CGBitmapContextCreate(
         baseAddress,
-                                                        SIM_LCD_W, SIM_LCD_H,
+        SIM_LCD_W,
+        SIM_LCD_H,
         8,
         bytesPerRow,
         colorSpace,

@@ -77,7 +77,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.10000000000000001" id="fUW-r9-yUW">
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.0" id="fUW-r9-yUW">
                     <connections>
                         <action selector="keyboardWasTouched:" destination="BYZ-38-t0r" id="90M-fN-mXV"/>
                     </connections>

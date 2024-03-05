@@ -121,6 +121,10 @@ extern ViewController *theViewController = nullptr;
 {
     [super viewDidLoad];
 
+    // Change directory to the app bundle
+    NSString *folder = [[NSBundle mainBundle] resourcePath];
+    chdir([folder cString]);
+
     // Dispatch the RPL thread
     dispatch_queue_t queue =
         dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
@@ -130,6 +134,14 @@ extern ViewController *theViewController = nullptr;
 
     theViewController = self;
     lastKey = 0;
+    
+#if 0
+    NSError * error;
+    NSArray * directoryContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:folder error:&error];
+    NSLog(@"Directory content %@", directoryContents);
+    for (NSString *file in directoryContents)
+        NSLog(@"file %@", file);
+#endif
 }
 
 
@@ -340,6 +352,8 @@ extern ViewController *theViewController = nullptr;
 
         if (dkey)
             key_push(dkey);
+
+        NSLog(@"Path is %s", getcwd(nullptr, 0));
     }
 }
 
@@ -441,6 +455,11 @@ size_t ui_read_setting(const char *name, char *value, size_t maxlen)
 //   Reading settings not implemented yet
 // ----------------------------------------------------------------------------
 {
+    if (strcmp(name, "state") == 0)
+    {
+        strncpy(value, "state/Demo.48S", maxlen);
+        return strlen("state/Demo.48S");
+    }
     return 0;
 }
 
