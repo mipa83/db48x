@@ -35,7 +35,7 @@
                                             <constraint firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="height" multiplier="698:878" id="Pzg-fD-vL7"/>
                                         </constraints>
                                         <connections>
-                                            <outletCollection property="gestureRecognizers" destination="Wxj-YR-vGe" appends="YES" id="YRF-nd-Tge"/>
+                                            <outletCollection property="gestureRecognizers" destination="fUW-r9-yUW" appends="YES" id="N7e-3w-JX9"/>
                                         </connections>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fx3-2y-GDN">
@@ -590,11 +590,11 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <tapGestureRecognizer id="Wxj-YR-vGe">
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.10000000000000001" id="fUW-r9-yUW">
                     <connections>
-                        <action selector="keyboardWasTapped:" destination="BYZ-38-t0r" id="iua-ng-T0R"/>
+                        <action selector="keyboardWasTouched:" destination="BYZ-38-t0r" id="90M-fN-mXV"/>
                     </connections>
-                </tapGestureRecognizer>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="45.038167938931295" y="-2.1126760563380285"/>
         </scene>

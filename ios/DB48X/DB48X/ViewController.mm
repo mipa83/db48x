@@ -39,7 +39,9 @@
 // ----------------------------------------------------------------------------
 //    The view controller sets up the various elements
 // ----------------------------------------------------------------------------
-
+{
+    int lastKey;
+}
 @end
 
 
@@ -128,6 +130,7 @@ extern ViewController *theViewController = nullptr;
         });
 
     theViewController = self;
+    lastKey = 0;
 }
 
 
@@ -160,8 +163,7 @@ extern ViewController *theViewController = nullptr;
     return [screenView refreshCount];
 }
 
-
-- (IBAction)keyboardWasTapped:(UITapGestureRecognizer *)sender
+- (IBAction)keyboardWasTouched:(UILongPressGestureRecognizer *)sender
 // ----------------------------------------------------------------------------
 //   Tap event on the keyboard
 // ----------------------------------------------------------------------------
@@ -171,15 +173,34 @@ extern ViewController *theViewController = nullptr;
     CGFloat relx = pos.x / keyboardView.frame.size.width;
     CGFloat rely = pos.y / keyboardView.frame.size.height;
 
-    for (mousemap *ptr = mouseMap; ptr->key; ptr++)
+    switch (sender.state)
     {
-        if ((relx >= ptr->left) && (relx <= ptr->right) &&
-            (rely >= ptr->top) && (rely <= ptr->bot))
-        {
-            key_push(ptr->keynum);
-        }
+        case UIGestureRecognizerStateBegan:
+        case UIGestureRecognizerStateChanged:
+        for (mousemap *ptr = mouseMap; ptr->key; ptr++)
+            {
+                if ((relx >= ptr->left) && (relx <= ptr->right) &&
+                    (rely >= ptr->top) && (rely <= ptr->bot))
+                {
+                    int key = ptr->keynum;
+                    if (key != lastKey)
+                    {
+                        key_push(key);
+                        lastKey = key;
+                    }
+                }
+            }
+            break;
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+            if (lastKey)
+            {
+                key_push(0);
+                lastKey = 0;
+            }
+            break;
+        default:
     }
-    key_push(0);
 
     [self refreshScreen];
 }
@@ -299,7 +320,6 @@ uint ui_battery()
     if (!UIDevice.currentDevice.isBatteryMonitoringEnabled)
         UIDevice.currentDevice.batteryMonitoringEnabled = true;
 
-    NSLog(@"Battery level is %f", UIDevice.currentDevice.batteryLevel);
     if (UIDevice.currentDevice.batteryLevel <= 0)
         return 500;
     uint level = uint(1000 * UIDevice.currentDevice.batteryLevel);
