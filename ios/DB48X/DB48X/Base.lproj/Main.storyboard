@@ -28,15 +28,12 @@
                             <view multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R4Q-96-XuB">
                                 <rect key="frame" x="0.0" y="294.66666666666669" width="393" height="523.33333333333326"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE">
+                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE" customClass="KeyboardView">
                                         <rect key="frame" x="0.0" y="14.6666666666666" width="393" height="494.33333333333326"/>
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="height" multiplier="698:878" id="Pzg-fD-vL7"/>
                                         </constraints>
-                                        <connections>
-                                            <outletCollection property="gestureRecognizers" destination="fUW-r9-yUW" appends="YES" id="N7e-3w-JX9"/>
-                                        </connections>
                                     </imageView>
                                     <view hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Tu-Gb-Szy" customClass="HighlightMarkerView">
                                         <rect key="frame" x="65" y="401" width="21" height="23"/>
@@ -77,11 +74,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.0" id="fUW-r9-yUW">
-                    <connections>
-                        <action selector="keyboardWasTouched:" destination="BYZ-38-t0r" id="90M-fN-mXV"/>
-                    </connections>
-                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="45.038167938931295" y="-2.1126760563380285"/>
         </scene>

@@ -28,6 +28,7 @@
 // ****************************************************************************
 
 #import "ViewController.h"
+#import <AVKit/AVKit.h>
 
 #include "sim-dmcp.h"
 #include "dmcp.h"
@@ -39,19 +40,16 @@
 //    The view controller sets up the various elements
 // ----------------------------------------------------------------------------
 {
-    int lastKey;
+    AVAudioPlayer *player;
 }
 @end
 
 
-struct mousemap
+struct tapmap tapMap[] =
 // ----------------------------------------------------------------------------
-//   Conversion between in-image coordinates and keys
+//   Identify the position of the keys on virtual keyboard
 // ----------------------------------------------------------------------------
 {
-    int key, keynum;
-    float left, right, top, bot;
-} mouseMap[] = {
 
     { 1,        38, 0.03, 0.15, 0.03, 0.10 },
     { 2,        39, 0.20, 0.32, 0.03, 0.10 },
@@ -133,8 +131,7 @@ extern ViewController *theViewController = nullptr;
         });
 
     theViewController = self;
-    lastKey = 0;
-    
+
 #if 0
     NSError * error;
     NSArray * directoryContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:folder error:&error];
@@ -186,7 +183,7 @@ extern ViewController *theViewController = nullptr;
     CGFloat x0 = keyboardView.frame.origin.x;
     CGFloat y0 = keyboardView.frame.origin.y;
     bool hidden = true;
-    for (mousemap *ptr = mouseMap; ptr->key; ptr++)
+    for (tapmap *ptr = tapMap; ptr->key; ptr++)
     {
         if (ptr->keynum == key)
         {
@@ -202,49 +199,6 @@ extern ViewController *theViewController = nullptr;
 
     [highlightView setFrame:rect];
     highlightView.hidden = hidden;
-}
-
-
-- (IBAction)keyboardWasTouched:(UILongPressGestureRecognizer *)sender
-// ----------------------------------------------------------------------------
-//   Tap event on the keyboard
-// ----------------------------------------------------------------------------
-{
-    CGPoint pos = [sender locationInView:keyboardView];
-
-    CGFloat relx = pos.x / keyboardView.frame.size.width;
-    CGFloat rely = pos.y / keyboardView.frame.size.height;
-
-    switch (sender.state)
-    {
-        case UIGestureRecognizerStateBegan:
-        case UIGestureRecognizerStateChanged:
-        for (mousemap *ptr = mouseMap; ptr->key; ptr++)
-            {
-                if ((relx >= ptr->left) && (relx <= ptr->right) &&
-                    (rely >= ptr->top) && (rely <= ptr->bot))
-                {
-                    int key = ptr->keynum;
-                    if (key != lastKey)
-                    {
-                        key_push(key);
-                        lastKey = key;
-                    }
-                }
-            }
-            break;
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded:
-            if (lastKey)
-            {
-                key_push(0);
-                lastKey = 0;
-            }
-            break;
-        default:
-    }
-
-    [self refreshScreen];
 }
 
 
@@ -353,7 +307,6 @@ extern ViewController *theViewController = nullptr;
         if (dkey)
             key_push(dkey);
 
-        NSLog(@"Path is %s", getcwd(nullptr, 0));
     }
 }
 
@@ -365,6 +318,42 @@ extern ViewController *theViewController = nullptr;
 {
     key_push(0);
 }
+
+
+- (void) startBuzzer:(uint) frequency
+// ----------------------------------------------------------------------------
+//   Start the buzzer
+// ----------------------------------------------------------------------------
+{
+#if 0
+    enum { SAMPLE_COUNT = 20000 };
+    static byte buf[SAMPLE_COUNT];
+    for (size_t i = 0; i < SAMPLE_COUNT; i++)
+        buf[i] = (i * frequency / (SAMPLE_COUNT * 1000)) & 1 ? 255U : 0;
+    NSData *data = [NSData dataWithBytes:buf length:SAMPLE_COUNT];
+
+    NSError *error = nil;
+    player = [[AVAudioPlayer alloc] initWithData:data error:&error];
+    if (error)
+        NSLog(@"AVAudioPlayer error %@", error);
+    if (player)
+        [player play];
+#endif
+}
+
+
+- (void) stopBuzzer
+// ----------------------------------------------------------------------------
+//   Stop the buzzer
+// ----------------------------------------------------------------------------
+{
+    if (player)
+    {
+        [player stop];
+        player = nil;
+    }
+}
+
 
 - (void)didReceiveMemoryWarning
 // ----------------------------------------------------------------------------
@@ -485,4 +474,24 @@ bool ui_charging()
 // ----------------------------------------------------------------------------
 {
     return UIDevice.currentDevice.batteryState == UIDeviceBatteryStateCharging;
+}
+
+
+void ui_start_buzzer(uint frequency)
+// ----------------------------------------------------------------------------
+//   Start buzzer at given frequency
+// ----------------------------------------------------------------------------
+{
+    if (theViewController)
+        [theViewController startBuzzer:frequency];
+}
+
+
+void ui_stop_buzzer()
+// ----------------------------------------------------------------------------
+//  Stop buzzer in simulator
+// ----------------------------------------------------------------------------
+{
+    if (theViewController)
+        [theViewController stopBuzzer];
 }

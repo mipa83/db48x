@@ -28,6 +28,7 @@
 // ****************************************************************************
 
 #import "ScreenView.h"
+#import "KeyboardView.h"
 #import "HighlightMarkerView.h"
 #import <UIKit/UIKit.h>
 #import <UIKit/UIImageView.h>
@@ -38,7 +39,18 @@
 // ----------------------------------------------------------------------------
 {
     __weak IBOutlet ScreenView *screenView;
-    __weak IBOutlet UIImageView *keyboardView;
+    __weak IBOutlet KeyboardView *keyboardView;
     __weak IBOutlet HighlightMarkerView *highlightView;
 }
 @end
+
+struct tapmap
+// ----------------------------------------------------------------------------
+//   Conversion between in-image coordinates and keys
+// ----------------------------------------------------------------------------
+{
+    int key, keynum;
+    float left, right, top, bot;
+};
+
+extern struct tapmap tapMap[];
