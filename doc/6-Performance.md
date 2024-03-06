@@ -154,7 +154,13 @@ intermediate computations were not made with increased precision.
 | DM32 HW16      | 2188113   | 1'395'612.15872'53834'6                     |
 | DM42 HW7       |  605102   | 1'384'348.25                                |
 | DM42 HW16      |  806730   | 1'395'612.15872'53834'6                     |
+| iPhone 12 VP48 | 1515800   | 1'395'609.35516'01878'23166'99926'37353'94572'23162'39251'9 |
+| iPhone 12 VP36 | 1003884   | 1'395'607.17477'7643'16731'54275'27942'243  |
+| iPhone 12 VP24 |  583237   | 1'395'600.94680'92149'84730'06              |
+| iPhone 12 HW7  |    9462   | 1'384'348.25                                |
+| iPhone 12 HW16 |    9495   | 1'395'612.15872'53836'9                     |
 
+The iPhone 12 HW16 is the same as the Nintendo New 2DS XL
 
 
 ## Drawing `sin X` with `FunctionPlot`
