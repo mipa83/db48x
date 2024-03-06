@@ -142,12 +142,11 @@ extern ViewController *theViewController = nullptr;
 }
 
 
--(void) refreshScreen
+-(void) refreshScreenWithImage:(UIImage *)image
 // ----------------------------------------------------------------------------
 //  Refresh the screen
 // ----------------------------------------------------------------------------
 {
-    UIImage *image = [screenView imageFromLCD];
     screenView.image = image;
 }
 
@@ -157,8 +156,9 @@ extern ViewController *theViewController = nullptr;
 //   Mark the screen as needing a refresh
 // ----------------------------------------------------------------------------
 {
+    UIImage *image = [screenView imageFromLCD];
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self refreshScreen];
+        [self refreshScreenWithImage:image];
     });
 }
 

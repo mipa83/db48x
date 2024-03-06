@@ -33,6 +33,11 @@
 #include <stdint.h>
 
 
+// Copy of the pixel data
+byte pixelData[SIM_LCD_W * SIM_LCD_H * 4];
+byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
+
+
 @implementation ScreenView
 {
     uint refreshed;
@@ -52,23 +57,40 @@
 }
 
 -(UIImage *)imageFromLCD
+// ----------------------------------------------------------------------------
+//   Build an image from the DMCP LCD representation
+// ----------------------------------------------------------------------------
+//   This can (and should) run on the RPL thread
 {
-    byte pixelData[SIM_LCD_W * SIM_LCD_H * 4];
     size_t bytesPerRow = SIM_LCD_W * 4;
 
     for (int y = 0; y < SIM_LCD_H; y++)
     {
-        for (int x = 0; x < SIM_LCD_W; x++)
+        for (int xb = 0; xb < SIM_LCD_W/8; xb++)
         {
-            unsigned bo = y * SIM_LCD_SCANLINE + x;
-            int on = (lcd_buffer[bo/8] >> (bo % 8)) & 1;
-            byte *pixel = &pixelData[(y * SIM_LCD_W + (SIM_LCD_W - 1 - x)) * 4];
-            pixel[0] = pixel[1] = pixel[2] = pixel[3] = on ? 220 : 0;
+            unsigned byteoffs = y * (SIM_LCD_SCANLINE/8) + xb;
+            byte diffs = lcd_copy[byteoffs] ^ lcd_buffer[byteoffs];
+            if (diffs)
+            {
+                for (int bit = 0; bit < 8; bit++)
+                {
+                    if ((diffs >> bit) & 1)
+                    {
+                        int x = 8*xb + bit;
+                        int on = (lcd_buffer[byteoffs] >> bit) & 1;
+                        uint pixoffs = y * SIM_LCD_W + (SIM_LCD_W - 1 - x);
+                        byte *pixel = &pixelData[pixoffs * 4];
+                        byte pixval = on ? 220 : 0;
+                        pixel[0] = pixel[1] = pixel[2] = pixel[3] = pixval;
+                    }
+                }
+                lcd_copy[byteoffs] = lcd_buffer[byteoffs];
+            }
         }
     }
+
+
     void *baseAddress = &pixelData;
-
-
     CGColorSpaceRef colorSpace  = CGColorSpaceCreateDeviceRGB();
     CGContextRef    context     = CGBitmapContextCreate(
         baseAddress,
