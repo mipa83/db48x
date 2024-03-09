@@ -14,6 +14,14 @@
 		1F9D29791C72B9BB000025E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */; };
 		1F9D29841C72B9BB000025E6 /* DB48XTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29831C72B9BB000025E6 /* DB48XTests.m */; };
 		1F9D298F1C72B9BB000025E6 /* DB48XUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */; };
+		6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
+		6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
+		6F4528D22B9C0F4E00C8357F /* library.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528CA2B9C0F4E00C8357F /* library.cc */; };
+		6F4528D32B9C0F4E00C8357F /* decimal-pi.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */; };
+		6F4528DC2B9C6DD800C8357F /* equations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F4528DD2B9C6DD800C8357F /* library.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
+		6F4528DE2B9C6DEF00C8357F /* equations.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F4528DF2B9C6DEF00C8357F /* library.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
 		6F5A77BE2B96862200C8357F /* ScreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A77BD2B96862200C8357F /* ScreenView.m */; };
 		6FB5A8812B97F50E00C8357F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FB5A8802B97F50E00C8357F /* AVFoundation.framework */; };
 		6FB5A8842B98035600C8357F /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5A8832B98035600C8357F /* KeyboardView.m */; };
@@ -139,6 +147,8 @@
 			dstPath = config;
 			dstSubfolderSpec = 7;
 			files = (
+				6F4528DE2B9C6DEF00C8357F /* equations.csv in CopyFiles */,
+				6F4528DF2B9C6DEF00C8357F /* library.csv in CopyFiles */,
 				6FD555872B995FB800C8357F /* characters.csv in CopyFiles */,
 				6FF873972B97B87400C8357F /* units.csv in CopyFiles */,
 				6FF873982B97B87400C8357F /* constants.csv in CopyFiles */,
@@ -174,6 +184,19 @@
 		1F9D298A1C72B9BB000025E6 /* DB48XUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DB48XUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DB48XUITests.m; sourceTree = "<group>"; };
 		1F9D29901C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F4528C52B9C0F4E00C8357F /* equations.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = equations.cc; path = ../../../src/equations.cc; sourceTree = "<group>"; };
+		6F4528C62B9C0F4E00C8357F /* equations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = equations.h; path = ../../../src/equations.h; sourceTree = "<group>"; };
+		6F4528C72B9C0F4E00C8357F /* decimal-e.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "decimal-e.txt"; path = "../../../src/decimal-e.txt"; sourceTree = "<group>"; };
+		6F4528C82B9C0F4E00C8357F /* conditionals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = conditionals.h; path = ../../../src/conditionals.h; sourceTree = "<group>"; };
+		6F4528C92B9C0F4E00C8357F /* catalog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = catalog.h; path = ../../../src/catalog.h; sourceTree = "<group>"; };
+		6F4528CA2B9C0F4E00C8357F /* library.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = library.cc; path = ../../../src/library.cc; sourceTree = "<group>"; };
+		6F4528CB2B9C0F4E00C8357F /* library.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = library.h; path = ../../../src/library.h; sourceTree = "<group>"; };
+		6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "decimal-pi.txt"; path = "../../../src/decimal-pi.txt"; sourceTree = "<group>"; };
+		6F4528CD2B9C0F4E00C8357F /* compare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = compare.h; path = ../../../src/compare.h; sourceTree = "<group>"; };
+		6F4528CE2B9C0F4E00C8357F /* beep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = beep.h; path = ../../../src/beep.h; sourceTree = "<group>"; };
+		6F4528CF2B9C0F4E00C8357F /* comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = comment.h; path = ../../../src/comment.h; sourceTree = "<group>"; };
+		6F4528DA2B9C6DD800C8357F /* equations.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equations.csv; sourceTree = "<group>"; };
+		6F4528DB2B9C6DD800C8357F /* library.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.csv; sourceTree = "<group>"; };
 		6F5A77BC2B96862200C8357F /* ScreenView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenView.h; sourceTree = "<group>"; };
 		6F5A77BD2B96862200C8357F /* ScreenView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenView.m; sourceTree = "<group>"; };
 		6FB5A8802B97F50E00C8357F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -481,6 +504,8 @@
 		6FE7750B2B97966E00C8357F /* config */ = {
 			isa = PBXGroup;
 			children = (
+				6F4528DA2B9C6DD800C8357F /* equations.csv */,
+				6F4528DB2B9C6DD800C8357F /* library.csv */,
 				6FD555852B995FA500C8357F /* characters.csv */,
 				6FE7750C2B97966E00C8357F /* units.csv */,
 				6FE7750D2B97966E00C8357F /* constants.csv */,
@@ -513,6 +538,17 @@
 				6FE7F0142B95E37300C8357F /* algebraic.cc */,
 				6FE7F0082B95E37300C8357F /* algebraic.h */,
 				6FE7F0372B95E37400C8357F /* arithmetic.cc */,
+				6F4528CE2B9C0F4E00C8357F /* beep.h */,
+				6F4528C92B9C0F4E00C8357F /* catalog.h */,
+				6F4528CF2B9C0F4E00C8357F /* comment.h */,
+				6F4528CD2B9C0F4E00C8357F /* compare.h */,
+				6F4528C82B9C0F4E00C8357F /* conditionals.h */,
+				6F4528C72B9C0F4E00C8357F /* decimal-e.txt */,
+				6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */,
+				6F4528C52B9C0F4E00C8357F /* equations.cc */,
+				6F4528C62B9C0F4E00C8357F /* equations.h */,
+				6F4528CA2B9C0F4E00C8357F /* library.cc */,
+				6F4528CB2B9C0F4E00C8357F /* library.h */,
 				6FE7F0132B95E37300C8357F /* arithmetic.h */,
 				6FE7EFFC2B95E37200C8357F /* array.cc */,
 				6FE7F0402B95E37400C8357F /* array.h */,
@@ -773,15 +809,19 @@
 				6FE775262B97966E00C8357F /* constants.csv in Resources */,
 				6FCED99D2B95E4C100C8357F /* recorder.spec in Resources */,
 				6FCEDA572B95E60700C8357F /* keyboard-db48x.png in Resources */,
+				6F4528DD2B9C6DD800C8357F /* library.csv in Resources */,
 				6FE775292B97966E00C8357F /* db48x.md in Resources */,
 				6FE775372B97966E00C8357F /* db50x.md in Resources */,
 				1F9D29741C72B9BB000025E6 /* Main.storyboard in Resources */,
 				6FE7F0562B95E37400C8357F /* errors.tbl in Resources */,
 				6FE7F06E2B95E37400C8357F /* ignored_menus.csv in Resources */,
+				6F4528D32B9C0F4E00C8357F /* decimal-pi.txt in Resources */,
+				6F4528DC2B9C6DD800C8357F /* equations.csv in Resources */,
 				6FE7F0792B95E37400C8357F /* ids.tbl in Resources */,
 				6FF8739D2B97BA1E00C8357F /* Demo.48S in Resources */,
 				6FF8739C2B97BA1E00C8357F /* Test.48S in Resources */,
 				6FE7F0712B95E37400C8357F /* stm32_program.ld in Resources */,
+				6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */,
 				6FE775252B97966E00C8357F /* units.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -844,6 +884,7 @@
 				6FE7F0632B95E37400C8357F /* locals.cc in Sources */,
 				6FE7F0782B95E37400C8357F /* arithmetic.cc in Sources */,
 				6FE7F0842B95E37400C8357F /* main.cc in Sources */,
+				6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */,
 				1F9D296E1C72B9BB000025E6 /* AppDelegate.m in Sources */,
 				6FE7F0752B95E37400C8357F /* renderer.cc in Sources */,
 				6FE7F06F2B95E37400C8357F /* constants.cc in Sources */,
@@ -870,6 +911,7 @@
 				6FE7F0852B95E37400C8357F /* sysmenu.cc in Sources */,
 				6FCED49D2B95E4C000C8357F /* recorder_ring.c in Sources */,
 				6FE7F0812B95E37400C8357F /* tests.cc in Sources */,
+				6F4528D22B9C0F4E00C8357F /* library.cc in Sources */,
 				6FCEDA872B95ED9600C8357F /* HelpFont.cc in Sources */,
 				6FE7F07D2B95E37400C8357F /* runtime.cc in Sources */,
 			);
