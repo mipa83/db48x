@@ -1094,11 +1094,13 @@
 					USE_IOS,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.7.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1117,11 +1119,13 @@
 					SIMULATOR,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.7.0;
+				MARKETING_VERSION = 0.7.2;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
