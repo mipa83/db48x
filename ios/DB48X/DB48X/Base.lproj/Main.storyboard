@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,17 +19,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="VyD-TD-Hcr" customClass="ScreenView">
-                                <rect key="frame" x="0.0" y="58.999999999999986" width="393" height="235.66666666666663"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="VyD-TD-Hcr" secondAttribute="height" multiplier="5:3" id="TEg-nX-cri"/>
-                                </constraints>
-                            </mtkView>
-                            <view multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R4Q-96-XuB">
-                                <rect key="frame" x="0.0" y="294.66666666666669" width="393" height="523.33333333333326"/>
+                            <view multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="R4Q-96-XuB">
+                                <rect key="frame" x="0.0" y="61" width="393" height="730"/>
                                 <subviews>
+                                    <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="VyD-TD-Hcr" customClass="ScreenView">
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="235.66666666666666"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="VyD-TD-Hcr" secondAttribute="height" multiplier="5:3" id="TEg-nX-cri"/>
+                                        </constraints>
+                                    </mtkView>
                                     <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE" customClass="KeyboardView">
-                                        <rect key="frame" x="0.0" y="14.6666666666666" width="393" height="494.33333333333326"/>
+                                        <rect key="frame" x="0.0" y="235.66666666666671" width="393" height="494.33333333333326"/>
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="height" multiplier="698:878" id="Pzg-fD-vL7"/>
@@ -48,23 +48,23 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="VeI-TE-aJE" secondAttribute="trailing" id="3oT-f2-Zib"/>
-                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="centerY" secondItem="R4Q-96-XuB" secondAttribute="centerY" id="5s1-yf-4Ug"/>
-                                    <constraint firstAttribute="trailing" secondItem="VeI-TE-aJE" secondAttribute="trailing" id="VW7-xN-ZoT"/>
-                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="leading" secondItem="R4Q-96-XuB" secondAttribute="leading" id="beh-Wk-xb6"/>
-                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="leading" secondItem="R4Q-96-XuB" secondAttribute="leading" id="t45-on-uwE"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="leading" secondItem="R4Q-96-XuB" secondAttribute="leading" id="45Q-z2-FZ5"/>
+                                    <constraint firstAttribute="bottom" secondItem="VeI-TE-aJE" secondAttribute="bottom" id="OtN-Pl-ozO"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="width" id="ZxN-V4-45B"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="centerX" secondItem="VeI-TE-aJE" secondAttribute="centerX" id="jod-0f-ORe"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="top" secondItem="R4Q-96-XuB" secondAttribute="top" id="mX1-e6-Jfb"/>
+                                    <constraint firstAttribute="trailing" secondItem="VyD-TD-Hcr" secondAttribute="trailing" id="ps2-Xr-DSd"/>
+                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="top" secondItem="VyD-TD-Hcr" secondAttribute="bottom" id="zrb-fz-nT9"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="VyD-TD-Hcr" firstAttribute="top" secondItem="3ge-3E-7cO" secondAttribute="bottom" id="Pc7-u8-jt6"/>
-                            <constraint firstItem="R4Q-96-XuB" firstAttribute="top" secondItem="VyD-TD-Hcr" secondAttribute="bottom" id="TZM-lZ-cQL"/>
-                            <constraint firstAttribute="trailing" secondItem="R4Q-96-XuB" secondAttribute="trailing" id="YM6-aU-bRE"/>
-                            <constraint firstAttribute="trailing" secondItem="VyD-TD-Hcr" secondAttribute="trailing" id="ehq-3s-ELV"/>
-                            <constraint firstItem="R4Q-96-XuB" firstAttribute="leading" secondItem="88m-4O-eCX" secondAttribute="leading" id="hVG-1k-0pP"/>
-                            <constraint firstItem="VyD-TD-Hcr" firstAttribute="leading" secondItem="88m-4O-eCX" secondAttribute="leading" id="ihs-Hf-m8b"/>
-                            <constraint firstItem="0iR-uu-Fzh" firstAttribute="top" secondItem="R4Q-96-XuB" secondAttribute="bottom" id="szL-3S-HX4"/>
+                            <constraint firstItem="R4Q-96-XuB" firstAttribute="centerX" secondItem="88m-4O-eCX" secondAttribute="centerX" id="3Rm-Q7-5qi"/>
+                            <constraint firstItem="R4Q-96-XuB" firstAttribute="top" relation="greaterThanOrEqual" secondItem="3ge-3E-7cO" secondAttribute="bottom" id="BZ8-AK-8P5"/>
+                            <constraint firstItem="R4Q-96-XuB" firstAttribute="height" relation="lessThanOrEqual" secondItem="88m-4O-eCX" secondAttribute="height" id="KpM-bY-cVQ"/>
+                            <constraint firstItem="R4Q-96-XuB" firstAttribute="width" relation="lessThanOrEqual" secondItem="88m-4O-eCX" secondAttribute="width" id="OX4-VZ-sZt"/>
+                            <constraint firstItem="R4Q-96-XuB" firstAttribute="centerY" secondItem="88m-4O-eCX" secondAttribute="centerY" id="evN-7t-HjV"/>
                         </constraints>
                     </view>
                     <connections>
