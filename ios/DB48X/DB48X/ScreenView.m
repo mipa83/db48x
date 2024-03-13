@@ -113,4 +113,6 @@ byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
     return image;
 }
 
+
+
 @end

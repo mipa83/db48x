@@ -119,17 +119,6 @@ extern ViewController *theViewController = nullptr;
 {
     [super viewDidLoad];
 
-    // Change directory to the app bundle
-    NSString *folder = [[NSBundle mainBundle] resourcePath];
-    chdir([folder cString]);
-
-    // Dispatch the RPL thread
-    dispatch_queue_t queue =
-        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
-    dispatch_async(queue, ^{
-            program_main();
-        });
-
     theViewController = self;
 
 #if 0

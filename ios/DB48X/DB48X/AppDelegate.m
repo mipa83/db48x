@@ -29,6 +29,8 @@
 
 #import "AppDelegate.h"
 
+#include "dmcp.h"
+
 @interface AppDelegate ()
 
 @end
@@ -43,6 +45,18 @@
 // ----------------------------------------------------------------------------
 {
     // Override point for customization after application launch.
+    
+    // Change directory to the app bundle
+    NSString *folder = [[NSBundle mainBundle] resourcePath];
+    chdir([folder cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+
+    // Dispatch the RPL thread
+    dispatch_queue_t queue =
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
+    dispatch_async(queue, ^{
+            program_main();
+        });
+    
     return YES;
 }
 
