@@ -33,6 +33,10 @@
 #include "sim-dmcp.h"
 #include "dmcp.h"
 
+#ifdef DEBUG
+#include "tests.h"
+#endif
+
 #include <time.h>
 
 @interface ViewController ()
@@ -290,6 +294,16 @@ extern ViewController *theViewController = nullptr;
         case UIKeyboardHIDUsageKeyboardF5: dkey = KEY_F5; break;
         case UIKeyboardHIDUsageKeyboardF6: dkey = KEY_F6; break;
 
+#ifdef DEBUG
+            // Running tests
+        case UIKeyboardHIDUsageKeyboardF11:
+            [self startTestWithSingle:true];
+            break;
+        case UIKeyboardHIDUsageKeyboardF12:
+            [self startTestWithSingle:false];
+            break;
+#endif // Debug
+
         default: break;
         }
 
@@ -298,6 +312,23 @@ extern ViewController *theViewController = nullptr;
 
     }
 }
+
+
+#ifdef DEBUG
+- (void) startTestWithSingle:(bool) single
+// ----------------------------------------------------------------------------
+//  Dispatch a test run
+// ----------------------------------------------------------------------------
+{
+    dispatch_queue_t queue =
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
+    dispatch_async(queue, ^{
+            tests suite;
+            suite.run(single);
+        });
+}
+#endif // DEBUG
+
 
 - (void) pressesEnded:(NSSet<UIPress *> *)presses
             withEvent:(UIPressesEvent *)event
@@ -390,7 +421,9 @@ void ui_push_key(int key)
 //   Draw a rectangle indicating we pushed the key
 // ----------------------------------------------------------------------------
 {
-    [theViewController pushKeyHighlight:key];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [theViewController pushKeyHighlight:key];
+    });
 }
 
 

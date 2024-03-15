@@ -9091,9 +9091,16 @@ static void passfail(bool ok)
 //   Print a pass/fail message
 // ----------------------------------------------------------------------------
 {
-#define GREEN "\033[32m"
-#define RED   "\033[41;97m"
-#define RESET "\033[39;49;99;27m"
+#ifdef USE_IOS
+    #warning IOS running
+#define ESCAPE(x)
+#else
+    #warning Not IOS running
+#define ESCAPE(x)       x
+#endif
+#define GREEN   ESCAPE("\033[32m")
+#define RED     ESCAPE("\033[41;97m")
+#define RESET   ESCAPE("\033[39;49;99;27m")
     fprintf(stderr, "%s\n", ok ? GREEN "[PASS]" RESET : RED "[FAIL]" RESET);
 #undef GREEN
 #undef RED
@@ -9115,10 +9122,10 @@ tests &tests::begin(cstring name, bool disabled)
     tstart = sys_current_ms();
     tname = name;
     tindex++;
-#define BLACK "\033[40;97m"
-#define GREY  "\033[100;37m"
-#define CLREOL "\033[K"
-#define RESET "\033[39;49;27m"
+#define BLACK   ESCAPE("\033[40;97m")
+#define GREY    ESCAPE("\033[100;37m")
+#define CLREOL  ESCAPE("\033[K")
+#define RESET   ESCAPE("\033[39;49;27m")
     if (disabled)
         fprintf(stderr,  GREY "%3u: %-75s" CLREOL RESET "\n", tindex, tname);
     else
