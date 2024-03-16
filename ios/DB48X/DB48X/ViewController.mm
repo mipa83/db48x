@@ -29,6 +29,7 @@
 
 #import "ViewController.h"
 #import <AVKit/AVKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 #include "sim-dmcp.h"
 #include "dmcp.h"
@@ -44,7 +45,8 @@
 //    The view controller sets up the various elements
 // ----------------------------------------------------------------------------
 {
-    AVAudioPlayer *player;
+    AVAudioEngine *audio;
+    float phase;
 }
 @end
 
@@ -111,7 +113,7 @@ struct tapmap tapMap[] =
 
 extern "C" void program_main();
 
-extern ViewController *theViewController = nullptr;
+ViewController *theViewController = nullptr;
 
 
 @implementation ViewController
@@ -345,20 +347,47 @@ extern ViewController *theViewController = nullptr;
 //   Start the buzzer
 // ----------------------------------------------------------------------------
 {
-#if 0
-    enum { SAMPLE_COUNT = 20000 };
-    static byte buf[SAMPLE_COUNT];
-    for (size_t i = 0; i < SAMPLE_COUNT; i++)
-        buf[i] = (i * frequency / (SAMPLE_COUNT * 1000)) & 1 ? 255U : 0;
-    NSData *data = [NSData dataWithBytes:buf length:SAMPLE_COUNT];
+    audio = [[AVAudioEngine alloc] init];
+    AVAudioFormat *format = [audio.outputNode outputFormatForBus:0];
+    float sampleRate = format.sampleRate;
+    float amplitude = 1.0;
+    float step = (2*M_PI / 1000) * frequency / sampleRate;
+
+    auto generator = ^OSStatus(BOOL *_Nonnull isSilence,
+                               const AudioTimeStamp *_Nonnull timestamp,
+                               AVAudioFrameCount frameCount,
+                               AudioBufferList *_Nonnull outputData)
+    {
+        *isSilence = false;
+        uint nbuf = outputData->mNumberBuffers;
+        for (uint f = 0; f < frameCount; f++)
+        {
+            float value = amplitude * (self->phase < M_PI ? 1.0 : -1.0);
+            self->phase = fmod(self->phase + step, 2 * M_PI);
+            for (uint i = 0; i < nbuf; i++)
+            {
+                AudioBuffer *buf = outputData->mBuffers + i;
+                uint nchan = buf->mNumberChannels;
+                ASSERT(nchan == 1);
+                float *fbuf = (float *) buf->mData;
+                fbuf[f] = value;
+            }
+        }
+        return noErr;
+    };
+    AVAudioSourceNode *source = [[AVAudioSourceNode alloc]
+        initWithRenderBlock: generator];
+
+    [audio attachNode:source];
+    format = [[AVAudioFormat alloc]
+                 initStandardFormatWithSampleRate:sampleRate channels:1];
+    [audio connect:source to:[audio mainMixerNode] format:format];
+    [audio mainMixerNode].outputVolume = 0.5;
 
     NSError *error = nil;
-    player = [[AVAudioPlayer alloc] initWithData:data error:&error];
+    [audio startAndReturnError:&error];
     if (error)
         NSLog(@"AVAudioPlayer error %@", error);
-    if (player)
-        [player play];
-#endif
 }
 
 
@@ -367,10 +396,10 @@ extern ViewController *theViewController = nullptr;
 //   Stop the buzzer
 // ----------------------------------------------------------------------------
 {
-    if (player)
+    if (audio)
     {
-        [player stop];
-        player = nil;
+        [audio stop];
+        audio = nil;
     }
 }
 
