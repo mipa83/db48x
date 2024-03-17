@@ -39,6 +39,7 @@
 		6FCEDA932B95EE2E00C8357F /* dmcp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA922B95EE2D00C8357F /* dmcp.cpp */; };
 		6FCEDA952B95F23600C8357F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA942B95F23600C8357F /* main.mm */; };
 		6FCEDA972B95F28F00C8357F /* catalog.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA962B95F28F00C8357F /* catalog.cc */; };
+		6FD3786D2BA727EC00C8357F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3786C2BA727EC00C8357F /* SettingsViewController.m */; };
 		6FD555842B995F8900C8357F /* characters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FD555822B995F8800C8357F /* characters.cc */; };
 		6FD555862B995FA500C8357F /* characters.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
 		6FD555872B995FB800C8357F /* characters.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
@@ -225,6 +226,8 @@
 		6FCEDA922B95EE2D00C8357F /* dmcp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dmcp.cpp; sourceTree = "<group>"; };
 		6FCEDA942B95F23600C8357F /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		6FCEDA962B95F28F00C8357F /* catalog.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = catalog.cc; path = ../../../src/catalog.cc; sourceTree = "<group>"; };
+		6FD3786B2BA727EC00C8357F /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		6FD3786C2BA727EC00C8357F /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		6FD555822B995F8800C8357F /* characters.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = characters.cc; path = ../../../src/characters.cc; sourceTree = "<group>"; };
 		6FD555832B995F8900C8357F /* characters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = characters.h; path = ../../../src/characters.h; sourceTree = "<group>"; };
 		6FD555852B995FA500C8357F /* characters.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = characters.csv; sourceTree = "<group>"; };
@@ -403,6 +406,8 @@
 		1F9D29681C72B9BB000025E6 /* DB48X */ = {
 			isa = PBXGroup;
 			children = (
+				6FD3786B2BA727EC00C8357F /* SettingsViewController.h */,
+				6FD3786C2BA727EC00C8357F /* SettingsViewController.m */,
 				6F5A77BC2B96862200C8357F /* ScreenView.h */,
 				6F5A77BD2B96862200C8357F /* ScreenView.m */,
 				6FE7EFE12B95E2F600C8357F /* Runtime */,
@@ -913,6 +918,7 @@
 				6FE7EFDF2B95DDF100C8357F /* Keyboard.cpp in Sources */,
 				6FCEDA952B95F23600C8357F /* main.mm in Sources */,
 				6FB5A8842B98035600C8357F /* KeyboardView.m in Sources */,
+				6FD3786D2BA727EC00C8357F /* SettingsViewController.m in Sources */,
 				6FE7F0802B95E37400C8357F /* menu.cc in Sources */,
 				6FE7F0742B95E37400C8357F /* comment.cc in Sources */,
 				6FE7F0572B95E37400C8357F /* object.cc in Sources */,

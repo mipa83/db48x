@@ -106,10 +106,10 @@
             </objects>
             <point key="canvasLocation" x="45.038167938931295" y="-2.1126760563380285"/>
         </scene>
-        <!--View Controller-->
+        <!--Settings View Controller-->
         <scene sceneID="eaj-UA-4Kv">
             <objects>
-                <viewController id="GeX-EI-msh" sceneMemberID="viewController">
+                <viewController id="GeX-EI-msh" customClass="SettingsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iPs-vc-yv9"/>
                         <viewControllerLayoutGuide type="bottom" id="9R9-mV-wfN"/>
@@ -159,7 +159,16 @@
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Help"/>
                                         <connections>
-                                            <segue destination="mMk-Q4-4JG" kind="presentation" modalPresentationStyle="fullScreen" modalTransitionStyle="flipHorizontal" id="xvi-mg-wgF"/>
+                                            <segue destination="mMk-Q4-4JG" kind="presentation" identifier="help" modalPresentationStyle="fullScreen" modalTransitionStyle="flipHorizontal" id="xvi-mg-wgF"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Gll-Rn-e7C">
+                                        <rect key="frame" x="0.0" y="99" width="361" height="35"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Report an issue or request a feature"/>
+                                        <connections>
+                                            <segue destination="mMk-Q4-4JG" kind="presentation" identifier="issues" modalPresentationStyle="fullScreen" id="RN8-BT-g14"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -247,7 +256,7 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                     <fontDescription key="titleFontDescription" style="UICTFontTextStyleTitle2"/>
                                 </buttonConfiguration>
                                 <connections>
-                                    <segue destination="GeX-EI-msh" kind="presentation" modalTransitionStyle="flipHorizontal" id="NZ2-Ra-0I8"/>
+                                    <segue destination="GeX-EI-msh" kind="presentation" identifier="" modalTransitionStyle="flipHorizontal" id="NZ2-Ra-0I8"/>
                                 </connections>
                             </button>
                         </subviews>

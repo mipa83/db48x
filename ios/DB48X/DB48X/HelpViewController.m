@@ -36,13 +36,21 @@
 @end
 
 @implementation HelpViewController
+{
+    NSString *URL;
+}
+
+- (void) setURL:(NSString *) url
+{
+    URL = url;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    NSURL *helpURL = [NSURL URLWithString:@"https://github.com/c3d/DB48X-on-DM42/blob/stable/help/db50x.md"];
-    NSURLRequest *helpReq = [NSURLRequest requestWithURL:helpURL];
-    [self.helpView loadRequest:helpReq];
+    NSURL *url = [NSURL URLWithString:URL];
+    NSURLRequest *req = [NSURLRequest requestWithURL:url];
+    [self.helpView loadRequest:req];
 }
 
 @end
