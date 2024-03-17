@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1F9D296E1C72B9BB000025E6 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D296D1C72B9BB000025E6 /* AppDelegate.m */; };
+		1F9D296E1C72B9BB000025E6 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D296D1C72B9BB000025E6 /* AppDelegate.mm */; };
 		1F9D29711C72B9BB000025E6 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29701C72B9BB000025E6 /* ViewController.mm */; };
 		1F9D29741C72B9BB000025E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29721C72B9BB000025E6 /* Main.storyboard */; };
 		1F9D29761C72B9BB000025E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29751C72B9BB000025E6 /* Assets.xcassets */; };
@@ -174,7 +174,7 @@
 /* Begin PBXFileReference section */
 		1F9D29661C72B9BB000025E6 /* DB48X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DB48X.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F9D296C1C72B9BB000025E6 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		1F9D296D1C72B9BB000025E6 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		1F9D296D1C72B9BB000025E6 /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		1F9D296F1C72B9BB000025E6 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		1F9D29701C72B9BB000025E6 /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		1F9D29731C72B9BB000025E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -408,7 +408,7 @@
 			isa = PBXGroup;
 			children = (
 				1F9D296C1C72B9BB000025E6 /* AppDelegate.h */,
-				1F9D296D1C72B9BB000025E6 /* AppDelegate.m */,
+				1F9D296D1C72B9BB000025E6 /* AppDelegate.mm */,
 				6FD3786E2BA7A66100C8357F /* AppSettings.h */,
 				1F9D29751C72B9BB000025E6 /* Assets.xcassets */,
 				6F75CED52BA1B23800C8357F /* HelpViewController.h */,
@@ -902,7 +902,7 @@
 				6FE7F0782B95E37400C8357F /* arithmetic.cc in Sources */,
 				6FE7F0842B95E37400C8357F /* main.cc in Sources */,
 				6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */,
-				1F9D296E1C72B9BB000025E6 /* AppDelegate.m in Sources */,
+				1F9D296E1C72B9BB000025E6 /* AppDelegate.mm in Sources */,
 				6FE7F0752B95E37400C8357F /* renderer.cc in Sources */,
 				6FE7F06F2B95E37400C8357F /* constants.cc in Sources */,
 				6FE7F0872B95E37400C8357F /* stats.cc in Sources */,

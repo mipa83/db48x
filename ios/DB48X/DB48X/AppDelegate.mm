@@ -1,5 +1,5 @@
 // ****************************************************************************
-//  AppDelegate.m                                                 DB48X project
+//  AppDelegate.mm                                               DB48X project
 // ****************************************************************************
 //
 //   File Description:
@@ -28,8 +28,10 @@
 // ****************************************************************************
 
 #import "AppDelegate.h"
+#import "AppSettings.h"
 
 #include "dmcp.h"
+#include "tests.h"
 
 @interface AppDelegate ()
 
@@ -45,7 +47,7 @@
 // ----------------------------------------------------------------------------
 {
     // Override point for customization after application launch.
-    
+
     // Change directory to the app bundle
     NSString *folder = [[NSBundle mainBundle] resourcePath];
     chdir([folder cStringUsingEncoding:[NSString defaultCStringEncoding]]);
@@ -56,7 +58,7 @@
     dispatch_async(queue, ^{
             program_main();
         });
-    
+
     return YES;
 }
 
@@ -73,6 +75,8 @@
 // Use this method to pause ongoing tasks, disable timers, and throttle down
 // OpenGL ES frame rates. Games should use this method to pause the game.
 {
+    if (theAppSettings.saveState)
+        key_push(tests::EXIT_PGM);
 }
 
 
@@ -111,11 +115,12 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 // ----------------------------------------------------------------------------
-//    Apllication is about to terminate
+//    Application is about to terminate
 // ----------------------------------------------------------------------------
 //   Save data if appropriate. See also applicationDidEnterBackground:.
 {
-    // key_push(tests::EXIT_PGM);
+    if (theAppSettings.saveState)
+        key_push(tests::EXIT_PGM);
 }
 
 @end
