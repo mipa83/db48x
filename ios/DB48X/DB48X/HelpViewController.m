@@ -38,6 +38,7 @@
 @implementation HelpViewController
 {
     NSString *URL;
+    __weak IBOutlet UIButton *openInBrowser;
 }
 
 - (void) setURL:(NSString *) url
@@ -53,4 +54,13 @@
     [self.helpView loadRequest:req];
 }
 
+- (IBAction)launchBrowser:(UIButton *)sender
+{
+    NSLog(@"Launch browser at %@", self.helpView.URL);
+    [UIApplication.sharedApplication openURL:self.helpView.URL
+                                     options:@{}
+                           completionHandler:^(BOOL success){
+        NSLog(@"Loaded URL was %s", success ? "successful" : "unsuccessful");
+    }];
+}
 @end
