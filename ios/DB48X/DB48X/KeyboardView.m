@@ -39,6 +39,7 @@
 //   The keyboard view must keep track of which keys happened last
 // ----------------------------------------------------------------------------
 {
+    UISelectionFeedbackGenerator *feedback;
     int lastKey;
     bool upArrowHeld;
     bool downArrowHeld;
@@ -63,6 +64,11 @@
                 int key = ptr->keynum;
                 if (key != lastKey)
                 {
+                    feedback = [[UISelectionFeedbackGenerator alloc] init];
+                    
+                    // Prepare the generator when the gesture begins.
+                    [feedback selectionChanged];
+
                     if (key == KEY_UP)
                         upArrowHeld = true;
                     else if (key == KEY_DOWN)
@@ -113,6 +119,7 @@
     {
         key_push(0);
         lastKey = 0;
+        feedback = nil;
     }
 }
 
