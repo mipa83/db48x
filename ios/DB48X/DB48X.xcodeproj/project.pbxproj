@@ -228,6 +228,7 @@
 		6FCEDA962B95F28F00C8357F /* catalog.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = catalog.cc; path = ../../../src/catalog.cc; sourceTree = "<group>"; };
 		6FD3786B2BA727EC00C8357F /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		6FD3786C2BA727EC00C8357F /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		6FD3786E2BA7A66100C8357F /* AppSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppSettings.h; sourceTree = "<group>"; };
 		6FD555822B995F8800C8357F /* characters.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = characters.cc; path = ../../../src/characters.cc; sourceTree = "<group>"; };
 		6FD555832B995F8900C8357F /* characters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = characters.h; path = ../../../src/characters.h; sourceTree = "<group>"; };
 		6FD555852B995FA500C8357F /* characters.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = characters.csv; sourceTree = "<group>"; };
@@ -406,29 +407,30 @@
 		1F9D29681C72B9BB000025E6 /* DB48X */ = {
 			isa = PBXGroup;
 			children = (
-				6FD3786B2BA727EC00C8357F /* SettingsViewController.h */,
-				6FD3786C2BA727EC00C8357F /* SettingsViewController.m */,
-				6F5A77BC2B96862200C8357F /* ScreenView.h */,
-				6F5A77BD2B96862200C8357F /* ScreenView.m */,
-				6FE7EFE12B95E2F600C8357F /* Runtime */,
-				6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */,
-				6FE7EFDE2B95DDF100C8357F /* Screen.cpp */,
 				1F9D296C1C72B9BB000025E6 /* AppDelegate.h */,
 				1F9D296D1C72B9BB000025E6 /* AppDelegate.m */,
-				1F9D296F1C72B9BB000025E6 /* ViewController.h */,
-				1F9D29701C72B9BB000025E6 /* ViewController.mm */,
-				1F9D29721C72B9BB000025E6 /* Main.storyboard */,
+				6FD3786E2BA7A66100C8357F /* AppSettings.h */,
+				1F9D29751C72B9BB000025E6 /* Assets.xcassets */,
 				6F75CED52BA1B23800C8357F /* HelpViewController.h */,
 				6F75CED62BA1B23800C8357F /* HelpViewController.m */,
-				1F9D29751C72B9BB000025E6 /* Assets.xcassets */,
-				1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */,
-				1F9D297A1C72B9BB000025E6 /* Info.plist */,
-				6FCEDA532B95E5AB00C8357F /* Pictures */,
-				1F9D29691C72B9BB000025E6 /* Supporting Files */,
 				6FE7753B2B979AFF00C8357F /* HighlightMarkerView.h */,
 				6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */,
+				1F9D297A1C72B9BB000025E6 /* Info.plist */,
+				6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */,
 				6FB5A8822B98035600C8357F /* KeyboardView.h */,
 				6FB5A8832B98035600C8357F /* KeyboardView.m */,
+				1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */,
+				1F9D29721C72B9BB000025E6 /* Main.storyboard */,
+				6FCEDA532B95E5AB00C8357F /* Pictures */,
+				6FE7EFE12B95E2F600C8357F /* Runtime */,
+				6FE7EFDE2B95DDF100C8357F /* Screen.cpp */,
+				6F5A77BC2B96862200C8357F /* ScreenView.h */,
+				6F5A77BD2B96862200C8357F /* ScreenView.m */,
+				6FD3786B2BA727EC00C8357F /* SettingsViewController.h */,
+				6FD3786C2BA727EC00C8357F /* SettingsViewController.m */,
+				1F9D29691C72B9BB000025E6 /* Supporting Files */,
+				1F9D296F1C72B9BB000025E6 /* ViewController.h */,
+				1F9D29701C72B9BB000025E6 /* ViewController.mm */,
 			);
 			path = DB48X;
 			sourceTree = "<group>";

@@ -29,10 +29,20 @@
 
 #import "SettingsViewController.h"
 #import "HelpViewController.h"
+#import "AppSettings.h"
 
 @interface SettingsViewController ()
+@property (weak, nonatomic) IBOutlet UISwitch *saveStateOnExitSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *hapticFeedbackSwitch;
 
 @end
+
+AppSettings theAppSettings =
+{
+saveState: true,
+hapticFeedback: true
+};
+
 
 @implementation SettingsViewController
 
@@ -52,6 +62,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.saveStateOnExitSwitch.on = theAppSettings.saveState;
+    self.hapticFeedbackSwitch.on = theAppSettings.hapticFeedback;
+}
+
+- (IBAction)saveSettingsSwitched:(UISwitch *)sender {
+    theAppSettings.saveState = sender.on;
+}
+
+- (IBAction)hapticFeedbackChanged:(UISwitch *)sender {
+    theAppSettings.hapticFeedback = sender.on;
 }
 
 /*

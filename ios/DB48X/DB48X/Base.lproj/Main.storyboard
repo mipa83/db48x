@@ -163,6 +163,9 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="Enable Mode" translatesAutoresizingMaskIntoConstraints="NO" id="nN0-FY-OhO">
                                                         <rect key="frame" x="292" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="saveSettingsSwitched:" destination="GeX-EI-msh" eventType="valueChanged" id="6Ie-b9-Sdn"/>
+                                                        </connections>
                                                     </switch>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -187,6 +190,9 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                                     </label>
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="Enable Mode" translatesAutoresizingMaskIntoConstraints="NO" id="Pv1-oY-piF">
                                                         <rect key="frame" x="292" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="hapticFeedbackChanged:" destination="GeX-EI-msh" eventType="valueChanged" id="IcT-Lc-nRl"/>
+                                                        </connections>
                                                     </switch>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -283,6 +289,10 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="uf5-hr-4xJ"/>
+                    <connections>
+                        <outlet property="hapticFeedbackSwitch" destination="Pv1-oY-piF" id="o4B-9E-2Oc"/>
+                        <outlet property="saveStateOnExitSwitch" destination="nN0-FY-OhO" id="PAs-Dg-Hub"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6cA-86-e69" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

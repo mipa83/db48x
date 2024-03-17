@@ -29,6 +29,7 @@
 
 #import "KeyboardView.h"
 #import "ViewController.h"
+#import "AppSettings.h"
 
 #include "dmcp.h"
 #include "sim-dmcp.h"
@@ -64,10 +65,13 @@
                 int key = ptr->keynum;
                 if (key != lastKey)
                 {
-                    feedback = [[UISelectionFeedbackGenerator alloc] init];
-                    
-                    // Prepare the generator when the gesture begins.
-                    [feedback selectionChanged];
+                    if (theAppSettings.hapticFeedback)
+                    {
+                        feedback = [[UISelectionFeedbackGenerator alloc] init];
+                        
+                        // Prepare the generator when the gesture begins.
+                        [feedback selectionChanged];
+                    }
 
                     if (key == KEY_UP)
                         upArrowHeld = true;
