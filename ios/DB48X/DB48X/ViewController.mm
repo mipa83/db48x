@@ -40,14 +40,14 @@
 
 #include <time.h>
 
+
+RECORDER(ui_images, 32, "Transfers of UIImage");
+
+
 @interface ViewController ()
 // ----------------------------------------------------------------------------
 //    The view controller sets up the various elements
 // ----------------------------------------------------------------------------
-{
-    AVAudioEngine *audio;
-    float phase;
-}
 @end
 
 
@@ -117,6 +117,16 @@ ViewController *theViewController = nullptr;
 
 
 @implementation ViewController
+// ----------------------------------------------------------------------------
+//   Implementation of the main view controller for DB48X
+// ----------------------------------------------------------------------------
+{
+    AVAudioEngine *audio;
+    float phase;
+    uint requests;
+    uint redraws;
+};
+
 
 - (void)viewDidLoad
 // ----------------------------------------------------------------------------
@@ -126,6 +136,8 @@ ViewController *theViewController = nullptr;
     [super viewDidLoad];
 
     theViewController = self;
+    requests = 0;
+    redraws = 0;
 
 #if 0
     NSError * error;
@@ -142,7 +154,10 @@ ViewController *theViewController = nullptr;
 //  Refresh the screen
 // ----------------------------------------------------------------------------
 {
+    record(ui_images, "%u/%u: Setting UI Image from %p to %p",
+           requests, redraws, screenView.image, image);
     screenView.image = image;
+    redraws++;
 }
 
 
@@ -151,10 +166,31 @@ ViewController *theViewController = nullptr;
 //   Mark the screen as needing a refresh
 // ----------------------------------------------------------------------------
 {
-    UIImage *image = [screenView imageFromLCD];
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self refreshScreenWithImage:image];
-    });
+    record(ui_images, "%u/%u: Refresh request", requests, redraws);
+    if (redraws == requests)
+    {
+        @autoreleasepool
+        {
+            UIImage *image = [screenView imageFromLCD];
+            if (image)
+            {
+                requests++;
+                record(ui_images,
+                       "%u/%u: Dispatch request for image %p",
+                       requests, redraws, image);
+                dispatch_async(dispatch_get_main_queue(), ^{
+                        record(ui_images,
+                               "%u/%u: Dispatched request for %p",
+                               self->requests, self->redraws, image);
+                        [self refreshScreenWithImage:image];
+                    });
+            }
+            else
+            {
+                recorder_dump();
+            }
+        }
+    }
 }
 
 
@@ -311,7 +347,6 @@ ViewController *theViewController = nullptr;
 
         if (dkey)
             key_push(dkey);
-
     }
 }
 

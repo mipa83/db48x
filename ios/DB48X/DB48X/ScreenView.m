@@ -28,6 +28,7 @@
 // ****************************************************************************
 
 #import "ScreenView.h"
+#include "recorder.h"
 
 #include "sim-dmcp.h"
 #include <stdint.h>
@@ -37,13 +38,22 @@
 byte pixelData[SIM_LCD_W * SIM_LCD_H * 4];
 byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
 
+RECORDER(screenview, 256, "Screen view image generation");
+
 
 @implementation ScreenView
+// ----------------------------------------------------------------------------
+//   Data associated with a screen view
+// ----------------------------------------------------------------------------
 {
-    uint refreshed;
+    uint refreshed;             // Number of times we rebuilt the image
 }
 
+
 - (id) init
+// ----------------------------------------------------------------------------
+//   Initialization
+// ----------------------------------------------------------------------------
 {
     self = [super init];
     if (self)
@@ -51,10 +61,15 @@ byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
     return self;
 }
 
+
 - (unsigned) refreshCount
+// ----------------------------------------------------------------------------
+//   Return the number of refresh
+// ----------------------------------------------------------------------------
 {
     return refreshed;
 }
+
 
 -(UIImage *)imageFromLCD
 // ----------------------------------------------------------------------------
@@ -62,6 +77,8 @@ byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
 // ----------------------------------------------------------------------------
 //   This can (and should) run on the RPL thread
 {
+    record(screenview, "%u: imageFromLCD", refreshed);
+
     size_t bytesPerRow = SIM_LCD_W * 4;
 
     for (int y = 0; y < SIM_LCD_H; y++)
@@ -105,14 +122,15 @@ byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
     UIImage *image = [UIImage imageWithCGImage:cgImage];
 
     CGImageRelease(cgImage);
-    CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+
+    record(screenview, "%u: imageFromLCD returns %p [%llu]",
+           refreshed, (__bridge void *) image);
 
     refreshed++;
 
     return image;
 }
-
-
 
 @end
