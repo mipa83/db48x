@@ -519,23 +519,38 @@ int ui_file_selector(const char *title,
 
 void ui_save_setting(const char *name, const char *value)
 // ----------------------------------------------------------------------------
-//   Saving settings not implemented yet
+//   Saving settings using NSDefaults
 // ----------------------------------------------------------------------------
 {
+    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
+    NSString *nsvalue = [NSString stringWithCString:value encoding:NSUTF8StringEncoding];
+    [settings setObject:nsvalue forKey:key];
 }
 
 
 size_t ui_read_setting(const char *name, char *value, size_t maxlen)
 // ----------------------------------------------------------------------------
-//   Reading settings not implemented yet
+//   Reading settings using NSDefaults
 // ----------------------------------------------------------------------------
 {
-    if (strcmp(name, "state") == 0)
+    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
+    NSString *key = [NSString stringWithCString:name encoding:NSUTF8StringEncoding];
+    NSString *nsvalue = [settings stringForKey:key];
+    if (nsvalue)
     {
-        strncpy(value, "state/Demo.48S", maxlen);
-        return strlen("state/Demo.48S");
+        const char *cvalue = [nsvalue UTF8String];
+        strncpy(value, cvalue, maxlen);
+        size_t res = strlen(cvalue);
+        if (res > maxlen-1)
+            res = maxlen-1;
+        return res;
     }
-    return 0;
+    else
+    {
+        *value = 0;
+        return 0;
+    }
 }
 
 

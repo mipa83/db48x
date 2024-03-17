@@ -37,42 +37,71 @@
 
 @end
 
+
 AppSettings theAppSettings =
+// ----------------------------------------------------------------------------
+//  Global application settings
+// ----------------------------------------------------------------------------
 {
 saveState: true,
 hapticFeedback: true
 };
 
 
+
 @implementation SettingsViewController
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+// ----------------------------------------------------------------------------
+//   Select the target URL based on where we come from
+// ----------------------------------------------------------------------------
 {
+    NSString *url = nil;
+
     HelpViewController *help = (HelpViewController *) segue.destinationViewController;
     if ([segue.identifier isEqualToString:@"help"])
     {
-        [help setURL:@"https://github.com/c3d/DB48X-on-DM42/blob/stable/help/db50x.md"];
+        url = @"https://github.com/c3d/DB48X-on-DM42/blob/stable/help/db50x.md";
     }
     else if ([segue.identifier isEqualToString:@"issues"])
     {
-        [help setURL:@"https://github.com/c3d/DB48X-on-DM42/issues"];
+        url = @"https://github.com/c3d/DB48X-on-DM42/issues";
     }
+    if (url)
+        [help setURL:url];
 }
 
-- (void)viewDidLoad {
+
+- (void)viewDidLoad
+// ----------------------------------------------------------------------------
+//   Adjust the settings widgets to match the settings values
+// ----------------------------------------------------------------------------
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+
+    // Load preferences into the switches
     self.saveStateOnExitSwitch.on = theAppSettings.saveState;
     self.hapticFeedbackSwitch.on = theAppSettings.hapticFeedback;
 }
 
-- (IBAction)saveSettingsSwitched:(UISwitch *)sender {
+
+- (IBAction)saveSettingsSwitched:(UISwitch *)sender
+// ----------------------------------------------------------------------------
+//   Adjust the setting to match widget
+// ----------------------------------------------------------------------------
+{
     theAppSettings.saveState = sender.on;
 }
 
-- (IBAction)hapticFeedbackChanged:(UISwitch *)sender {
+
+- (IBAction)hapticFeedbackChanged:(UISwitch *)sender
+// ----------------------------------------------------------------------------
+//   Adjust the setting to match widget
+// ----------------------------------------------------------------------------
+{
     theAppSettings.hapticFeedback = sender.on;
 }
+
 
 /*
 #pragma mark - Navigation

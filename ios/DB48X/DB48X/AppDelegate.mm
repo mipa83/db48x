@@ -46,7 +46,10 @@
 //   Application launch
 // ----------------------------------------------------------------------------
 {
-    // Override point for customization after application launch.
+    // Load user settings
+    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
+    theAppSettings.saveState = ![settings boolForKey:@"DisableSaveState"];
+    theAppSettings.hapticFeedback = ![settings boolForKey:@"DisableHapticFeedback"];
 
     // Change directory to the app bundle
     NSString *folder = [[NSBundle mainBundle] resourcePath];
@@ -75,6 +78,11 @@
 // Use this method to pause ongoing tasks, disable timers, and throttle down
 // OpenGL ES frame rates. Games should use this method to pause the game.
 {
+    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
+    [settings setBool:!theAppSettings.saveState
+               forKey:@"DisableSaveState"];
+    [settings setBool:!theAppSettings.hapticFeedback
+               forKey:@"DisableHapticFeedback"];
     if (theAppSettings.saveState)
         key_push(tests::EXIT_PGM);
 }
@@ -119,8 +127,7 @@
 // ----------------------------------------------------------------------------
 //   Save data if appropriate. See also applicationDidEnterBackground:.
 {
-    if (theAppSettings.saveState)
-        key_push(tests::EXIT_PGM);
+    [self applicationWillResignActive:application];
 }
 
 @end
