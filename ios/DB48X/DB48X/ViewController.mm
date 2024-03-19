@@ -33,6 +33,7 @@
 
 #include "sim-dmcp.h"
 #include "dmcp.h"
+#include "sysmenu.h"
 
 #ifdef DEBUG
 #include "tests.h"
@@ -125,6 +126,9 @@ ViewController *theViewController = nullptr;
     float phase;
     uint requests;
     uint redraws;
+    file_sel_fn fileSelectorCallback;
+    void *fileSelectorData;
+    NSString *fileSelectorExtension;
 };
 
 
@@ -467,6 +471,24 @@ ViewController *theViewController = nullptr;
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Creation requested");
+
+    NSString *tmpDirectory = NSTemporaryDirectory();
+    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+    NSString *tempFile = [tempFileBase stringByAppendingPathExtension:fileSelectorExtension];
+    cstring path = [tempFile cStringUsingEncoding:NSUTF8StringEncoding];
+    cstring name = path;
+    for (cstring p = path; *p; p++)
+        if (*p == '/' || *p == '\\')
+            name = p + 1;
+
+    UIDocumentBrowserImportMode importMode = UIDocumentBrowserImportModeNone;
+    NSURL *toImport = nil;
+    if (fileSelectorCallback(path, name, fileSelectorData))
+    {
+        toImport = [NSURL fileURLWithPath:tempFile];
+        importMode = UIDocumentBrowserImportModeMove;
+    }
+    importHandler(toImport, importMode);
 }
 
 
@@ -478,7 +500,6 @@ ViewController *theViewController = nullptr;
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Imported from %@ to %@", sourceURL, destinationURL);
-
 }
 
 
@@ -514,13 +535,25 @@ ViewController *theViewController = nullptr;
 //   Display a file selector in the application
 // ----------------------------------------------------------------------------
 {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtPath:baseDir
+           withIntermediateDirectories:YES
+                            attributes:nil
+                                 error:nil];
+
+    fileSelectorCallback = callback;
+    fileSelectorData = data;
+    fileSelectorExtension = ext;
+    
     UTType *type = [UTType typeWithFilenameExtension:ext];
     if (allowNew)
     {
         UIDocumentBrowserViewController *browser =
-        [[UIDocumentBrowserViewController alloc]
-         initForOpeningContentTypes:@[type]];
+            [[UIDocumentBrowserViewController alloc]
+                initForOpeningContentTypes:@[ type ]];
         browser.delegate = self;
+        browser.shouldShowFileExtensions = true;
+        browser.allowsDocumentCreation = allowNew;
         [self presentViewController:browser animated:YES completion:nil];
     }
     else
@@ -528,13 +561,25 @@ ViewController *theViewController = nullptr;
         UIDocumentPickerViewController *picker =
             [[UIDocumentPickerViewController alloc]
                 initForOpeningContentTypes:@[ type ]];
-        picker.delegate                 = self;
+        picker.delegate = self;
         picker.shouldShowFileExtensions = true;
+        picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
         [self presentViewController:picker animated:YES completion:nil];
     }
     NSLog(@"File selector done");
     return 0;
 }
+
+
+- (NSURL *)applicationDocumentsDirectory
+// ----------------------------------------------------------------------------
+//   Returns the URL to the application's Documents directory.
+// ----------------------------------------------------------------------------
+{
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+}
+
+
 
 
 - (void)didReceiveMemoryWarning
