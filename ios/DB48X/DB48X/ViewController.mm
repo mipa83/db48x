@@ -126,9 +126,10 @@ ViewController *theViewController = nullptr;
     float phase;
     uint requests;
     uint redraws;
+    NSString *fileSelectorBase;
+    NSString *fileSelectorExtension;
     file_sel_fn fileSelectorCallback;
     void *fileSelectorData;
-    NSString *fileSelectorExtension;
 };
 
 
@@ -443,13 +444,38 @@ ViewController *theViewController = nullptr;
 }
 
 
+- (void)fileSelector:(UIViewController *)controller
+didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+// ----------------------------------------------------------------------------
+//   User picked some documents
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Picked documents: %@", urls);
+    NSURL *toLoad = [urls lastObject];
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+    [coordinator coordinateReadingItemAtURL:toLoad options:NSFileCoordinatorReadingWithoutChanges error:nil byAccessor:^(NSURL * newURL)
+     {
+        NSURL *filePathURL = [newURL filePathURL];
+        NSString *filePath = filePathURL.path;
+        cstring path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
+        cstring name = path;
+        for (cstring p = path; *p; p++)
+            if (*p == '/' || *p == '\\')
+                name = p + 1;
+
+        self->fileSelectorCallback(path, name, self->fileSelectorData);
+        [controller dismissViewControllerAnimated:YES completion:nil];
+    }];
+}
+
+
 - (void)documentPicker:(UIDocumentPickerViewController *)controller
     didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 // ----------------------------------------------------------------------------
 //   User picked some documents
 // ----------------------------------------------------------------------------
 {
-    NSLog(@"Picked documents: %@", urls);
+    [self fileSelector:controller didPickDocumentsAtURLs:urls];
 }
 
 
@@ -473,7 +499,7 @@ ViewController *theViewController = nullptr;
     NSLog(@"Creation requested");
 
     NSString *tmpDirectory = NSTemporaryDirectory();
-    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:fileSelectorBase];
     NSString *tempFile = [tempFileBase stringByAppendingPathExtension:fileSelectorExtension];
     cstring path = [tempFile cStringUsingEncoding:NSUTF8StringEncoding];
     cstring name = path;
@@ -489,6 +515,7 @@ ViewController *theViewController = nullptr;
         importMode = UIDocumentBrowserImportModeMove;
     }
     importHandler(toImport, importMode);
+    [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
 
@@ -500,6 +527,7 @@ ViewController *theViewController = nullptr;
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Imported from %@ to %@", sourceURL, destinationURL);
+    
 }
 
 
@@ -521,6 +549,7 @@ ViewController *theViewController = nullptr;
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Document browser picked %@", documentURLs);
+    [self fileSelector:controller didPickDocumentsAtURLs:documentURLs];
 }
 
 
@@ -541,9 +570,10 @@ ViewController *theViewController = nullptr;
                             attributes:nil
                                  error:nil];
 
+    fileSelectorBase = baseDir;
+    fileSelectorExtension = ext;
     fileSelectorCallback = callback;
     fileSelectorData = data;
-    fileSelectorExtension = ext;
     
     UTType *type = [UTType typeWithFilenameExtension:ext];
     if (allowNew)
