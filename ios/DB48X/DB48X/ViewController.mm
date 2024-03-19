@@ -439,6 +439,104 @@ ViewController *theViewController = nullptr;
 }
 
 
+- (void)documentPicker:(UIDocumentPickerViewController *)controller
+    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+// ----------------------------------------------------------------------------
+//   User picked some documents
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Picked documents: %@", urls);
+}
+
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
+// ----------------------------------------------------------------------------
+//  User decided to cancel
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Picker cancelled");
+}
+
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
+    didRequestDocumentCreationWithHandler:
+        (void (^)(NSURL                      *urlToImport,
+                  UIDocumentBrowserImportMode importMode))importHandler
+// ----------------------------------------------------------------------------
+//   Requesting the creation of a new file
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Creation requested");
+}
+
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
+    didImportDocumentAtURL:(NSURL *)sourceURL
+          toDestinationURL:(NSURL *)destinationURL
+// ----------------------------------------------------------------------------
+//   Requesting the import of a file, we will overwrite it
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Imported from %@ to %@", sourceURL, destinationURL);
+
+}
+
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
+    failedToImportDocumentAtURL:(NSURL *)documentURL
+                          error:(NSError *)error
+// ----------------------------------------------------------------------------
+//   Failed to import an existing document
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Document browser failed to import URL %@", documentURL);
+}
+
+
+- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
+    didPickDocumentsAtURLs:(NSArray<NSURL *> *)documentURLs
+// ----------------------------------------------------------------------------
+//   Picked an existing document
+// ----------------------------------------------------------------------------
+{
+    NSLog(@"Document browser picked %@", documentURLs);
+}
+
+
+- (int) fileSelectorWithTitle:(NSString *) title
+                      baseDir:(NSString *)baseDir
+                    extension:(NSString *)ext
+                   completion:(file_sel_fn)callback
+                         data:(void *) data
+                     allowNew:(BOOL)allowNew
+               overwriteCheck:(BOOL)overwriteCheck
+// ----------------------------------------------------------------------------
+//   Display a file selector in the application
+// ----------------------------------------------------------------------------
+{
+    UTType *type = [UTType typeWithFilenameExtension:ext];
+    if (allowNew)
+    {
+        UIDocumentBrowserViewController *browser =
+        [[UIDocumentBrowserViewController alloc]
+         initForOpeningContentTypes:@[type]];
+        browser.delegate = self;
+        [self presentViewController:browser animated:YES completion:nil];
+    }
+    else
+    {
+        UIDocumentPickerViewController *picker =
+            [[UIDocumentPickerViewController alloc]
+                initForOpeningContentTypes:@[ type ]];
+        picker.delegate                 = self;
+        picker.shouldShowFileExtensions = true;
+        [self presentViewController:picker animated:YES completion:nil];
+    }
+    NSLog(@"File selector done");
+    return 0;
+}
+
+
 - (void)didReceiveMemoryWarning
 // ----------------------------------------------------------------------------
 //   Low memory: Dispose of resources that can be recreated
@@ -514,6 +612,25 @@ int ui_file_selector(const char *title,
 //   File selector not implemented on iOS yet
 // ----------------------------------------------------------------------------
 {
+    if (*ext == '.')
+        ext++;
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [theViewController
+          fileSelectorWithTitle:[NSString
+                                    stringWithCString:title
+                                             encoding:NSUTF8StringEncoding]
+                        baseDir:[NSString
+                                    stringWithCString:base_dir
+                                             encoding:NSUTF8StringEncoding]
+                      extension:[NSString
+                                    stringWithCString:ext
+                                             encoding:NSUTF8StringEncoding]
+                     completion:callback
+                           data:data
+                       allowNew:disp_new
+                 overwriteCheck:overwrite_check];
+    });
+
     return 0;
 }
 

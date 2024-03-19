@@ -34,7 +34,10 @@
 #import <UIKit/UIImageView.h>
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
+@interface ViewController
+    : UIViewController <UIGestureRecognizerDelegate,
+                        UIDocumentPickerDelegate,
+                        UIDocumentBrowserViewControllerDelegate>
 // ----------------------------------------------------------------------------
 //   View controller interface
 // ----------------------------------------------------------------------------

@@ -105,6 +105,7 @@
 		6FE7F0892B95E37400C8357F /* file.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0512B95E37400C8357F /* file.cc */; };
 		6FE7F08A2B95E37400C8357F /* integrate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0532B95E37400C8357F /* integrate.cc */; };
 		6FE7F08B2B95E37400C8357F /* bignum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0542B95E37400C8357F /* bignum.cc */; };
+		6FEF5C702BAA151400C8357F /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */; };
 		6FF873942B97B84D00C8357F /* db48x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
 		6FF873952B97B84D00C8357F /* db50x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
 		6FF873972B97B87400C8357F /* units.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
@@ -352,6 +353,7 @@
 		6FE7F0532B95E37400C8357F /* integrate.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = integrate.cc; path = ../../../src/integrate.cc; sourceTree = "<group>"; };
 		6FE7F0542B95E37400C8357F /* bignum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bignum.cc; path = ../../../src/bignum.cc; sourceTree = "<group>"; };
 		6FE7F0552B95E37400C8357F /* command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = command.h; path = ../../../src/command.h; sourceTree = "<group>"; };
+		6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
 		6FF8739A2B97BA1E00C8357F /* Test.48S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Test.48S; sourceTree = "<group>"; };
 		6FF8739B2B97BA1E00C8357F /* Demo.48S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Demo.48S; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -361,6 +363,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FEF5C702BAA151400C8357F /* UniformTypeIdentifiers.framework in Frameworks */,
 				6F75CED92BA1B7D300C8357F /* WebKit.framework in Frameworks */,
 				6FB5A8812B97F50E00C8357F /* AVFoundation.framework in Frameworks */,
 			);
@@ -464,6 +467,7 @@
 		6FB5A87F2B97F50E00C8357F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */,
 				6F75CED82BA1B7D300C8357F /* WebKit.framework */,
 				6FB5A8802B97F50E00C8357F /* AVFoundation.framework */,
 			);
@@ -1114,6 +1118,7 @@
 				INFOPLIST_FILE = DB48X/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1139,6 +1144,7 @@
 				INFOPLIST_FILE = DB48X/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
