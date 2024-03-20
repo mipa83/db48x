@@ -72,7 +72,7 @@
         if (error)
             NSLog(@"Error creating '%@' directory: %@", subdir, error);
     }
-    
+
     // Copy initial files
     NSArray<NSString *> *filesToCopy = @[
         @"state/Demo.48S",
@@ -130,7 +130,7 @@
     [settings setBool:!theAppSettings.hapticFeedback
                forKey:@"DisableHapticFeedback"];
     if (theAppSettings.saveState)
-        key_push(tests::EXIT_PGM);
+        key_push(tests::SAVE_PGM);
 }
 
 
