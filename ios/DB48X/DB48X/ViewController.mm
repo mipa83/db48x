@@ -456,8 +456,8 @@ enum FileSelectorState
 }
 
 
-- (void)fileSelector:(UIViewController *)controller
-didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+- (void)documentPicker:(UIDocumentPickerViewController *)controller
+    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 // ----------------------------------------------------------------------------
 //   User picked some documents
 // ----------------------------------------------------------------------------
@@ -470,100 +470,20 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 }
 
 
-- (void)documentPicker:(UIDocumentPickerViewController *)controller
-    didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
-// ----------------------------------------------------------------------------
-//   User picked some documents
-// ----------------------------------------------------------------------------
-{
-    [self fileSelector:controller didPickDocumentsAtURLs:urls];
-}
-
-
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
 // ----------------------------------------------------------------------------
 //  User decided to cancel
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Picker cancelled");
-    fileSelectorState = FileSelectorCancelled;
     fileSelectorPath = nil;
     [controller dismissViewControllerAnimated:YES completion:^{
-        self->fileSelectorState = FileSelectorDidPick;
+        self->fileSelectorState = FileSelectorCancelled;
     }];
 }
 
 
-- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
-    didRequestDocumentCreationWithHandler:
-        (void (^)(NSURL                      *urlToImport,
-                  UIDocumentBrowserImportMode importMode))importHandler
-// ----------------------------------------------------------------------------
-//   Requesting the creation of a new file
-// ----------------------------------------------------------------------------
-{
-    NSLog(@"Creation requested");
-
-#if 0
-    NSString *tmpDirectory = NSTemporaryDirectory();
-    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:fileSelectorPath];
-    NSString *tempFile = [tempFileBase stringByAppendingPathExtension:fileSelectorExtension];
-    cstring path = [tempFile cStringUsingEncoding:NSUTF8StringEncoding];
-    cstring name = path;
-    for (cstring p = path; *p; p++)
-        if (*p == '/' || *p == '\\')
-            name = p + 1;
-
-    UIDocumentBrowserImportMode importMode = UIDocumentBrowserImportModeNone;
-    NSURL *toImport = nil;
-    if (fileSelectorCallback(path, name, fileSelectorData))
-    {
-        toImport = [NSURL fileURLWithPath:tempFile];
-        importMode = UIDocumentBrowserImportModeMove;
-    }
-    importHandler(toImport, importMode);
-    fileSelectorCallback = nil;
-#endif
-
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
-
-- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
-    didImportDocumentAtURL:(NSURL *)sourceURL
-          toDestinationURL:(NSURL *)destinationURL
-// ----------------------------------------------------------------------------
-//   Requesting the import of a file, we will overwrite it
-// ----------------------------------------------------------------------------
-{
-    NSLog(@"Imported from %@ to %@", sourceURL, destinationURL);
-
-}
-
-
-- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
-    failedToImportDocumentAtURL:(NSURL *)documentURL
-                          error:(NSError *)error
-// ----------------------------------------------------------------------------
-//   Failed to import an existing document
-// ----------------------------------------------------------------------------
-{
-    NSLog(@"Document browser failed to import URL %@", documentURL);
-}
-
-
-- (void)documentBrowser:(UIDocumentBrowserViewController *)controller
-    didPickDocumentsAtURLs:(NSArray<NSURL *> *)documentURLs
-// ----------------------------------------------------------------------------
-//   Picked an existing document
-// ----------------------------------------------------------------------------
-{
-    NSLog(@"Document browser picked %@", documentURLs);
-    [self fileSelector:controller didPickDocumentsAtURLs:documentURLs];
-}
-
-
-- (int) fileSelectorWithTitle:(NSString *) title
+- (int) fileSelectorWithTitle:(NSString *)title
                       baseDir:(NSString *)baseDir
                     extension:(NSString *)ext
                    completion:(file_sel_fn)callback
@@ -579,29 +499,16 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
     fileSelectorExtension = ext;
 
     dispatch_sync(dispatch_get_main_queue(), ^{
-            UTType *type = [UTType typeWithFilenameExtension:ext];
-            if (allowNew)
-            {
-                UIDocumentBrowserViewController *browser =
-                    [[UIDocumentBrowserViewController alloc]
-                        initForOpeningContentTypes:@[ type ]];
-                browser.delegate = self;
-                browser.shouldShowFileExtensions = true;
-                browser.allowsDocumentCreation = allowNew;
-                [self presentViewController:browser animated:YES completion:nil];
-            }
-            else
-            {
-                UIDocumentPickerViewController *picker =
-                    [[UIDocumentPickerViewController alloc]
-                        initForOpeningContentTypes:@[ type ]];
-                picker.delegate = self;
-                picker.shouldShowFileExtensions = true;
-                picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
-                [self presentViewController:picker animated:YES completion:nil];
-            }
-            NSLog(@"File selector shown, waiting for it to clear");
-        });
+        UTType *type = [UTType typeWithFilenameExtension:ext];
+        UIDocumentPickerViewController *picker =
+            [[UIDocumentPickerViewController alloc]
+                initForOpeningContentTypes:@[ type ]];
+        picker.delegate = self;
+        picker.shouldShowFileExtensions = true;
+        picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
+        [self presentViewController:picker animated:YES completion:nil];
+        NSLog(@"File selector shown, waiting for it to clear");
+    });
 
     NSLog(@"File selector done, waiting for state to change");
     while (fileSelectorState == FileSelectorActive)
@@ -611,25 +518,28 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
     }
 
     NSLog(@"Resume RPL thread");
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
     int __block result = 0;
-    [coordinator
-        coordinateReadingItemAtURL:fileSelectorSelectedURL
-                           options:NSFileCoordinatorReadingWithoutChanges
-                             error:nil
-                        byAccessor:^(NSURL *newURL) {
-        NSURL *filePathURL = [newURL filePathURL];
-        NSString *fileFullPath = filePathURL.path;
-        NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [[documentsPath lastObject] stringByAppendingString: @"/"];
-        NSString *filePath = [fileFullPath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length]) ];
-        cstring   path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
-        cstring   name = path;
-        for (cstring p = path; *p; p++)
-            if (*p == '/' || *p == '\\')
-                name = p + 1;
-        result = callback(path, name, data);
+    if (fileSelectorState == FileSelectorDidPick)
+    {
+        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+        [coordinator
+         coordinateReadingItemAtURL:fileSelectorSelectedURL
+         options:NSFileCoordinatorReadingWithoutChanges
+         error:nil
+         byAccessor:^(NSURL *newURL) {
+            NSURL *filePathURL = [newURL filePathURL];
+            NSString *fileFullPath = filePathURL.path;
+            NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [[documentsPath lastObject] stringByAppendingString: @"/"];
+            NSString *filePath = [fileFullPath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length]) ];
+            cstring   path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
+            cstring   name = path;
+            for (cstring p = path; *p; p++)
+                if (*p == '/' || *p == '\\')
+                    name = p + 1;
+            result = callback(path, name, data);
         }];
+    }
 
     fileSelectorState = FileSelectorOff;
     return result;
