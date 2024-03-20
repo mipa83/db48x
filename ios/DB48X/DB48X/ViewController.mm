@@ -500,9 +500,23 @@ enum FileSelectorState
 
     dispatch_sync(dispatch_get_main_queue(), ^{
         UTType *type = [UTType typeWithFilenameExtension:ext];
-        UIDocumentPickerViewController *picker =
-            [[UIDocumentPickerViewController alloc]
-                initForOpeningContentTypes:@[ type ]];
+        UIDocumentPickerViewController *picker = [UIDocumentPickerViewController alloc];
+        if (allowNew)
+        {
+            cstring current = get_reset_state_file();
+            if (!current)
+                current = "state/State.48S";
+            NSString *currentPath = [NSString stringWithCString:current encoding:NSUTF8StringEncoding];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            if (![fileManager fileExistsAtPath:currentPath])
+                [fileManager createFileAtPath:currentPath contents:[NSData data] attributes:nil];
+            NSURL *stateURL = [NSURL fileURLWithPath:currentPath isDirectory:NO];
+            picker = [picker initForExportingURLs:@[stateURL] asCopy:YES];
+        }
+        else
+        {
+            picker = [picker initForOpeningContentTypes:@[ type ]];
+        }
         picker.delegate = self;
         picker.shouldShowFileExtensions = true;
         picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
