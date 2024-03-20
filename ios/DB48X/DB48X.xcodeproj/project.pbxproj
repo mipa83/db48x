@@ -209,7 +209,6 @@
 		6FB5A8802B97F50E00C8357F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6FB5A8822B98035600C8357F /* KeyboardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
 		6FB5A8832B98035600C8357F /* KeyboardView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
-		6FC22A332B973FB700C8357F /* sim-dmcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sim-dmcp.h"; sourceTree = "<group>"; };
 		6FCECF432B95E4BE00C8357F /* recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder.c; sourceTree = "<group>"; };
 		6FCECF462B95E4BE00C8357F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder_ring.c; sourceTree = "<group>"; };
@@ -354,6 +353,7 @@
 		6FE7F0542B95E37400C8357F /* bignum.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bignum.cc; path = ../../../src/bignum.cc; sourceTree = "<group>"; };
 		6FE7F0552B95E37400C8357F /* command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = command.h; path = ../../../src/command.h; sourceTree = "<group>"; };
 		6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
+		6FEF5C772BAC7CB800C8357F /* sim-dmcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "sim-dmcp.h"; sourceTree = "<group>"; };
 		6FF8739A2B97BA1E00C8357F /* Test.48S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Test.48S; sourceTree = "<group>"; };
 		6FF8739B2B97BA1E00C8357F /* Demo.48S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Demo.48S; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -491,7 +491,6 @@
 		6FCED99E2B95E51E00C8357F /* sim */ = {
 			isa = PBXGroup;
 			children = (
-				6FC22A332B973FB700C8357F /* sim-dmcp.h */,
 				6FCEDA922B95EE2D00C8357F /* dmcp.cpp */,
 				6FCEDA582B95ECC800C8357F /* ff_ifc.h */,
 				6FCED9D82B95E51E00C8357F /* dmcp.h */,
@@ -690,6 +689,7 @@
 		6FE7F0472B95E37400C8357F /* dmcp */ = {
 			isa = PBXGroup;
 			children = (
+				6FEF5C772BAC7CB800C8357F /* sim-dmcp.h */,
 				6FE7F0482B95E37400C8357F /* main.cc */,
 				6FE7F0492B95E37400C8357F /* version.h */,
 				6FE7F04A2B95E37400C8357F /* sysmenu.h */,

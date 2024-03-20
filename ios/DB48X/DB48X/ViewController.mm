@@ -504,7 +504,7 @@ enum FileSelectorState
         if (allowNew)
         {
             cstring current = get_reset_state_file();
-            if (!current)
+            if (!current || !*current)
                 current = "state/State.48S";
             NSString *currentPath = [NSString stringWithCString:current encoding:NSUTF8StringEncoding];
             NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -536,11 +536,8 @@ enum FileSelectorState
     if (fileSelectorState == FileSelectorDidPick)
     {
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
-        [coordinator
-         coordinateReadingItemAtURL:fileSelectorSelectedURL
-         options:NSFileCoordinatorReadingWithoutChanges
-         error:nil
-         byAccessor:^(NSURL *newURL) {
+        auto accessor = ^(NSURL *newURL)
+        {
             NSURL *filePathURL = [newURL filePathURL];
             NSString *fileFullPath = filePathURL.path;
             NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -552,7 +549,22 @@ enum FileSelectorState
                 if (*p == '/' || *p == '\\')
                     name = p + 1;
             result = callback(path, name, data);
-        }];
+        };
+
+        if (allowNew)
+        {
+            [coordinator coordinateWritingItemAtURL:fileSelectorSelectedURL
+                                            options:NSFileCoordinatorReadingWithoutChanges
+                                              error:nil
+                                         byAccessor:accessor];
+        }
+        else
+        {
+            [coordinator coordinateReadingItemAtURL:fileSelectorSelectedURL
+                                            options:NSFileCoordinatorReadingWithoutChanges
+                                              error:nil
+                                         byAccessor:accessor];
+        }
     }
 
     fileSelectorState = FileSelectorOff;

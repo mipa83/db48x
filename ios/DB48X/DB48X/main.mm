@@ -189,3 +189,55 @@ int main(int argc, char * argv[])
                                  NSStringFromClass([AppDelegate class]));
     }
 }
+
+
+
+// ============================================================================
+//
+//   State file interface
+//
+// ============================================================================
+//   iOS requires this to be wrapped in an NSFileCoordinator if we want
+//   to be able to access files in iCloud
+
+int ui_wrap_io(file_sel_fn_t callback, const char *path, void *data, bool writing)
+// ----------------------------------------------------------------------------
+//   Wrap I/O operations in an NSFileCoordinator
+// ----------------------------------------------------------------------------
+{
+    int __block result = 0;
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+    auto accessor = ^(NSURL *newURL)
+    {
+        NSURL *filePathURL = [newURL filePathURL];
+        NSString *fileFullPath = filePathURL.path;
+        NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [[documentsPath lastObject] stringByAppendingString: @"/"];
+        NSString *filePath = [fileFullPath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length]) ];
+        cstring   path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
+        cstring   name = path;
+        for (cstring p = path; *p; p++)
+            if (*p == '/' || *p == '\\')
+                name = p + 1;
+        result = callback(path, name, data);
+    };
+
+    NSString *nspath = [NSString stringWithCString:path encoding:NSUTF8StringEncoding];
+    NSURL *url = [NSURL fileURLWithPath:nspath];
+    if (writing)
+    {
+        [coordinator coordinateWritingItemAtURL:url
+                                        options:NSFileCoordinatorReadingWithoutChanges
+                                          error:nil
+                                     byAccessor:accessor];
+    }
+    else
+    {
+        [coordinator coordinateReadingItemAtURL:url
+                                        options:NSFileCoordinatorReadingWithoutChanges
+                                          error:nil
+                                     byAccessor:accessor];
+    }
+
+    return result;
+}
