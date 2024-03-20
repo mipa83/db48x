@@ -86,7 +86,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.text</string>
+				<string>public.utf8-plain-text</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>DB48X source code</string>
@@ -122,6 +122,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
+				<string>public.utf8-plain-text</string>
 				<string>public.comma-separated-values-text</string>
 			</array>
 			<key>UTTypeDescription</key>
