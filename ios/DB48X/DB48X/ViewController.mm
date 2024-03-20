@@ -116,20 +116,32 @@ extern "C" void program_main();
 
 ViewController *theViewController = nullptr;
 
+enum FileSelectorState
+// ----------------------------------------------------------------------------
+//   State of the file selector
+// ----------------------------------------------------------------------------
+{
+    FileSelectorOff,
+    FileSelectorActive,
+    FileSelectorCancelled,
+    FileSelectorDidPick
+};
+
+
 
 @implementation ViewController
 // ----------------------------------------------------------------------------
 //   Implementation of the main view controller for DB48X
 // ----------------------------------------------------------------------------
 {
-    AVAudioEngine *audio;
-    float phase;
-    uint requests;
-    uint redraws;
-    NSString *fileSelectorBase;
-    NSString *fileSelectorExtension;
-    file_sel_fn fileSelectorCallback;
-    void *fileSelectorData;
+    AVAudioEngine    *audio;
+    float             phase;
+    uint              requests;
+    uint              redraws;
+    FileSelectorState fileSelectorState;
+    NSString         *fileSelectorPath;
+    NSString         *fileSelectorExtension;
+    NSURL            *fileSelectorSelectedURL;
 };
 
 
@@ -451,20 +463,9 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Picked documents: %@", urls);
-    NSURL *toLoad = [urls lastObject];
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
-    [coordinator coordinateReadingItemAtURL:toLoad options:NSFileCoordinatorReadingWithoutChanges error:nil byAccessor:^(NSURL * newURL)
-     {
-        NSURL *filePathURL = [newURL filePathURL];
-        NSString *filePath = filePathURL.path;
-        cstring path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
-        cstring name = path;
-        for (cstring p = path; *p; p++)
-            if (*p == '/' || *p == '\\')
-                name = p + 1;
-
-        self->fileSelectorCallback(path, name, self->fileSelectorData);
-        [controller dismissViewControllerAnimated:YES completion:nil];
+    fileSelectorSelectedURL = [urls lastObject];
+    [controller dismissViewControllerAnimated:YES completion:^{
+        self->fileSelectorState = FileSelectorDidPick;
     }];
 }
 
@@ -485,6 +486,11 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Picker cancelled");
+    fileSelectorState = FileSelectorCancelled;
+    fileSelectorPath = nil;
+    [controller dismissViewControllerAnimated:YES completion:^{
+        self->fileSelectorState = FileSelectorDidPick;
+    }];
 }
 
 
@@ -498,8 +504,9 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
     NSLog(@"Creation requested");
 
+#if 0
     NSString *tmpDirectory = NSTemporaryDirectory();
-    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:fileSelectorBase];
+    NSString *tempFileBase = [tmpDirectory stringByAppendingPathComponent:fileSelectorPath];
     NSString *tempFile = [tempFileBase stringByAppendingPathExtension:fileSelectorExtension];
     cstring path = [tempFile cStringUsingEncoding:NSUTF8StringEncoding];
     cstring name = path;
@@ -515,7 +522,10 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
         importMode = UIDocumentBrowserImportModeMove;
     }
     importHandler(toImport, importMode);
-    [controller dismissViewControllerAnimated:YES completion:nil];
+    fileSelectorCallback = nil;
+#endif
+
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 
@@ -527,7 +537,7 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 // ----------------------------------------------------------------------------
 {
     NSLog(@"Imported from %@ to %@", sourceURL, destinationURL);
-    
+
 }
 
 
@@ -564,40 +574,65 @@ didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 //   Display a file selector in the application
 // ----------------------------------------------------------------------------
 {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager createDirectoryAtPath:baseDir
-           withIntermediateDirectories:YES
-                            attributes:nil
-                                 error:nil];
-
-    fileSelectorBase = baseDir;
+    fileSelectorState = FileSelectorActive;
+    fileSelectorPath = baseDir;
     fileSelectorExtension = ext;
-    fileSelectorCallback = callback;
-    fileSelectorData = data;
-    
-    UTType *type = [UTType typeWithFilenameExtension:ext];
-    if (allowNew)
+
+    dispatch_sync(dispatch_get_main_queue(), ^{
+            UTType *type = [UTType typeWithFilenameExtension:ext];
+            if (allowNew)
+            {
+                UIDocumentBrowserViewController *browser =
+                    [[UIDocumentBrowserViewController alloc]
+                        initForOpeningContentTypes:@[ type ]];
+                browser.delegate = self;
+                browser.shouldShowFileExtensions = true;
+                browser.allowsDocumentCreation = allowNew;
+                [self presentViewController:browser animated:YES completion:nil];
+            }
+            else
+            {
+                UIDocumentPickerViewController *picker =
+                    [[UIDocumentPickerViewController alloc]
+                        initForOpeningContentTypes:@[ type ]];
+                picker.delegate = self;
+                picker.shouldShowFileExtensions = true;
+                picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
+                [self presentViewController:picker animated:YES completion:nil];
+            }
+            NSLog(@"File selector shown, waiting for it to clear");
+        });
+
+    NSLog(@"File selector done, waiting for state to change");
+    while (fileSelectorState == FileSelectorActive)
     {
-        UIDocumentBrowserViewController *browser =
-            [[UIDocumentBrowserViewController alloc]
-                initForOpeningContentTypes:@[ type ]];
-        browser.delegate = self;
-        browser.shouldShowFileExtensions = true;
-        browser.allowsDocumentCreation = allowNew;
-        [self presentViewController:browser animated:YES completion:nil];
+        sys_delay(100);
+        reset_auto_off();
     }
-    else
-    {
-        UIDocumentPickerViewController *picker =
-            [[UIDocumentPickerViewController alloc]
-                initForOpeningContentTypes:@[ type ]];
-        picker.delegate = self;
-        picker.shouldShowFileExtensions = true;
-        picker.directoryURL = [NSURL fileURLWithPath:baseDir isDirectory:YES];
-        [self presentViewController:picker animated:YES completion:nil];
-    }
-    NSLog(@"File selector done");
-    return 0;
+
+    NSLog(@"Resume RPL thread");
+    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+    int __block result = 0;
+    [coordinator
+        coordinateReadingItemAtURL:fileSelectorSelectedURL
+                           options:NSFileCoordinatorReadingWithoutChanges
+                             error:nil
+                        byAccessor:^(NSURL *newURL) {
+        NSURL *filePathURL = [newURL filePathURL];
+        NSString *fileFullPath = filePathURL.path;
+        NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [[documentsPath lastObject] stringByAppendingString: @"/"];
+        NSString *filePath = [fileFullPath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length]) ];
+        cstring   path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
+        cstring   name = path;
+        for (cstring p = path; *p; p++)
+            if (*p == '/' || *p == '\\')
+                name = p + 1;
+        result = callback(path, name, data);
+        }];
+
+    fileSelectorState = FileSelectorOff;
+    return result;
 }
 
 
@@ -684,30 +719,28 @@ int ui_file_selector(const char *title,
                      int         disp_new,
                      int         overwrite_check)
 // ----------------------------------------------------------------------------
-//   File selector not implemented on iOS yet
+//   File selector
 // ----------------------------------------------------------------------------
 {
     if (*ext == '.')
         ext++;
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [theViewController
-          fileSelectorWithTitle:[NSString
-                                    stringWithCString:title
-                                             encoding:NSUTF8StringEncoding]
-                        baseDir:[NSString
-                                    stringWithCString:base_dir
-                                             encoding:NSUTF8StringEncoding]
-                      extension:[NSString
-                                    stringWithCString:ext
-                                             encoding:NSUTF8StringEncoding]
-                     completion:callback
-                           data:data
-                       allowNew:disp_new
-                 overwriteCheck:overwrite_check];
-    });
 
-    return 0;
+    return [theViewController
+               fileSelectorWithTitle:[NSString
+                                         stringWithCString:title
+                                                  encoding:NSUTF8StringEncoding]
+                             baseDir:[NSString
+                                         stringWithCString:base_dir
+                                                  encoding:NSUTF8StringEncoding]
+                           extension:[NSString
+                                         stringWithCString:ext
+                                                  encoding:NSUTF8StringEncoding]
+                          completion:callback
+                                data:data
+                            allowNew:disp_new
+                      overwriteCheck:overwrite_check];
 }
+
 
 void ui_save_setting(const char *name, const char *value)
 // ----------------------------------------------------------------------------
