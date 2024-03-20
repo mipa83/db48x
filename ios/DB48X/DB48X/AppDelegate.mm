@@ -51,9 +51,55 @@
     theAppSettings.saveState = ![settings boolForKey:@"DisableSaveState"];
     theAppSettings.hapticFeedback = ![settings boolForKey:@"DisableHapticFeedback"];
 
-    // Change directory to the app bundle
-    NSString *folder = [[NSBundle mainBundle] resourcePath];
-    chdir([folder cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    // Change directory to the app documents path
+    NSString *bundle = [[NSBundle mainBundle] resourcePath];
+    NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSLog(@"Document directories %@", documentsPath);
+    NSString *documentsDirectory = [documentsPath lastObject];
+    chdir([documentsDirectory cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+    NSLog(@"Running in directory %@", documentsDirectory);
+
+    // Create the DB48X standard structure
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    for (NSString *subdir in @[@"state", @"help", @"config", @"data"])
+    {
+        NSString *directory = [documentsDirectory stringByAppendingPathComponent:subdir];
+        NSError *error = nil;
+        [fileManager createDirectoryAtPath:directory
+               withIntermediateDirectories:YES
+                                attributes:nil
+                                     error:&error];
+        if (error)
+            NSLog(@"Error creating '%@' directory: %@", subdir, error);
+    }
+    
+    // Copy initial files
+    NSArray<NSString *> *filesToCopy = @[
+        @"state/Demo.48S",
+        @"state/Test.48S",
+        @"config/equations.csv",
+        @"config/library.csv",
+        @"config/characters.csv",
+        @"config/units.csv",
+        @"config/constants.csv",
+        @"help/db48x.md",
+        @"help/db50x.md",
+    ];
+    NSLog(@"Contents of resources: %@", [[fileManager enumeratorAtPath:bundle] allObjects]);
+    NSLog(@"Contents of documents before copy: %@", [[fileManager enumeratorAtPath:documentsDirectory] allObjects]);
+    for (NSString *file in filesToCopy)
+    {
+        NSString *source = [bundle stringByAppendingPathComponent:file];
+        NSString *destination = [documentsDirectory stringByAppendingPathComponent:file];
+        if (![fileManager fileExistsAtPath:destination])
+        {
+            NSError *error = nil;
+            [fileManager copyItemAtPath:source toPath:destination error:&error];
+            if (error)
+                NSLog(@"Error copying '%@': %@", file, error);
+        }
+    }
+    NSLog(@"Contents of documents after copy: %@", [[fileManager enumeratorAtPath:documentsDirectory] allObjects]);
 
     // Dispatch the RPL thread
     dispatch_queue_t queue =
