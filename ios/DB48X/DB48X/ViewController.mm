@@ -503,15 +503,12 @@ enum FileSelectorState
         UIDocumentPickerViewController *picker = [UIDocumentPickerViewController alloc];
         if (allowNew)
         {
-            cstring current = get_reset_state_file();
-            if (!current || !*current)
-                current = "state/State.48S";
-            NSString *currentPath = [NSString stringWithCString:current encoding:NSUTF8StringEncoding];
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            if (![fileManager fileExistsAtPath:currentPath])
-                [fileManager createFileAtPath:currentPath contents:[NSData data] attributes:nil];
+            // Not very intuitive, but we must show the URL of a known good file
+            // even if ultimately we export something else entirely
+            NSString *bundle = [[NSBundle mainBundle] resourcePath];
+            NSString *currentPath = [bundle stringByAppendingPathComponent:@"state/Demo.48S"];
             NSURL *stateURL = [NSURL fileURLWithPath:currentPath isDirectory:NO];
-            picker = [picker initForExportingURLs:@[stateURL] asCopy:YES];
+            picker = [picker initForExportingURLs:@[stateURL] asCopy:YES ];
         }
         else
         {
@@ -542,7 +539,8 @@ enum FileSelectorState
             NSString *fileFullPath = filePathURL.path;
             NSArray<NSString *> *documentsPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString *documentsDirectory = [[documentsPath lastObject] stringByAppendingString: @"/"];
-            NSString *filePath = [fileFullPath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length]) ];
+            NSString *noPrivatePath = [fileFullPath stringByReplacingOccurrencesOfString:@"/private" withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [fileFullPath length])];
+            NSString *filePath = [noPrivatePath stringByReplacingOccurrencesOfString:documentsDirectory withString:@"" options:NSAnchoredSearch range:NSMakeRange(0, [noPrivatePath length]) ];
             cstring   path = [filePath cStringUsingEncoding:NSUTF8StringEncoding];
             cstring   name = path;
             for (cstring p = path; *p; p++)
