@@ -33,6 +33,7 @@
 
 @interface SettingsViewController ()
 @property (weak, nonatomic) IBOutlet UISwitch *saveStateOnExitSwitch;
+@property (weak, nonatomic) IBOutlet UISwitch *saveStateWhenMovingToBackgroundSwitch;
 @property (weak, nonatomic) IBOutlet UISwitch *hapticFeedbackSwitch;
 
 @end
@@ -43,10 +44,10 @@ AppSettings theAppSettings =
 //  Global application settings
 // ----------------------------------------------------------------------------
 {
-saveState: true,
-hapticFeedback: true
+    .saveStateOnExit                 = true,
+    .saveStateWhenMovingToBackground = false,
+    .hapticFeedback                  = true
 };
-
 
 
 @implementation SettingsViewController
@@ -80,19 +81,27 @@ hapticFeedback: true
     [super viewDidLoad];
 
     // Load preferences into the switches
-    self.saveStateOnExitSwitch.on = theAppSettings.saveState;
+    self.saveStateOnExitSwitch.on = theAppSettings.saveStateOnExit;
+    self.saveStateWhenMovingToBackgroundSwitch.on = theAppSettings.saveStateWhenMovingToBackground;
     self.hapticFeedbackSwitch.on = theAppSettings.hapticFeedback;
 }
 
 
-- (IBAction)saveSettingsSwitched:(UISwitch *)sender
+- (IBAction)saveSettingsOnExitSwitched:(UISwitch *)sender
 // ----------------------------------------------------------------------------
 //   Adjust the setting to match widget
 // ----------------------------------------------------------------------------
 {
-    theAppSettings.saveState = sender.on;
+    theAppSettings.saveStateOnExit = sender.on;
 }
 
+- (IBAction)saveSettingWhenMovingToBackground:(UISwitch *)sender
+// ----------------------------------------------------------------------------
+//   Adjust the setting to match widget
+// ----------------------------------------------------------------------------
+{
+    theAppSettings.saveStateWhenMovingToBackground = sender.on;
+}
 
 - (IBAction)hapticFeedbackChanged:(UISwitch *)sender
 // ----------------------------------------------------------------------------

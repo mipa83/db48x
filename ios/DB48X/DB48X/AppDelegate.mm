@@ -48,7 +48,8 @@
 {
     // Load user settings
     NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
-    theAppSettings.saveState = ![settings boolForKey:@"DisableSaveState"];
+    theAppSettings.saveStateOnExit = ![settings boolForKey:@"DisableSaveState"];
+    theAppSettings.saveStateWhenMovingToBackground = [settings boolForKey:@"EnableSaveStateWhenMovingToBackground"];
     theAppSettings.hapticFeedback = ![settings boolForKey:@"DisableHapticFeedback"];
 
     // Change directory to the app documents path
@@ -112,6 +113,21 @@
 }
 
 
+- (void)saveApplicationSettings
+// ----------------------------------------------------------------------------
+//   Save application settings to user defaults
+// ----------------------------------------------------------------------------
+{
+    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
+    [settings setBool:!theAppSettings.saveStateOnExit
+               forKey:@"DisableSaveState"];
+    [settings setBool:theAppSettings.saveStateWhenMovingToBackground
+               forKey:@"EnableSaveStateWhenMovingToBackground"];
+    [settings setBool:!theAppSettings.hapticFeedback
+               forKey:@"DisableHapticFeedback"];
+}
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 // ----------------------------------------------------------------------------
 //   Moving from active to inactive state
@@ -124,12 +140,8 @@
 // Use this method to pause ongoing tasks, disable timers, and throttle down
 // OpenGL ES frame rates. Games should use this method to pause the game.
 {
-    NSUserDefaults *settings = [NSUserDefaults standardUserDefaults];
-    [settings setBool:!theAppSettings.saveState
-               forKey:@"DisableSaveState"];
-    [settings setBool:!theAppSettings.hapticFeedback
-               forKey:@"DisableHapticFeedback"];
-    if (theAppSettings.saveState)
+    [self saveApplicationSettings];
+    if (theAppSettings.saveStateWhenMovingToBackground)
         key_push(tests::SAVE_PGM);
 }
 
@@ -173,7 +185,9 @@
 // ----------------------------------------------------------------------------
 //   Save data if appropriate. See also applicationDidEnterBackground:.
 {
-    [self applicationWillResignActive:application];
+    [self saveApplicationSettings];
+    if (theAppSettings.saveStateWhenMovingToBackground)
+        key_push(tests::SAVE_PGM);
 }
 
 @end

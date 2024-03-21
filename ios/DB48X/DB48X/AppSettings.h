@@ -34,7 +34,8 @@ typedef struct AppSettings
 //   Settings for the application
 // ----------------------------------------------------------------------------
 {
-    bool        saveState;
+    bool        saveStateOnExit;
+    bool        saveStateWhenMovingToBackground;
     bool        hapticFeedback;
 } AppSettings;
 

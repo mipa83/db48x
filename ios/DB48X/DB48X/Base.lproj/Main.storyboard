@@ -152,7 +152,7 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jj3-Zw-DY9" userLabel="scrollcontents">
                                         <rect key="frame" x="0.0" y="0.0" width="361" height="410"/>
                                         <subviews>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jkK-bL-IOv" userLabel="savestate">
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jkK-bL-IOv" userLabel="savestateonexit">
                                                 <rect key="frame" x="0.0" y="0.0" width="361" height="31"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save state on exit" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9ep-MQ-lJU">
@@ -164,13 +164,15 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="Enable Mode" translatesAutoresizingMaskIntoConstraints="NO" id="nN0-FY-OhO">
                                                         <rect key="frame" x="292" y="0.0" width="51" height="31"/>
                                                         <connections>
-                                                            <action selector="saveSettingsSwitched:" destination="GeX-EI-msh" eventType="valueChanged" id="6Ie-b9-Sdn"/>
+                                                            <action selector="saveSettingsOnExitSwitched:" destination="GeX-EI-msh" eventType="valueChanged" id="Rfd-Lk-NjG"/>
                                                         </connections>
                                                     </switch>
                                                 </subviews>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
+                                                    <constraint firstItem="nN0-FY-OhO" firstAttribute="top" secondItem="9ep-MQ-lJU" secondAttribute="top" id="8JT-V2-56d"/>
                                                     <constraint firstAttribute="bottom" secondItem="9ep-MQ-lJU" secondAttribute="bottom" id="9aJ-FF-2eH"/>
+                                                    <constraint firstItem="nN0-FY-OhO" firstAttribute="bottom" secondItem="9ep-MQ-lJU" secondAttribute="bottom" id="9g8-MS-XTe"/>
                                                     <constraint firstAttribute="bottom" secondItem="nN0-FY-OhO" secondAttribute="bottom" id="IEg-Pt-8DZ"/>
                                                     <constraint firstItem="nN0-FY-OhO" firstAttribute="top" secondItem="jkK-bL-IOv" secondAttribute="top" id="KNA-zn-S8d"/>
                                                     <constraint firstItem="nN0-FY-OhO" firstAttribute="leading" secondItem="9ep-MQ-lJU" secondAttribute="trailing" id="KnZ-do-FeF"/>
@@ -179,8 +181,35 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                                     <constraint firstAttribute="trailing" secondItem="nN0-FY-OhO" secondAttribute="trailing" constant="20" symbolic="YES" id="yD6-wc-809"/>
                                                 </constraints>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="efO-hg-UvK" userLabel="haptic">
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bwE-tB-8Yh" userLabel="savestateonbackground">
                                                 <rect key="frame" x="0.0" y="39" width="361" height="31"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save state when deactivating" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E3y-4u-dcj">
+                                                        <rect key="frame" x="20" y="0.0" width="264" height="31"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" title="Enable Mode" translatesAutoresizingMaskIntoConstraints="NO" id="1om-4q-n2a">
+                                                        <rect key="frame" x="292" y="0.0" width="51" height="31"/>
+                                                        <connections>
+                                                            <action selector="saveSettingWhenMovingToBackground:" destination="GeX-EI-msh" eventType="valueChanged" id="qem-9W-JXh"/>
+                                                        </connections>
+                                                    </switch>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="E3y-4u-dcj" secondAttribute="bottom" id="2vw-Ou-uNl"/>
+                                                    <constraint firstAttribute="trailing" secondItem="1om-4q-n2a" secondAttribute="trailing" constant="20" symbolic="YES" id="6Ga-E4-CYr"/>
+                                                    <constraint firstItem="E3y-4u-dcj" firstAttribute="top" secondItem="bwE-tB-8Yh" secondAttribute="top" id="IE3-Zg-hWM"/>
+                                                    <constraint firstItem="1om-4q-n2a" firstAttribute="top" secondItem="bwE-tB-8Yh" secondAttribute="top" id="UI7-Sg-Hdp"/>
+                                                    <constraint firstItem="E3y-4u-dcj" firstAttribute="leading" secondItem="bwE-tB-8Yh" secondAttribute="leading" constant="20" symbolic="YES" id="X4q-G8-YBb"/>
+                                                    <constraint firstItem="1om-4q-n2a" firstAttribute="leading" secondItem="E3y-4u-dcj" secondAttribute="trailing" constant="8" symbolic="YES" id="hxE-0S-QZX"/>
+                                                    <constraint firstAttribute="bottom" secondItem="1om-4q-n2a" secondAttribute="bottom" id="xed-il-XW3"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="efO-hg-UvK" userLabel="haptic">
+                                                <rect key="frame" x="0.0" y="78" width="361" height="31"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Haptic feedback" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wqq-TC-wQt">
                                                         <rect key="frame" x="20" y="0.0" width="272" height="31"/>
@@ -232,9 +261,11 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstItem="jkK-bL-IOv" firstAttribute="top" secondItem="jj3-Zw-DY9" secondAttribute="top" id="0AI-wM-JEF"/>
+                                            <constraint firstItem="bwE-tB-8Yh" firstAttribute="leading" secondItem="jj3-Zw-DY9" secondAttribute="leading" id="28h-Jc-50M"/>
                                             <constraint firstAttribute="bottom" secondItem="Gll-Rn-e7C" secondAttribute="bottom" id="3EW-LJ-GtK"/>
+                                            <constraint firstItem="bwE-tB-8Yh" firstAttribute="top" secondItem="jkK-bL-IOv" secondAttribute="bottom" constant="8" symbolic="YES" id="EPd-Gv-HuI"/>
                                             <constraint firstItem="Trc-CY-fCD" firstAttribute="top" relation="greaterThanOrEqual" secondItem="efO-hg-UvK" secondAttribute="bottom" id="Jz5-hS-T4o"/>
-                                            <constraint firstItem="efO-hg-UvK" firstAttribute="top" secondItem="jkK-bL-IOv" secondAttribute="bottom" constant="8" symbolic="YES" id="KI2-kX-vPu"/>
+                                            <constraint firstItem="efO-hg-UvK" firstAttribute="top" secondItem="bwE-tB-8Yh" secondAttribute="bottom" constant="8" symbolic="YES" id="KI2-kX-vPu"/>
                                             <constraint firstAttribute="trailing" secondItem="jkK-bL-IOv" secondAttribute="trailing" id="OSd-OZ-n7Y"/>
                                             <constraint firstAttribute="trailing" secondItem="efO-hg-UvK" secondAttribute="trailing" id="efB-hT-2D2"/>
                                             <constraint firstAttribute="trailing" secondItem="Trc-CY-fCD" secondAttribute="trailing" id="iTh-WK-bCF"/>
@@ -243,6 +274,7 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                                             <constraint firstItem="Trc-CY-fCD" firstAttribute="leading" secondItem="jj3-Zw-DY9" secondAttribute="leading" id="oWh-Lz-FRc"/>
                                             <constraint firstItem="efO-hg-UvK" firstAttribute="leading" secondItem="jj3-Zw-DY9" secondAttribute="leading" id="sFf-77-OHa"/>
                                             <constraint firstAttribute="trailing" secondItem="Gll-Rn-e7C" secondAttribute="trailing" id="sOU-d2-Lep"/>
+                                            <constraint firstAttribute="trailing" secondItem="bwE-tB-8Yh" secondAttribute="trailing" id="sf2-xC-qIN"/>
                                             <constraint firstItem="Gll-Rn-e7C" firstAttribute="leading" secondItem="jj3-Zw-DY9" secondAttribute="leading" id="tJl-dW-Xj4"/>
                                         </constraints>
                                     </view>
@@ -290,8 +322,8 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
                     </view>
                     <navigationItem key="navigationItem" id="uf5-hr-4xJ"/>
                     <connections>
-                        <outlet property="hapticFeedbackSwitch" destination="Pv1-oY-piF" id="o4B-9E-2Oc"/>
-                        <outlet property="saveStateOnExitSwitch" destination="nN0-FY-OhO" id="PAs-Dg-Hub"/>
+                        <outlet property="saveStateOnExitSwitch" destination="nN0-FY-OhO" id="OsO-gk-HfS"/>
+                        <outlet property="saveStateWhenMovingToBackgroundSwitch" destination="1om-4q-n2a" id="eXE-BR-G8F"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6cA-86-e69" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
