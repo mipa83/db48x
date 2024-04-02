@@ -38,6 +38,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="DB48X startup screen" width="577" height="1000"/>
+        <image name="DB48X startup screen" width="782" height="1480"/>
     </resources>
 </document>

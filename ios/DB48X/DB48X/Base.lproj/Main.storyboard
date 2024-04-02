@@ -33,7 +33,7 @@
                                             <outletCollection property="gestureRecognizers" destination="Gsa-Ry-57p" appends="YES" id="r8o-Es-G5i"/>
                                         </connections>
                                     </mtkView>
-                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE" customClass="KeyboardView">
+                                    <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x.png" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE" customClass="KeyboardView">
                                         <rect key="frame" x="0.0" y="235.66666666666671" width="393" height="494.33333333333326"/>
                                         <gestureRecognizers/>
                                         <constraints>
@@ -401,7 +401,7 @@ and a tribute to Dave Packard and Bill Hewlett (the DB in DB48X, more often know
     </inferredMetricsTieBreakers>
     <resources>
         <image name="DB48X Logo" width="310" height="130"/>
-        <image name="keyboard-db48x" width="698" height="878"/>
+        <image name="keyboard-db48x.png" width="698" height="878"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
