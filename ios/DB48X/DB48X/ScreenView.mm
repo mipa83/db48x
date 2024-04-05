@@ -28,6 +28,7 @@
 // ****************************************************************************
 
 #import "ScreenView.h"
+#include "target.h"
 #include "recorder.h"
 
 #include "sim-dmcp.h"
@@ -35,8 +36,8 @@
 
 
 // Copy of the pixel data
-byte pixelData[SIM_LCD_W * SIM_LCD_H * 4];
-byte lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H / 8];
+byte     pixelData[SIM_LCD_W * SIM_LCD_H * 4];
+uint32_t lcd_copy[SIM_LCD_SCANLINE * SIM_LCD_H * color::BPP / 32];
 
 RECORDER(screenview, 256, "Screen view image generation");
 
@@ -80,32 +81,42 @@ RECORDER(screenview, 256, "Screen view image generation");
     record(screenview, "%u: imageFromLCD", refreshed);
 
     size_t bytesPerRow = SIM_LCD_W * 4;
-
+    surface s(lcd_buffer, LCD_W, LCD_H, LCD_SCANLINE);
+    pixword mask = ~(~0U << color::BPP);
     for (int y = 0; y < SIM_LCD_H; y++)
     {
-        for (int xb = 0; xb < SIM_LCD_W/8; xb++)
+        for (int xw = 0; xw < SIM_LCD_SCANLINE*color::BPP/32; xw++)
         {
-            unsigned byteoffs = y * (SIM_LCD_SCANLINE/8) + xb;
-            byte diffs = lcd_copy[byteoffs] ^ lcd_buffer[byteoffs];
-            if (diffs)
+            unsigned woffs = y * (SIM_LCD_SCANLINE*color::BPP/32) + xw;
+            if (uint32_t diffs = lcd_copy[woffs] ^ lcd_buffer[woffs])
             {
-                for (int bit = 0; bit < 8; bit++)
+                for (int bit = 0; bit < 32; bit += color::BPP)
                 {
-                    if ((diffs >> bit) & 1)
+                    if ((diffs >> bit) & mask)
                     {
-                        int x = 8*xb + bit;
-                        int on = (lcd_buffer[byteoffs] >> bit) & 1;
-                        uint pixoffs = y * SIM_LCD_W + (SIM_LCD_W - 1 - x);
+                        pixword bits = (lcd_buffer[woffs] >> bit) & mask;
+                        color col(bits);
+                        coord xx = (xw * 32 + bit) / color::BPP;
+                        coord yy = y;
+                        s.horizontal_adjust(xx, xx);
+                        s.vertical_adjust(yy, yy);
+                        uint pixoffs = yy * SIM_LCD_W + xx;
                         byte *pixel = &pixelData[pixoffs * 4];
-                        byte pixval = on ? 220 : 0;
+#ifdef CONFIG_COLOR
+                        pixel[0] = col.blue();
+                        pixel[1] = col.green();
+                        pixel[2] = col.red();
+                        pixel[3] = 255;
+#else
+                        byte pixval = bits ? 220 : 0;
                         pixel[0] = pixel[1] = pixel[2] = pixel[3] = pixval;
+#endif
                     }
                 }
-                lcd_copy[byteoffs] = lcd_buffer[byteoffs];
+                lcd_copy[woffs] = lcd_buffer[woffs];
             }
         }
     }
-
 
     void *baseAddress = &pixelData;
     CGColorSpaceRef colorSpace  = CGColorSpaceCreateDeviceRGB();

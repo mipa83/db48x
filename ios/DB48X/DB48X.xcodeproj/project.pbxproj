@@ -23,11 +23,11 @@
 		6F4528DD2B9C6DD800C8357F /* library.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
 		6F4528DE2B9C6DEF00C8357F /* equations.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
 		6F4528DF2B9C6DEF00C8357F /* library.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
-		6F5A77BE2B96862200C8357F /* ScreenView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F5A77BD2B96862200C8357F /* ScreenView.m */; };
 		6F75CED72BA1B23800C8357F /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F75CED62BA1B23800C8357F /* HelpViewController.m */; };
 		6F75CED92BA1B7D300C8357F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F75CED82BA1B7D300C8357F /* WebKit.framework */; };
 		6FB5A8812B97F50E00C8357F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FB5A8802B97F50E00C8357F /* AVFoundation.framework */; };
 		6FB5A8842B98035600C8357F /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5A8832B98035600C8357F /* KeyboardView.m */; };
+		6FBC10382BC0482F00C8357F /* ScreenView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FBC10372BC0482F00C8357F /* ScreenView.mm */; };
 		6FCED4962B95E4C000C8357F /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF432B95E4BE00C8357F /* recorder.c */; };
 		6FCED49D2B95E4C000C8357F /* recorder_ring.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */; };
 		6FCED99D2B95E4C100C8357F /* recorder.spec in Resources */ = {isa = PBXBuildFile; fileRef = 6FCED4582B95E4C000C8357F /* recorder.spec */; };
@@ -204,13 +204,13 @@
 		6F4528DA2B9C6DD800C8357F /* equations.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = equations.csv; sourceTree = "<group>"; };
 		6F4528DB2B9C6DD800C8357F /* library.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.csv; sourceTree = "<group>"; };
 		6F5A77BC2B96862200C8357F /* ScreenView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenView.h; sourceTree = "<group>"; };
-		6F5A77BD2B96862200C8357F /* ScreenView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenView.m; sourceTree = "<group>"; };
 		6F75CED52BA1B23800C8357F /* HelpViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
 		6F75CED62BA1B23800C8357F /* HelpViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
 		6F75CED82BA1B7D300C8357F /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		6FB5A8802B97F50E00C8357F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		6FB5A8822B98035600C8357F /* KeyboardView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
 		6FB5A8832B98035600C8357F /* KeyboardView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
+		6FBC10372BC0482F00C8357F /* ScreenView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScreenView.mm; sourceTree = "<group>"; };
 		6FCECF432B95E4BE00C8357F /* recorder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder.c; sourceTree = "<group>"; };
 		6FCECF462B95E4BE00C8357F /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recorder_ring.c; sourceTree = "<group>"; };
@@ -430,7 +430,7 @@
 				6FE7EFE12B95E2F600C8357F /* Runtime */,
 				6FE7EFDE2B95DDF100C8357F /* Screen.cpp */,
 				6F5A77BC2B96862200C8357F /* ScreenView.h */,
-				6F5A77BD2B96862200C8357F /* ScreenView.m */,
+				6FBC10372BC0482F00C8357F /* ScreenView.mm */,
 				6FD3786B2BA727EC00C8357F /* SettingsViewController.h */,
 				6FD3786C2BA727EC00C8357F /* SettingsViewController.m */,
 				1F9D29691C72B9BB000025E6 /* Supporting Files */,
@@ -879,7 +879,6 @@
 				6FE7F0682B95E37400C8357F /* font.cc in Sources */,
 				6FE7F0582B95E37400C8357F /* text.cc in Sources */,
 				6FCEDA972B95F28F00C8357F /* catalog.cc in Sources */,
-				6F5A77BE2B96862200C8357F /* ScreenView.m in Sources */,
 				6FE7F0672B95E37400C8357F /* integer.cc in Sources */,
 				6FE7F05E2B95E37400C8357F /* expression.cc in Sources */,
 				6FE7F06A2B95E37400C8357F /* compare.cc in Sources */,
@@ -896,6 +895,7 @@
 				6FE7F0692B95E37400C8357F /* algebraic.cc in Sources */,
 				6FE7F07F2B95E37400C8357F /* unit.cc in Sources */,
 				6FE7F05A2B95E37400C8357F /* decimal.cc in Sources */,
+				6FBC10382BC0482F00C8357F /* ScreenView.mm in Sources */,
 				6FE7F0862B95E37400C8357F /* target.cc in Sources */,
 				6FE7F08B2B95E37400C8357F /* bignum.cc in Sources */,
 				6FE7F0772B95E37400C8357F /* complex.cc in Sources */,
@@ -1118,6 +1118,7 @@
 					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
 					SIMULATOR,
 					USE_IOS,
+					CONFIG_COLOR,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
@@ -1144,6 +1145,7 @@
 					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
 					USE_IOS,
 					SIMULATOR,
+					CONFIG_COLOR,
 				);
 				INFOPLIST_FILE = DB48X/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
