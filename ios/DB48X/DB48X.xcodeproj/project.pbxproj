@@ -14,6 +14,7 @@
 		1F9D29791C72B9BB000025E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */; };
 		1F9D29841C72B9BB000025E6 /* DB48XTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29831C72B9BB000025E6 /* DB48XTests.m */; };
 		1F9D298F1C72B9BB000025E6 /* DB48XUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */; };
+		6F18F27F2C2DAC3400C8357F /* polynomial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F18F27D2C2DAC3400C8357F /* polynomial.cc */; };
 		6F4519AA2BBC80A600C8357F /* DB48X startup screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F4519A92BBC80A600C8357F /* DB48X startup screen.png */; };
 		6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
 		6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
@@ -189,6 +190,8 @@
 		1F9D298A1C72B9BB000025E6 /* DB48XUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DB48XUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DB48XUITests.m; sourceTree = "<group>"; };
 		1F9D29901C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F18F27D2C2DAC3400C8357F /* polynomial.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = polynomial.cc; path = ../../../src/polynomial.cc; sourceTree = "<group>"; };
+		6F18F27E2C2DAC3400C8357F /* polynomial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polynomial.h; path = ../../../src/polynomial.h; sourceTree = "<group>"; };
 		6F4519A92BBC80A600C8357F /* DB48X startup screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DB48X startup screen.png"; sourceTree = "<group>"; };
 		6F4528C52B9C0F4E00C8357F /* equations.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = equations.cc; path = ../../../src/equations.cc; sourceTree = "<group>"; };
 		6F4528C62B9C0F4E00C8357F /* equations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = equations.h; path = ../../../src/equations.h; sourceTree = "<group>"; };
@@ -551,6 +554,8 @@
 		6FE7EFE12B95E2F600C8357F /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
+				6F18F27D2C2DAC3400C8357F /* polynomial.cc */,
+				6F18F27E2C2DAC3400C8357F /* polynomial.h */,
 				6FF873992B97BA1E00C8357F /* state */,
 				6FE7750B2B97966E00C8357F /* config */,
 				6FE7750E2B97966E00C8357F /* help */,
@@ -908,6 +913,7 @@
 				6FE7F0822B95E37400C8357F /* user_interface.cc in Sources */,
 				6FE7F0632B95E37400C8357F /* locals.cc in Sources */,
 				6FE7F0782B95E37400C8357F /* arithmetic.cc in Sources */,
+				6F18F27F2C2DAC3400C8357F /* polynomial.cc in Sources */,
 				6FE7F0842B95E37400C8357F /* main.cc in Sources */,
 				6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */,
 				1F9D296E1C72B9BB000025E6 /* AppDelegate.mm in Sources */,
@@ -1128,7 +1134,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.7.6;
+				MARKETING_VERSION = 0.7.8;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1155,7 +1161,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.7.6;
+				MARKETING_VERSION = 0.7.8;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
