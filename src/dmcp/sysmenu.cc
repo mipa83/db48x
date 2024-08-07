@@ -232,6 +232,13 @@ static int state_save_callback(cstring fpath, cstring fname, void *)
 //   Callback when a file is selected
 // ----------------------------------------------------------------------------
 {
+#if NOSAVE
+    ui.draw_message("Saving state unsupported",
+                    "You cannot save programs in the free version");
+    wait_for_key_press();
+    return 1;
+#endif
+
     // Display the name of the file being saved
     ui.draw_message("Saving state...", fname);
 

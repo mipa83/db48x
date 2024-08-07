@@ -114,6 +114,419 @@
 		6F2AC4222C63E4FB00C8357F /* FlowInFullPipes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */; };
 		6F2AC4242C63E4FB00C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */; };
 		6F2AC4252C63E4FB00C8357F /* CantileverShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */; };
+		6F2AC4292C64105F00C8357F /* graphics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01F2B95E37300C8357F /* graphics.cc */; };
+		6F2AC42A2C64105F00C8357F /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDE2B95DDF100C8357F /* Screen.cpp */; };
+		6F2AC42B2C64105F00C8357F /* logical.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0172B95E37300C8357F /* logical.cc */; };
+		6F2AC42C2C64105F00C8357F /* fraction.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00B2B95E37300C8357F /* fraction.cc */; };
+		6F2AC42D2C64105F00C8357F /* conditionals.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFD2B95E37200C8357F /* conditionals.cc */; };
+		6F2AC42E2C64105F00C8357F /* font.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0122B95E37300C8357F /* font.cc */; };
+		6F2AC42F2C64105F00C8357F /* text.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE42B95E37200C8357F /* text.cc */; };
+		6F2AC4302C64105F00C8357F /* catalog.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA962B95F28F00C8357F /* catalog.cc */; };
+		6F2AC4312C64105F00C8357F /* integer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00F2B95E37300C8357F /* integer.cc */; };
+		6F2AC4322C64105F00C8357F /* expression.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFB2B95E37200C8357F /* expression.cc */; };
+		6F2AC4332C64105F00C8357F /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0152B95E37300C8357F /* compare.cc */; };
+		6F2AC4342C64105F00C8357F /* stack.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE82B95E37200C8357F /* stack.cc */; };
+		6F2AC4352C64105F00C8357F /* solve.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0452B95E37400C8357F /* solve.cc */; };
+		6F2AC4362C64105F00C8357F /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29701C72B9BB000025E6 /* ViewController.mm */; };
+		6F2AC4372C64105F00C8357F /* StackFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA5C2B95ED9600C8357F /* StackFont.cc */; };
+		6F2AC4382C64105F00C8357F /* plot.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFF2B95E37200C8357F /* plot.cc */; };
+		6F2AC4392C64105F00C8357F /* command.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0302B95E37400C8357F /* command.cc */; };
+		6F2AC43A2C64105F00C8357F /* characters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FD555822B995F8800C8357F /* characters.cc */; };
+		6F2AC43B2C64105F00C8357F /* integrate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0532B95E37400C8357F /* integrate.cc */; };
+		6F2AC43C2C64105F00C8357F /* variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0242B95E37300C8357F /* variables.cc */; };
+		6F2AC43D2C64105F00C8357F /* program.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0182B95E37300C8357F /* program.cc */; };
+		6F2AC43E2C64105F00C8357F /* algebraic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0142B95E37300C8357F /* algebraic.cc */; };
+		6F2AC43F2C64105F00C8357F /* unit.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0412B95E37400C8357F /* unit.cc */; };
+		6F2AC4402C64105F00C8357F /* decimal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFEC2B95E37200C8357F /* decimal.cc */; };
+		6F2AC4412C64105F00C8357F /* ScreenView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FBC10372BC0482F00C8357F /* ScreenView.mm */; };
+		6F2AC4422C64105F00C8357F /* target.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04C2B95E37400C8357F /* target.cc */; };
+		6F2AC4432C64105F00C8357F /* bignum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0542B95E37400C8357F /* bignum.cc */; };
+		6F2AC4442C64105F00C8357F /* complex.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0322B95E37400C8357F /* complex.cc */; };
+		6F2AC4452C64105F00C8357F /* grob.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03B2B95E37400C8357F /* grob.cc */; };
+		6F2AC4462C64105F00C8357F /* loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFE2B95E37200C8357F /* loops.cc */; };
+		6F2AC4472C64105F00C8357F /* functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFA2B95E37200C8357F /* functions.cc */; };
+		6F2AC4482C64105F00C8357F /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F75CED62BA1B23800C8357F /* HelpViewController.m */; };
+		6F2AC4492C64105F00C8357F /* array.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFC2B95E37200C8357F /* array.cc */; };
+		6F2AC44A2C64105F00C8357F /* HighlightMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */; };
+		6F2AC44B2C64105F00C8357F /* user_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0442B95E37400C8357F /* user_interface.cc */; };
+		6F2AC44C2C64105F00C8357F /* locals.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0002B95E37200C8357F /* locals.cc */; };
+		6F2AC44D2C64105F00C8357F /* arithmetic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0372B95E37400C8357F /* arithmetic.cc */; };
+		6F2AC44E2C64105F00C8357F /* polynomial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F18F27D2C2DAC3400C8357F /* polynomial.cc */; };
+		6F2AC44F2C64105F00C8357F /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0482B95E37400C8357F /* main.cc */; };
+		6F2AC4502C64105F00C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
+		6F2AC4512C64105F00C8357F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D296D1C72B9BB000025E6 /* AppDelegate.mm */; };
+		6F2AC4522C64105F00C8357F /* renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F02E2B95E37300C8357F /* renderer.cc */; };
+		6F2AC4532C64105F00C8357F /* constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01D2B95E37300C8357F /* constants.cc */; };
+		6F2AC4542C64105F00C8357F /* stats.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04F2B95E37400C8357F /* stats.cc */; };
+		6F2AC4552C64105F00C8357F /* hwfp.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03A2B95E37400C8357F /* hwfp.cc */; };
+		6F2AC4562C64105F00C8357F /* files.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00C2B95E37300C8357F /* files.cc */; };
+		6F2AC4572C64105F00C8357F /* settings.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0502B95E37400C8357F /* settings.cc */; };
+		6F2AC4582C64105F00C8357F /* tag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03E2B95E37400C8357F /* tag.cc */; };
+		6F2AC4592C64105F00C8357F /* ReducedFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA902B95EDDF00C8357F /* ReducedFont.cc */; };
+		6F2AC45A2C64105F00C8357F /* datetime.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0392B95E37400C8357F /* datetime.cc */; };
+		6F2AC45B2C64105F00C8357F /* file.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0512B95E37400C8357F /* file.cc */; };
+		6F2AC45C2C64105F00C8357F /* EditorFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA722B95ED9600C8357F /* EditorFont.cc */; };
+		6F2AC45D2C64105F00C8357F /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00A2B95E37300C8357F /* util.cc */; };
+		6F2AC45E2C64105F00C8357F /* symbol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0252B95E37300C8357F /* symbol.cc */; };
+		6F2AC45F2C64105F00C8357F /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF432B95E4BE00C8357F /* recorder.c */; };
+		6F2AC4602C64105F00C8357F /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */; };
+		6F2AC4612C64105F00C8357F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA942B95F23600C8357F /* main.mm */; };
+		6F2AC4622C64105F00C8357F /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5A8832B98035600C8357F /* KeyboardView.m */; };
+		6F2AC4632C64105F00C8357F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3786C2BA727EC00C8357F /* SettingsViewController.m */; };
+		6F2AC4642C64105F00C8357F /* menu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0422B95E37400C8357F /* menu.cc */; };
+		6F2AC4652C64105F00C8357F /* comment.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F02C2B95E37300C8357F /* comment.cc */; };
+		6F2AC4662C64105F00C8357F /* object.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE32B95E37200C8357F /* object.cc */; };
+		6F2AC4672C64105F00C8357F /* dmcp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA922B95EE2D00C8357F /* dmcp.cpp */; };
+		6F2AC4682C64105F00C8357F /* list.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01A2B95E37300C8357F /* list.cc */; };
+		6F2AC4692C64105F00C8357F /* sysmenu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04B2B95E37400C8357F /* sysmenu.cc */; };
+		6F2AC46A2C64105F00C8357F /* recorder_ring.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */; };
+		6F2AC46B2C64105F00C8357F /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0432B95E37400C8357F /* tests.cc */; };
+		6F2AC46C2C64105F00C8357F /* library.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528CA2B9C0F4E00C8357F /* library.cc */; };
+		6F2AC46D2C64105F00C8357F /* HelpFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA6C2B95ED9600C8357F /* HelpFont.cc */; };
+		6F2AC46E2C64105F00C8357F /* runtime.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03C2B95E37400C8357F /* runtime.cc */; };
+		6F2AC4702C64105F00C8357F /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */; };
+		6F2AC4712C64105F00C8357F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F75CED82BA1B7D300C8357F /* WebKit.framework */; };
+		6F2AC4722C64105F00C8357F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FB5A8802B97F50E00C8357F /* AVFoundation.framework */; };
+		6F2AC4742C64105F00C8357F /* ignored_help.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFF62B95E37200C8357F /* ignored_help.csv */; };
+		6F2AC4752C64105F00C8357F /* keyboard-dm42.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FCEDA542B95E60700C8357F /* keyboard-dm42.png */; };
+		6F2AC4762C64105F00C8357F /* keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775102B97966E00C8357F /* keyboard.png */; };
+		6F2AC4772C64105F00C8357F /* characters.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
+		6F2AC4782C64105F00C8357F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */; };
+		6F2AC4792C64105F00C8357F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29751C72B9BB000025E6 /* Assets.xcassets */; };
+		6F2AC47A2C64105F00C8357F /* constants.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
+		6F2AC47B2C64105F00C8357F /* recorder.spec in Resources */ = {isa = PBXBuildFile; fileRef = 6FCED4582B95E4C000C8357F /* recorder.spec */; };
+		6F2AC47C2C64105F00C8357F /* keyboard-db48x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FCEDA552B95E60700C8357F /* keyboard-db48x.png */; };
+		6F2AC47D2C64105F00C8357F /* library.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
+		6F2AC47E2C64105F00C8357F /* db48x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
+		6F2AC47F2C64105F00C8357F /* db50x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
+		6F2AC4802C64105F00C8357F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29721C72B9BB000025E6 /* Main.storyboard */; };
+		6F2AC4812C64105F00C8357F /* errors.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE22B95E37200C8357F /* errors.tbl */; };
+		6F2AC4822C64105F00C8357F /* ignored_menus.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F01C2B95E37300C8357F /* ignored_menus.csv */; };
+		6F2AC4832C64105F00C8357F /* decimal-pi.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */; };
+		6F2AC4842C64105F00C8357F /* equations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F2AC4852C64105F00C8357F /* ids.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F0382B95E37400C8357F /* ids.tbl */; };
+		6F2AC4862C64105F00C8357F /* Demo.48S in Resources */ = {isa = PBXBuildFile; fileRef = 6FF8739B2B97BA1E00C8357F /* Demo.48S */; };
+		6F2AC4872C64105F00C8357F /* Test.48S in Resources */ = {isa = PBXBuildFile; fileRef = 6FF8739A2B97BA1E00C8357F /* Test.48S */; };
+		6F2AC4892C64105F00C8357F /* DB48X startup screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F4519A92BBC80A600C8357F /* DB48X startup screen.png */; };
+		6F2AC48A2C64105F00C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
+		6F2AC48B2C64105F00C8357F /* units.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
+		6F2AC48D2C64105F00C8357F /* db48x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
+		6F2AC48E2C64105F00C8357F /* db50x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
+		6F2AC48F2C64105F00C8357F /* shifts.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35B2C63640C00C8357F /* shifts.bmp */; };
+		6F2AC4912C64105F00C8357F /* equations.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F2AC4922C64105F00C8357F /* library.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
+		6F2AC4932C64105F00C8357F /* characters.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
+		6F2AC4942C64105F00C8357F /* units.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
+		6F2AC4952C64105F00C8357F /* constants.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
+		6F2AC4972C64105F00C8357F /* Test.48S in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FF8739A2B97BA1E00C8357F /* Test.48S */; };
+		6F2AC4982C64105F00C8357F /* Demo.48S in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FF8739B2B97BA1E00C8357F /* Demo.48S */; };
+		6F2AC49A2C64105F00C8357F /* IsentropicFlow.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A82C63E4F900C8357F /* IsentropicFlow.bmp */; };
+		6F2AC49B2C64105F00C8357F /* BernouilliEquation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3912C63E4F800C8357F /* BernouilliEquation.bmp */; };
+		6F2AC49C2C64105F00C8357F /* bat-and-jet.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39D2C63E4F900C8357F /* bat-and-jet.bmp */; };
+		6F2AC49D2C64105F00C8357F /* HookesLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3902C63E4F800C8357F /* HookesLaw.bmp */; };
+		6F2AC49E2C64105F00C8357F /* SphericalReflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AC2C63E4F900C8357F /* SphericalReflection.bmp */; };
+		6F2AC49F2C64105F00C8357F /* RLTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B62C63E4FA00C8357F /* RLTransient.bmp */; };
+		6F2AC4A02C64105F00C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3672C63640C00C8357F /* definition_of_e.bmp */; };
+		6F2AC4A12C64105F00C8357F /* NMOSTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C72C63E4FB00C8357F /* NMOSTransistor.bmp */; };
+		6F2AC4A22C64105F00C8357F /* Triangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C92C63E4FB00C8357F /* Triangle.bmp */; };
+		6F2AC4A32C64105F00C8357F /* 7-display-modes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3622C63640C00C8357F /* 7-display-modes.bmp */; };
+		6F2AC4A42C64105F00C8357F /* 8-help.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3632C63640C00C8357F /* 8-help.bmp */; };
+		6F2AC4A52C64105F00C8357F /* ThinLens.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C82C63E4FB00C8357F /* ThinLens.bmp */; };
+		6F2AC4A62C64105F00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35C2C63640C00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC4A72C64105F00C8357F /* SimplePendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C32C63E4FB00C8357F /* SimplePendulum.bmp */; };
+		6F2AC4A82C64105F00C8357F /* MassSpringSystem.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C22C63E4FB00C8357F /* MassSpringSystem.bmp */; };
+		6F2AC4A92C64105F00C8357F /* ElasticBuckling.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CC2C63E4FB00C8357F /* ElasticBuckling.bmp */; };
+		6F2AC4AA2C64105F00C8357F /* PressureAtDepth.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3822C63E4F700C8357F /* PressureAtDepth.bmp */; };
+		6F2AC4AB2C64105F00C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A72C63E4F900C8357F /* stack-and-menus.bmp */; };
+		6F2AC4AC2C64105F00C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A12C63E4F900C8357F /* 4-basic-math.bmp */; };
+		6F2AC4AD2C64105F00C8357F /* Conduction+Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3842C63E4F700C8357F /* Conduction+Convection.bmp */; };
+		6F2AC4AE2C64105F00C8357F /* CantileverDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39B2C63E4F800C8357F /* CantileverDeflection.bmp */; };
+		6F2AC4AF2C64105F00C8357F /* RCTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CB2C63E4FB00C8357F /* RCTransient.bmp */; };
+		6F2AC4B02C64105F00C8357F /* SeriesAndParallelR.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3942C63E4F800C8357F /* SeriesAndParallelR.bmp */; };
+		6F2AC4B12C64105F00C8357F /* Cylinder.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C42C63E4FB00C8357F /* Cylinder.bmp */; };
+		6F2AC4B22C64105F00C8357F /* ThermalExpansion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38C2C63E4F800C8357F /* ThermalExpansion.bmp */; };
+		6F2AC4B32C64105F00C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CA2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp */; };
+		6F2AC4B42C64105F00C8357F /* Circle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BA2C63E4FA00C8357F /* Circle.bmp */; };
+		6F2AC4B52C64105F00C8357F /* JFETs.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AF2C63E4F900C8357F /* JFETs.bmp */; };
+		6F2AC4B62C64105F00C8357F /* LawOfRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3922C63E4F800C8357F /* LawOfRefraction.bmp */; };
+		6F2AC4B72C64105F00C8357F /* CantileverShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */; };
+		6F2AC4B82C64105F00C8357F /* BrewstersLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B82C63E4FA00C8357F /* BrewstersLaw.bmp */; };
+		6F2AC4B92C64105F00C8357F /* CantileverMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B52C63E4FA00C8357F /* CantileverMoment.bmp */; };
+		6F2AC4BA2C64105F00C8357F /* CircularRing.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3882C63E4F700C8357F /* CircularRing.bmp */; };
+		6F2AC4BB2C64105F00C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AA2C63E4F900C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC4BC2C64105F00C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3612C63640C00C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC4BD2C64105F00C8357F /* Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38F2C63E4F800C8357F /* Convection.bmp */; };
+		6F2AC4BE2C64105F00C8357F /* StressOnAnElement.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A52C63E4F900C8357F /* StressOnAnElement.bmp */; };
+		6F2AC4BF2C64105F00C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36B2C63640C00C8357F /* stack-and-menus.bmp */; };
+		6F2AC4C02C64105F00C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3662C63640C00C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC4C12C64105F00C8357F /* EccentricColumns.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C02C63E4FA00C8357F /* EccentricColumns.bmp */; };
+		6F2AC4C22C64105F00C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3692C63640C00C8357F /* imaginary_unit.bmp */; };
+		6F2AC4C32C64105F00C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BF2C63E4FA00C8357F /* 10-complex.bmp */; };
+		6F2AC4C42C64105F00C8357F /* SeriesAndParallelC.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A02C63E4F900C8357F /* SeriesAndParallelC.bmp */; };
+		6F2AC4C52C64105F00C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39E2C63E4F900C8357F /* imaginary_unit.bmp */; };
+		6F2AC4C62C64105F00C8357F /* Conduction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A32C63E4F900C8357F /* Conduction.bmp */; };
+		6F2AC4C72C64105F00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3602C63640C00C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC4C82C64105F00C8357F /* Ellipse.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3982C63E4F800C8357F /* Ellipse.bmp */; };
+		6F2AC4C92C64105F00C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35E2C63640C00C8357F /* 3-fractions.bmp */; };
+		6F2AC4CA2C64105F00C8357F /* RLCCurrentDelay.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39F2C63E4F900C8357F /* RLCCurrentDelay.bmp */; };
+		6F2AC4CB2C64105F00C8357F /* ToroidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AE2C63E4F900C8357F /* ToroidInductance.bmp */; };
+		6F2AC4CC2C64105F00C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A42C63E4F900C8357F /* definition_of_pi.bmp */; };
+		6F2AC4CD2C64105F00C8357F /* 1DElastiCollisions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3852C63E4F700C8357F /* 1DElastiCollisions.bmp */; };
+		6F2AC4CE2C64105F00C8357F /* Cone.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39C2C63E4F900C8357F /* Cone.bmp */; };
+		6F2AC4CF2C64105F00C8357F /* ProjectileMotion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38D2C63E4F800C8357F /* ProjectileMotion.bmp */; };
+		6F2AC4D02C64105F00C8357F /* MohrsCircle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C62C63E4FB00C8357F /* MohrsCircle.bmp */; };
+		6F2AC4D12C64105F00C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3682C63640C00C8357F /* definition_of_pi.bmp */; };
+		6F2AC4D22C64105F00C8357F /* RegularPolygon.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3932C63E4F800C8357F /* RegularPolygon.bmp */; };
+		6F2AC4D32C64105F00C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39A2C63E4F800C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC4D42C64105F00C8357F /* StraightWire.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A62C63E4F900C8357F /* StraightWire.bmp */; };
+		6F2AC4D52C64105F00C8357F /* ForceBetweenWires.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37E2C63E4F700C8357F /* ForceBetweenWires.bmp */; };
+		6F2AC4D62C64105F00C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35F2C63640C00C8357F /* 4-basic-math.bmp */; };
+		6F2AC4D72C64105F00C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3952C63E4F800C8357F /* 9-angles.bmp */; };
+		6F2AC4D82C64105F00C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */; };
+		6F2AC4D92C64105F00C8357F /* BipolarTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BB2C63E4FA00C8357F /* BipolarTransistor.bmp */; };
+		6F2AC4DA2C64105F00C8357F /* SimpleShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BD2C63E4FA00C8357F /* SimpleShear.bmp */; };
+		6F2AC4DB2C64105F00C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3642C63640C00C8357F /* 9-angles.bmp */; };
+		6F2AC4DC2C64105F00C8357F /* SphericalRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3962C63E4F800C8357F /* SphericalRefraction.bmp */; };
+		6F2AC4DD2C64105F00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AB2C63E4F900C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC4DE2C64105F00C8357F /* VoltageDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3892C63E4F700C8357F /* VoltageDivider.bmp */; };
+		6F2AC4DF2C64105F00C8357F /* Sphere.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B42C63E4FA00C8357F /* Sphere.bmp */; };
+		6F2AC4E02C64105F00C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A92C63E4F900C8357F /* NewtonGravitation.bmp */; };
+		6F2AC4E12C64105F00C8357F /* TorsionalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B12C63E4FA00C8357F /* TorsionalPendulum.bmp */; };
+		6F2AC4E22C64105F00C8357F /* FlowWIthLosses.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C12C63E4FA00C8357F /* FlowWIthLosses.bmp */; };
+		6F2AC4E32C64105F00C8357F /* ShearStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38A2C63E4F700C8357F /* ShearStress.bmp */; };
+		6F2AC4E42C64105F00C8357F /* MagneticFieldInToroid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A22C63E4F900C8357F /* MagneticFieldInToroid.bmp */; };
+		6F2AC4E52C64105F00C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3652C63640C00C8357F /* 10-complex.bmp */; };
+		6F2AC4E62C64105F00C8357F /* Rectangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38E2C63E4F800C8357F /* Rectangle.bmp */; };
+		6F2AC4E72C64105F00C8357F /* FlowInFullPipes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */; };
+		6F2AC4E82C64105F00C8357F /* CriticalAngle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3812C63E4F700C8357F /* CriticalAngle.bmp */; };
+		6F2AC4E92C64105F00C8357F /* CurrentDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B02C63E4FA00C8357F /* CurrentDivider.bmp */; };
+		6F2AC4EA2C64105F00C8357F /* SolenoidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37F2C63E4F700C8357F /* SolenoidInductance.bmp */; };
+		6F2AC4EB2C64105F00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B32C63E4FA00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC4EC2C64105F00C8357F /* CylindricalCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C52C63E4FB00C8357F /* CylindricalCapacitor.bmp */; };
+		6F2AC4ED2C64105F00C8357F /* SimpleMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3802C63E4F700C8357F /* SimpleMoment.bmp */; };
+		6F2AC4EE2C64105F00C8357F /* PNStepJunction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BE2C63E4FA00C8357F /* PNStepJunction.bmp */; };
+		6F2AC4EF2C64105F00C8357F /* BlackBodyRadiation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B92C63E4FA00C8357F /* BlackBodyRadiation.bmp */; };
+		6F2AC4F02C64105F00C8357F /* Parallelepiped.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CD2C63E4FB00C8357F /* Parallelepiped.bmp */; };
+		6F2AC4F12C64105F00C8357F /* CantileverSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3862C63E4F700C8357F /* CantileverSlope.bmp */; };
+		6F2AC4F22C64105F00C8357F /* NormalStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38B2C63E4F800C8357F /* NormalStress.bmp */; };
+		6F2AC4F32C64105F00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AD2C63E4F900C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC4F42C64105F00C8357F /* ConicalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3832C63E4F700C8357F /* ConicalPendulum.bmp */; };
+		6F2AC4F52C64105F00C8357F /* PlateCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3992C63E4F800C8357F /* PlateCapacitor.bmp */; };
+		6F2AC4F62C64105F00C8357F /* SimpleDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B22C63E4FA00C8357F /* SimpleDeflection.bmp */; };
+		6F2AC4F72C64105F00C8357F /* SimpleSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3872C63E4F700C8357F /* SimpleSlope.bmp */; };
+		6F2AC4F82C64105F00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35D2C63640C00C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC4F92C64105F00C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3972C63E4F800C8357F /* definition_of_e.bmp */; };
+		6F2AC4FA2C64105F00C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36A2C63640C00C8357F /* NewtonGravitation.bmp */; };
+		6F2AC4FB2C64105F00C8357F /* SeriesAndParallelL.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B72C63E4FA00C8357F /* SeriesAndParallelL.bmp */; };
+		6F2AC5032C6410F700C8357F /* graphics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01F2B95E37300C8357F /* graphics.cc */; };
+		6F2AC5042C6410F700C8357F /* Screen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDE2B95DDF100C8357F /* Screen.cpp */; };
+		6F2AC5052C6410F700C8357F /* logical.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0172B95E37300C8357F /* logical.cc */; };
+		6F2AC5062C6410F700C8357F /* fraction.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00B2B95E37300C8357F /* fraction.cc */; };
+		6F2AC5072C6410F700C8357F /* conditionals.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFD2B95E37200C8357F /* conditionals.cc */; };
+		6F2AC5082C6410F700C8357F /* font.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0122B95E37300C8357F /* font.cc */; };
+		6F2AC5092C6410F700C8357F /* text.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE42B95E37200C8357F /* text.cc */; };
+		6F2AC50A2C6410F700C8357F /* catalog.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA962B95F28F00C8357F /* catalog.cc */; };
+		6F2AC50B2C6410F700C8357F /* integer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00F2B95E37300C8357F /* integer.cc */; };
+		6F2AC50C2C6410F700C8357F /* expression.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFB2B95E37200C8357F /* expression.cc */; };
+		6F2AC50D2C6410F700C8357F /* compare.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0152B95E37300C8357F /* compare.cc */; };
+		6F2AC50E2C6410F700C8357F /* stack.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE82B95E37200C8357F /* stack.cc */; };
+		6F2AC50F2C6410F700C8357F /* solve.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0452B95E37400C8357F /* solve.cc */; };
+		6F2AC5102C6410F700C8357F /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29701C72B9BB000025E6 /* ViewController.mm */; };
+		6F2AC5112C6410F700C8357F /* StackFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA5C2B95ED9600C8357F /* StackFont.cc */; };
+		6F2AC5122C6410F700C8357F /* plot.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFF2B95E37200C8357F /* plot.cc */; };
+		6F2AC5132C6410F700C8357F /* command.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0302B95E37400C8357F /* command.cc */; };
+		6F2AC5142C6410F700C8357F /* characters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FD555822B995F8800C8357F /* characters.cc */; };
+		6F2AC5152C6410F700C8357F /* integrate.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0532B95E37400C8357F /* integrate.cc */; };
+		6F2AC5162C6410F700C8357F /* variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0242B95E37300C8357F /* variables.cc */; };
+		6F2AC5172C6410F700C8357F /* program.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0182B95E37300C8357F /* program.cc */; };
+		6F2AC5182C6410F700C8357F /* algebraic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0142B95E37300C8357F /* algebraic.cc */; };
+		6F2AC5192C6410F700C8357F /* unit.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0412B95E37400C8357F /* unit.cc */; };
+		6F2AC51A2C6410F700C8357F /* decimal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFEC2B95E37200C8357F /* decimal.cc */; };
+		6F2AC51B2C6410F700C8357F /* ScreenView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FBC10372BC0482F00C8357F /* ScreenView.mm */; };
+		6F2AC51C2C6410F700C8357F /* target.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04C2B95E37400C8357F /* target.cc */; };
+		6F2AC51D2C6410F700C8357F /* bignum.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0542B95E37400C8357F /* bignum.cc */; };
+		6F2AC51E2C6410F700C8357F /* complex.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0322B95E37400C8357F /* complex.cc */; };
+		6F2AC51F2C6410F700C8357F /* grob.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03B2B95E37400C8357F /* grob.cc */; };
+		6F2AC5202C6410F700C8357F /* loops.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFE2B95E37200C8357F /* loops.cc */; };
+		6F2AC5212C6410F700C8357F /* functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFA2B95E37200C8357F /* functions.cc */; };
+		6F2AC5222C6410F700C8357F /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6F75CED62BA1B23800C8357F /* HelpViewController.m */; };
+		6F2AC5232C6410F700C8357F /* array.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFFC2B95E37200C8357F /* array.cc */; };
+		6F2AC5242C6410F700C8357F /* HighlightMarkerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */; };
+		6F2AC5252C6410F700C8357F /* user_interface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0442B95E37400C8357F /* user_interface.cc */; };
+		6F2AC5262C6410F700C8357F /* locals.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0002B95E37200C8357F /* locals.cc */; };
+		6F2AC5272C6410F700C8357F /* arithmetic.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0372B95E37400C8357F /* arithmetic.cc */; };
+		6F2AC5282C6410F700C8357F /* polynomial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F18F27D2C2DAC3400C8357F /* polynomial.cc */; };
+		6F2AC5292C6410F700C8357F /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0482B95E37400C8357F /* main.cc */; };
+		6F2AC52A2C6410F700C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
+		6F2AC52B2C6410F700C8357F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D296D1C72B9BB000025E6 /* AppDelegate.mm */; };
+		6F2AC52C2C6410F700C8357F /* renderer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F02E2B95E37300C8357F /* renderer.cc */; };
+		6F2AC52D2C6410F700C8357F /* constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01D2B95E37300C8357F /* constants.cc */; };
+		6F2AC52E2C6410F700C8357F /* stats.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04F2B95E37400C8357F /* stats.cc */; };
+		6F2AC52F2C6410F700C8357F /* hwfp.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03A2B95E37400C8357F /* hwfp.cc */; };
+		6F2AC5302C6410F700C8357F /* files.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00C2B95E37300C8357F /* files.cc */; };
+		6F2AC5312C6410F700C8357F /* settings.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0502B95E37400C8357F /* settings.cc */; };
+		6F2AC5322C6410F700C8357F /* tag.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03E2B95E37400C8357F /* tag.cc */; };
+		6F2AC5332C6410F700C8357F /* ReducedFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA902B95EDDF00C8357F /* ReducedFont.cc */; };
+		6F2AC5342C6410F700C8357F /* datetime.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0392B95E37400C8357F /* datetime.cc */; };
+		6F2AC5352C6410F700C8357F /* file.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0512B95E37400C8357F /* file.cc */; };
+		6F2AC5362C6410F700C8357F /* EditorFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA722B95ED9600C8357F /* EditorFont.cc */; };
+		6F2AC5372C6410F700C8357F /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F00A2B95E37300C8357F /* util.cc */; };
+		6F2AC5382C6410F700C8357F /* symbol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0252B95E37300C8357F /* symbol.cc */; };
+		6F2AC5392C6410F700C8357F /* recorder.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF432B95E4BE00C8357F /* recorder.c */; };
+		6F2AC53A2C6410F700C8357F /* Keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */; };
+		6F2AC53B2C6410F700C8357F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA942B95F23600C8357F /* main.mm */; };
+		6F2AC53C2C6410F700C8357F /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FB5A8832B98035600C8357F /* KeyboardView.m */; };
+		6F2AC53D2C6410F700C8357F /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6FD3786C2BA727EC00C8357F /* SettingsViewController.m */; };
+		6F2AC53E2C6410F700C8357F /* menu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0422B95E37400C8357F /* menu.cc */; };
+		6F2AC53F2C6410F700C8357F /* comment.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F02C2B95E37300C8357F /* comment.cc */; };
+		6F2AC5402C6410F700C8357F /* object.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE32B95E37200C8357F /* object.cc */; };
+		6F2AC5412C6410F700C8357F /* dmcp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA922B95EE2D00C8357F /* dmcp.cpp */; };
+		6F2AC5422C6410F700C8357F /* list.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01A2B95E37300C8357F /* list.cc */; };
+		6F2AC5432C6410F700C8357F /* sysmenu.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F04B2B95E37400C8357F /* sysmenu.cc */; };
+		6F2AC5442C6410F700C8357F /* recorder_ring.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FCECF4B2B95E4BE00C8357F /* recorder_ring.c */; };
+		6F2AC5452C6410F700C8357F /* tests.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0432B95E37400C8357F /* tests.cc */; };
+		6F2AC5462C6410F700C8357F /* library.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528CA2B9C0F4E00C8357F /* library.cc */; };
+		6F2AC5472C6410F700C8357F /* HelpFont.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FCEDA6C2B95ED9600C8357F /* HelpFont.cc */; };
+		6F2AC5482C6410F700C8357F /* runtime.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F03C2B95E37400C8357F /* runtime.cc */; };
+		6F2AC54A2C6410F700C8357F /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FEF5C6F2BAA151400C8357F /* UniformTypeIdentifiers.framework */; };
+		6F2AC54B2C6410F700C8357F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F75CED82BA1B7D300C8357F /* WebKit.framework */; };
+		6F2AC54C2C6410F700C8357F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FB5A8802B97F50E00C8357F /* AVFoundation.framework */; };
+		6F2AC54E2C6410F700C8357F /* ignored_help.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFF62B95E37200C8357F /* ignored_help.csv */; };
+		6F2AC54F2C6410F700C8357F /* keyboard-dm42.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FCEDA542B95E60700C8357F /* keyboard-dm42.png */; };
+		6F2AC5502C6410F700C8357F /* keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775102B97966E00C8357F /* keyboard.png */; };
+		6F2AC5512C6410F700C8357F /* characters.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
+		6F2AC5522C6410F700C8357F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29771C72B9BB000025E6 /* LaunchScreen.storyboard */; };
+		6F2AC5532C6410F700C8357F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29751C72B9BB000025E6 /* Assets.xcassets */; };
+		6F2AC5542C6410F700C8357F /* constants.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
+		6F2AC5552C6410F700C8357F /* recorder.spec in Resources */ = {isa = PBXBuildFile; fileRef = 6FCED4582B95E4C000C8357F /* recorder.spec */; };
+		6F2AC5562C6410F700C8357F /* keyboard-db48x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FCEDA552B95E60700C8357F /* keyboard-db48x.png */; };
+		6F2AC5572C6410F700C8357F /* library.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
+		6F2AC5582C6410F700C8357F /* db48x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
+		6F2AC5592C6410F700C8357F /* db50x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
+		6F2AC55A2C6410F700C8357F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F9D29721C72B9BB000025E6 /* Main.storyboard */; };
+		6F2AC55B2C6410F700C8357F /* errors.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7EFE22B95E37200C8357F /* errors.tbl */; };
+		6F2AC55C2C6410F700C8357F /* ignored_menus.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F01C2B95E37300C8357F /* ignored_menus.csv */; };
+		6F2AC55D2C6410F700C8357F /* decimal-pi.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */; };
+		6F2AC55E2C6410F700C8357F /* equations.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F2AC55F2C6410F700C8357F /* ids.tbl in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F0382B95E37400C8357F /* ids.tbl */; };
+		6F2AC5602C6410F700C8357F /* Demo.48S in Resources */ = {isa = PBXBuildFile; fileRef = 6FF8739B2B97BA1E00C8357F /* Demo.48S */; };
+		6F2AC5612C6410F700C8357F /* Test.48S in Resources */ = {isa = PBXBuildFile; fileRef = 6FF8739A2B97BA1E00C8357F /* Test.48S */; };
+		6F2AC5632C6410F700C8357F /* DB48X startup screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F4519A92BBC80A600C8357F /* DB48X startup screen.png */; };
+		6F2AC5642C6410F700C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
+		6F2AC5652C6410F700C8357F /* units.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
+		6F2AC5672C6410F700C8357F /* db48x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
+		6F2AC5682C6410F700C8357F /* db50x.md in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
+		6F2AC5692C6410F700C8357F /* shifts.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35B2C63640C00C8357F /* shifts.bmp */; };
+		6F2AC56B2C6410F700C8357F /* equations.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DA2B9C6DD800C8357F /* equations.csv */; };
+		6F2AC56C2C6410F700C8357F /* library.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F4528DB2B9C6DD800C8357F /* library.csv */; };
+		6F2AC56D2C6410F700C8357F /* characters.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
+		6F2AC56E2C6410F700C8357F /* units.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
+		6F2AC56F2C6410F700C8357F /* constants.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
+		6F2AC5712C6410F700C8357F /* Test.48S in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FF8739A2B97BA1E00C8357F /* Test.48S */; };
+		6F2AC5722C6410F700C8357F /* Demo.48S in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FF8739B2B97BA1E00C8357F /* Demo.48S */; };
+		6F2AC5742C6410F700C8357F /* IsentropicFlow.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A82C63E4F900C8357F /* IsentropicFlow.bmp */; };
+		6F2AC5752C6410F700C8357F /* BernouilliEquation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3912C63E4F800C8357F /* BernouilliEquation.bmp */; };
+		6F2AC5762C6410F700C8357F /* bat-and-jet.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39D2C63E4F900C8357F /* bat-and-jet.bmp */; };
+		6F2AC5772C6410F700C8357F /* HookesLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3902C63E4F800C8357F /* HookesLaw.bmp */; };
+		6F2AC5782C6410F700C8357F /* SphericalReflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AC2C63E4F900C8357F /* SphericalReflection.bmp */; };
+		6F2AC5792C6410F700C8357F /* RLTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B62C63E4FA00C8357F /* RLTransient.bmp */; };
+		6F2AC57A2C6410F700C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3672C63640C00C8357F /* definition_of_e.bmp */; };
+		6F2AC57B2C6410F700C8357F /* NMOSTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C72C63E4FB00C8357F /* NMOSTransistor.bmp */; };
+		6F2AC57C2C6410F700C8357F /* Triangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C92C63E4FB00C8357F /* Triangle.bmp */; };
+		6F2AC57D2C6410F700C8357F /* 7-display-modes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3622C63640C00C8357F /* 7-display-modes.bmp */; };
+		6F2AC57E2C6410F700C8357F /* 8-help.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3632C63640C00C8357F /* 8-help.bmp */; };
+		6F2AC57F2C6410F700C8357F /* ThinLens.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C82C63E4FB00C8357F /* ThinLens.bmp */; };
+		6F2AC5802C6410F700C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35C2C63640C00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC5812C6410F700C8357F /* SimplePendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C32C63E4FB00C8357F /* SimplePendulum.bmp */; };
+		6F2AC5822C6410F700C8357F /* MassSpringSystem.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C22C63E4FB00C8357F /* MassSpringSystem.bmp */; };
+		6F2AC5832C6410F700C8357F /* ElasticBuckling.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CC2C63E4FB00C8357F /* ElasticBuckling.bmp */; };
+		6F2AC5842C6410F700C8357F /* PressureAtDepth.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3822C63E4F700C8357F /* PressureAtDepth.bmp */; };
+		6F2AC5852C6410F700C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A72C63E4F900C8357F /* stack-and-menus.bmp */; };
+		6F2AC5862C6410F700C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A12C63E4F900C8357F /* 4-basic-math.bmp */; };
+		6F2AC5872C6410F700C8357F /* Conduction+Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3842C63E4F700C8357F /* Conduction+Convection.bmp */; };
+		6F2AC5882C6410F700C8357F /* CantileverDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39B2C63E4F800C8357F /* CantileverDeflection.bmp */; };
+		6F2AC5892C6410F700C8357F /* RCTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CB2C63E4FB00C8357F /* RCTransient.bmp */; };
+		6F2AC58A2C6410F700C8357F /* SeriesAndParallelR.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3942C63E4F800C8357F /* SeriesAndParallelR.bmp */; };
+		6F2AC58B2C6410F700C8357F /* Cylinder.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C42C63E4FB00C8357F /* Cylinder.bmp */; };
+		6F2AC58C2C6410F700C8357F /* ThermalExpansion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38C2C63E4F800C8357F /* ThermalExpansion.bmp */; };
+		6F2AC58D2C6410F700C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CA2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp */; };
+		6F2AC58E2C6410F700C8357F /* Circle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BA2C63E4FA00C8357F /* Circle.bmp */; };
+		6F2AC58F2C6410F700C8357F /* JFETs.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AF2C63E4F900C8357F /* JFETs.bmp */; };
+		6F2AC5902C6410F700C8357F /* LawOfRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3922C63E4F800C8357F /* LawOfRefraction.bmp */; };
+		6F2AC5912C6410F700C8357F /* CantileverShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */; };
+		6F2AC5922C6410F700C8357F /* BrewstersLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B82C63E4FA00C8357F /* BrewstersLaw.bmp */; };
+		6F2AC5932C6410F700C8357F /* CantileverMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B52C63E4FA00C8357F /* CantileverMoment.bmp */; };
+		6F2AC5942C6410F700C8357F /* CircularRing.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3882C63E4F700C8357F /* CircularRing.bmp */; };
+		6F2AC5952C6410F700C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AA2C63E4F900C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC5962C6410F700C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3612C63640C00C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC5972C6410F700C8357F /* Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38F2C63E4F800C8357F /* Convection.bmp */; };
+		6F2AC5982C6410F700C8357F /* StressOnAnElement.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A52C63E4F900C8357F /* StressOnAnElement.bmp */; };
+		6F2AC5992C6410F700C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36B2C63640C00C8357F /* stack-and-menus.bmp */; };
+		6F2AC59A2C6410F700C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3662C63640C00C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC59B2C6410F700C8357F /* EccentricColumns.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C02C63E4FA00C8357F /* EccentricColumns.bmp */; };
+		6F2AC59C2C6410F700C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3692C63640C00C8357F /* imaginary_unit.bmp */; };
+		6F2AC59D2C6410F700C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BF2C63E4FA00C8357F /* 10-complex.bmp */; };
+		6F2AC59E2C6410F700C8357F /* SeriesAndParallelC.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A02C63E4F900C8357F /* SeriesAndParallelC.bmp */; };
+		6F2AC59F2C6410F700C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39E2C63E4F900C8357F /* imaginary_unit.bmp */; };
+		6F2AC5A02C6410F700C8357F /* Conduction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A32C63E4F900C8357F /* Conduction.bmp */; };
+		6F2AC5A12C6410F700C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3602C63640C00C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC5A22C6410F700C8357F /* Ellipse.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3982C63E4F800C8357F /* Ellipse.bmp */; };
+		6F2AC5A32C6410F700C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35E2C63640C00C8357F /* 3-fractions.bmp */; };
+		6F2AC5A42C6410F700C8357F /* RLCCurrentDelay.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39F2C63E4F900C8357F /* RLCCurrentDelay.bmp */; };
+		6F2AC5A52C6410F700C8357F /* ToroidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AE2C63E4F900C8357F /* ToroidInductance.bmp */; };
+		6F2AC5A62C6410F700C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A42C63E4F900C8357F /* definition_of_pi.bmp */; };
+		6F2AC5A72C6410F700C8357F /* 1DElastiCollisions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3852C63E4F700C8357F /* 1DElastiCollisions.bmp */; };
+		6F2AC5A82C6410F700C8357F /* Cone.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39C2C63E4F900C8357F /* Cone.bmp */; };
+		6F2AC5A92C6410F700C8357F /* ProjectileMotion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38D2C63E4F800C8357F /* ProjectileMotion.bmp */; };
+		6F2AC5AA2C6410F700C8357F /* MohrsCircle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C62C63E4FB00C8357F /* MohrsCircle.bmp */; };
+		6F2AC5AB2C6410F700C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3682C63640C00C8357F /* definition_of_pi.bmp */; };
+		6F2AC5AC2C6410F700C8357F /* RegularPolygon.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3932C63E4F800C8357F /* RegularPolygon.bmp */; };
+		6F2AC5AD2C6410F700C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39A2C63E4F800C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC5AE2C6410F700C8357F /* StraightWire.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A62C63E4F900C8357F /* StraightWire.bmp */; };
+		6F2AC5AF2C6410F700C8357F /* ForceBetweenWires.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37E2C63E4F700C8357F /* ForceBetweenWires.bmp */; };
+		6F2AC5B02C6410F700C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35F2C63640C00C8357F /* 4-basic-math.bmp */; };
+		6F2AC5B12C6410F700C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3952C63E4F800C8357F /* 9-angles.bmp */; };
+		6F2AC5B22C6410F700C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */; };
+		6F2AC5B32C6410F700C8357F /* BipolarTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BB2C63E4FA00C8357F /* BipolarTransistor.bmp */; };
+		6F2AC5B42C6410F700C8357F /* SimpleShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BD2C63E4FA00C8357F /* SimpleShear.bmp */; };
+		6F2AC5B52C6410F700C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3642C63640C00C8357F /* 9-angles.bmp */; };
+		6F2AC5B62C6410F700C8357F /* SphericalRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3962C63E4F800C8357F /* SphericalRefraction.bmp */; };
+		6F2AC5B72C6410F700C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AB2C63E4F900C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC5B82C6410F700C8357F /* VoltageDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3892C63E4F700C8357F /* VoltageDivider.bmp */; };
+		6F2AC5B92C6410F700C8357F /* Sphere.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B42C63E4FA00C8357F /* Sphere.bmp */; };
+		6F2AC5BA2C6410F700C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A92C63E4F900C8357F /* NewtonGravitation.bmp */; };
+		6F2AC5BB2C6410F700C8357F /* TorsionalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B12C63E4FA00C8357F /* TorsionalPendulum.bmp */; };
+		6F2AC5BC2C6410F700C8357F /* FlowWIthLosses.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C12C63E4FA00C8357F /* FlowWIthLosses.bmp */; };
+		6F2AC5BD2C6410F700C8357F /* ShearStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38A2C63E4F700C8357F /* ShearStress.bmp */; };
+		6F2AC5BE2C6410F700C8357F /* MagneticFieldInToroid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A22C63E4F900C8357F /* MagneticFieldInToroid.bmp */; };
+		6F2AC5BF2C6410F700C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3652C63640C00C8357F /* 10-complex.bmp */; };
+		6F2AC5C02C6410F700C8357F /* Rectangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38E2C63E4F800C8357F /* Rectangle.bmp */; };
+		6F2AC5C12C6410F700C8357F /* FlowInFullPipes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */; };
+		6F2AC5C22C6410F700C8357F /* CriticalAngle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3812C63E4F700C8357F /* CriticalAngle.bmp */; };
+		6F2AC5C32C6410F700C8357F /* CurrentDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B02C63E4FA00C8357F /* CurrentDivider.bmp */; };
+		6F2AC5C42C6410F700C8357F /* SolenoidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37F2C63E4F700C8357F /* SolenoidInductance.bmp */; };
+		6F2AC5C52C6410F700C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B32C63E4FA00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC5C62C6410F700C8357F /* CylindricalCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C52C63E4FB00C8357F /* CylindricalCapacitor.bmp */; };
+		6F2AC5C72C6410F700C8357F /* SimpleMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3802C63E4F700C8357F /* SimpleMoment.bmp */; };
+		6F2AC5C82C6410F700C8357F /* PNStepJunction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BE2C63E4FA00C8357F /* PNStepJunction.bmp */; };
+		6F2AC5C92C6410F700C8357F /* BlackBodyRadiation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B92C63E4FA00C8357F /* BlackBodyRadiation.bmp */; };
+		6F2AC5CA2C6410F700C8357F /* Parallelepiped.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CD2C63E4FB00C8357F /* Parallelepiped.bmp */; };
+		6F2AC5CB2C6410F700C8357F /* CantileverSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3862C63E4F700C8357F /* CantileverSlope.bmp */; };
+		6F2AC5CC2C6410F700C8357F /* NormalStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38B2C63E4F800C8357F /* NormalStress.bmp */; };
+		6F2AC5CD2C6410F700C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AD2C63E4F900C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC5CE2C6410F700C8357F /* ConicalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3832C63E4F700C8357F /* ConicalPendulum.bmp */; };
+		6F2AC5CF2C6410F700C8357F /* PlateCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3992C63E4F800C8357F /* PlateCapacitor.bmp */; };
+		6F2AC5D02C6410F700C8357F /* SimpleDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B22C63E4FA00C8357F /* SimpleDeflection.bmp */; };
+		6F2AC5D12C6410F700C8357F /* SimpleSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3872C63E4F700C8357F /* SimpleSlope.bmp */; };
+		6F2AC5D22C6410F700C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35D2C63640C00C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC5D32C6410F700C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3972C63E4F800C8357F /* definition_of_e.bmp */; };
+		6F2AC5D42C6410F700C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36A2C63640C00C8357F /* NewtonGravitation.bmp */; };
+		6F2AC5D52C6410F700C8357F /* SeriesAndParallelL.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B72C63E4FA00C8357F /* SeriesAndParallelL.bmp */; };
+		6F2AC5DC2C64170B00C8357F /* DB40X-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6F2AC5DB2C64170B00C8357F /* DB40X-Info.plist */; };
+		6F2AC5DE2C64171A00C8357F /* DB50X-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6F2AC5DD2C64171A00C8357F /* DB50X-Info.plist */; };
+		6F2AC5E32C6418CC00C8357F /* stm32_program.ld in Resources */ = {isa = PBXBuildFile; fileRef = 6F2AC5E12C6418CC00C8357F /* stm32_program.ld */; };
+		6F2AC5E42C6418CC00C8357F /* stm32_program.ld in Resources */ = {isa = PBXBuildFile; fileRef = 6F2AC5E12C6418CC00C8357F /* stm32_program.ld */; };
+		6F2AC5E92C64195700C8357F /* stm32_program.ld in Resources */ = {isa = PBXBuildFile; fileRef = 6F2AC5E72C64195700C8357F /* stm32_program.ld */; };
 		6F4519AA2BBC80A600C8357F /* DB48X startup screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F4519A92BBC80A600C8357F /* DB48X startup screen.png */; };
 		6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
 		6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
@@ -178,7 +591,6 @@
 		6FE7F06E2B95E37400C8357F /* ignored_menus.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F01C2B95E37300C8357F /* ignored_menus.csv */; };
 		6FE7F06F2B95E37400C8357F /* constants.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01D2B95E37300C8357F /* constants.cc */; };
 		6FE7F0702B95E37400C8357F /* graphics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F01F2B95E37300C8357F /* graphics.cc */; };
-		6FE7F0712B95E37400C8357F /* stm32_program.ld in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7F0232B95E37300C8357F /* stm32_program.ld */; };
 		6FE7F0722B95E37400C8357F /* variables.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0242B95E37300C8357F /* variables.cc */; };
 		6FE7F0732B95E37400C8357F /* symbol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F0252B95E37300C8357F /* symbol.cc */; };
 		6FE7F0742B95E37400C8357F /* comment.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6FE7F02C2B95E37300C8357F /* comment.cc */; };
@@ -341,6 +753,294 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F2AC48C2C64105F00C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = help;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC48D2C64105F00C8357F /* db48x.md in CopyFiles */,
+				6F2AC48E2C64105F00C8357F /* db50x.md in CopyFiles */,
+				6F2AC48F2C64105F00C8357F /* shifts.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC4902C64105F00C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = config;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC4912C64105F00C8357F /* equations.csv in CopyFiles */,
+				6F2AC4922C64105F00C8357F /* library.csv in CopyFiles */,
+				6F2AC4932C64105F00C8357F /* characters.csv in CopyFiles */,
+				6F2AC4942C64105F00C8357F /* units.csv in CopyFiles */,
+				6F2AC4952C64105F00C8357F /* constants.csv in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC4962C64105F00C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = state;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC4972C64105F00C8357F /* Test.48S in CopyFiles */,
+				6F2AC4982C64105F00C8357F /* Demo.48S in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC4992C64105F00C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = help/img;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC49A2C64105F00C8357F /* IsentropicFlow.bmp in CopyFiles */,
+				6F2AC49B2C64105F00C8357F /* BernouilliEquation.bmp in CopyFiles */,
+				6F2AC49C2C64105F00C8357F /* bat-and-jet.bmp in CopyFiles */,
+				6F2AC49D2C64105F00C8357F /* HookesLaw.bmp in CopyFiles */,
+				6F2AC49E2C64105F00C8357F /* SphericalReflection.bmp in CopyFiles */,
+				6F2AC49F2C64105F00C8357F /* RLTransient.bmp in CopyFiles */,
+				6F2AC4A02C64105F00C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC4A12C64105F00C8357F /* NMOSTransistor.bmp in CopyFiles */,
+				6F2AC4A22C64105F00C8357F /* Triangle.bmp in CopyFiles */,
+				6F2AC4A32C64105F00C8357F /* 7-display-modes.bmp in CopyFiles */,
+				6F2AC4A42C64105F00C8357F /* 8-help.bmp in CopyFiles */,
+				6F2AC4A52C64105F00C8357F /* ThinLens.bmp in CopyFiles */,
+				6F2AC4A62C64105F00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC4A72C64105F00C8357F /* SimplePendulum.bmp in CopyFiles */,
+				6F2AC4A82C64105F00C8357F /* MassSpringSystem.bmp in CopyFiles */,
+				6F2AC4A92C64105F00C8357F /* ElasticBuckling.bmp in CopyFiles */,
+				6F2AC4AA2C64105F00C8357F /* PressureAtDepth.bmp in CopyFiles */,
+				6F2AC4AB2C64105F00C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC4AC2C64105F00C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC4AD2C64105F00C8357F /* Conduction+Convection.bmp in CopyFiles */,
+				6F2AC4AE2C64105F00C8357F /* CantileverDeflection.bmp in CopyFiles */,
+				6F2AC4AF2C64105F00C8357F /* RCTransient.bmp in CopyFiles */,
+				6F2AC4B02C64105F00C8357F /* SeriesAndParallelR.bmp in CopyFiles */,
+				6F2AC4B12C64105F00C8357F /* Cylinder.bmp in CopyFiles */,
+				6F2AC4B22C64105F00C8357F /* ThermalExpansion.bmp in CopyFiles */,
+				6F2AC4B32C64105F00C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */,
+				6F2AC4B42C64105F00C8357F /* Circle.bmp in CopyFiles */,
+				6F2AC4B52C64105F00C8357F /* JFETs.bmp in CopyFiles */,
+				6F2AC4B62C64105F00C8357F /* LawOfRefraction.bmp in CopyFiles */,
+				6F2AC4B72C64105F00C8357F /* CantileverShear.bmp in CopyFiles */,
+				6F2AC4B82C64105F00C8357F /* BrewstersLaw.bmp in CopyFiles */,
+				6F2AC4B92C64105F00C8357F /* CantileverMoment.bmp in CopyFiles */,
+				6F2AC4BA2C64105F00C8357F /* CircularRing.bmp in CopyFiles */,
+				6F2AC4BB2C64105F00C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC4BC2C64105F00C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC4BD2C64105F00C8357F /* Convection.bmp in CopyFiles */,
+				6F2AC4BE2C64105F00C8357F /* StressOnAnElement.bmp in CopyFiles */,
+				6F2AC4BF2C64105F00C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC4C02C64105F00C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC4C12C64105F00C8357F /* EccentricColumns.bmp in CopyFiles */,
+				6F2AC4C22C64105F00C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC4C32C64105F00C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC4C42C64105F00C8357F /* SeriesAndParallelC.bmp in CopyFiles */,
+				6F2AC4C52C64105F00C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC4C62C64105F00C8357F /* Conduction.bmp in CopyFiles */,
+				6F2AC4C72C64105F00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC4C82C64105F00C8357F /* Ellipse.bmp in CopyFiles */,
+				6F2AC4C92C64105F00C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC4CA2C64105F00C8357F /* RLCCurrentDelay.bmp in CopyFiles */,
+				6F2AC4CB2C64105F00C8357F /* ToroidInductance.bmp in CopyFiles */,
+				6F2AC4CC2C64105F00C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC4CD2C64105F00C8357F /* 1DElastiCollisions.bmp in CopyFiles */,
+				6F2AC4CE2C64105F00C8357F /* Cone.bmp in CopyFiles */,
+				6F2AC4CF2C64105F00C8357F /* ProjectileMotion.bmp in CopyFiles */,
+				6F2AC4D02C64105F00C8357F /* MohrsCircle.bmp in CopyFiles */,
+				6F2AC4D12C64105F00C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC4D22C64105F00C8357F /* RegularPolygon.bmp in CopyFiles */,
+				6F2AC4D32C64105F00C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC4D42C64105F00C8357F /* StraightWire.bmp in CopyFiles */,
+				6F2AC4D52C64105F00C8357F /* ForceBetweenWires.bmp in CopyFiles */,
+				6F2AC4D62C64105F00C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC4D72C64105F00C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC4D82C64105F00C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC4D92C64105F00C8357F /* BipolarTransistor.bmp in CopyFiles */,
+				6F2AC4DA2C64105F00C8357F /* SimpleShear.bmp in CopyFiles */,
+				6F2AC4DB2C64105F00C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC4DC2C64105F00C8357F /* SphericalRefraction.bmp in CopyFiles */,
+				6F2AC4DD2C64105F00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC4DE2C64105F00C8357F /* VoltageDivider.bmp in CopyFiles */,
+				6F2AC4DF2C64105F00C8357F /* Sphere.bmp in CopyFiles */,
+				6F2AC4E02C64105F00C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC4E12C64105F00C8357F /* TorsionalPendulum.bmp in CopyFiles */,
+				6F2AC4E22C64105F00C8357F /* FlowWIthLosses.bmp in CopyFiles */,
+				6F2AC4E32C64105F00C8357F /* ShearStress.bmp in CopyFiles */,
+				6F2AC4E42C64105F00C8357F /* MagneticFieldInToroid.bmp in CopyFiles */,
+				6F2AC4E52C64105F00C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC4E62C64105F00C8357F /* Rectangle.bmp in CopyFiles */,
+				6F2AC4E72C64105F00C8357F /* FlowInFullPipes.bmp in CopyFiles */,
+				6F2AC4E82C64105F00C8357F /* CriticalAngle.bmp in CopyFiles */,
+				6F2AC4E92C64105F00C8357F /* CurrentDivider.bmp in CopyFiles */,
+				6F2AC4EA2C64105F00C8357F /* SolenoidInductance.bmp in CopyFiles */,
+				6F2AC4EB2C64105F00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC4EC2C64105F00C8357F /* CylindricalCapacitor.bmp in CopyFiles */,
+				6F2AC4ED2C64105F00C8357F /* SimpleMoment.bmp in CopyFiles */,
+				6F2AC4EE2C64105F00C8357F /* PNStepJunction.bmp in CopyFiles */,
+				6F2AC4EF2C64105F00C8357F /* BlackBodyRadiation.bmp in CopyFiles */,
+				6F2AC4F02C64105F00C8357F /* Parallelepiped.bmp in CopyFiles */,
+				6F2AC4F12C64105F00C8357F /* CantileverSlope.bmp in CopyFiles */,
+				6F2AC4F22C64105F00C8357F /* NormalStress.bmp in CopyFiles */,
+				6F2AC4F32C64105F00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC4F42C64105F00C8357F /* ConicalPendulum.bmp in CopyFiles */,
+				6F2AC4F52C64105F00C8357F /* PlateCapacitor.bmp in CopyFiles */,
+				6F2AC4F62C64105F00C8357F /* SimpleDeflection.bmp in CopyFiles */,
+				6F2AC4F72C64105F00C8357F /* SimpleSlope.bmp in CopyFiles */,
+				6F2AC4F82C64105F00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC4F92C64105F00C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC4FA2C64105F00C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC4FB2C64105F00C8357F /* SeriesAndParallelL.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC5662C6410F700C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = help;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC5672C6410F700C8357F /* db48x.md in CopyFiles */,
+				6F2AC5682C6410F700C8357F /* db50x.md in CopyFiles */,
+				6F2AC5692C6410F700C8357F /* shifts.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC56A2C6410F700C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = config;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC56B2C6410F700C8357F /* equations.csv in CopyFiles */,
+				6F2AC56C2C6410F700C8357F /* library.csv in CopyFiles */,
+				6F2AC56D2C6410F700C8357F /* characters.csv in CopyFiles */,
+				6F2AC56E2C6410F700C8357F /* units.csv in CopyFiles */,
+				6F2AC56F2C6410F700C8357F /* constants.csv in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC5702C6410F700C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = state;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC5712C6410F700C8357F /* Test.48S in CopyFiles */,
+				6F2AC5722C6410F700C8357F /* Demo.48S in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC5732C6410F700C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = help/img;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC5742C6410F700C8357F /* IsentropicFlow.bmp in CopyFiles */,
+				6F2AC5752C6410F700C8357F /* BernouilliEquation.bmp in CopyFiles */,
+				6F2AC5762C6410F700C8357F /* bat-and-jet.bmp in CopyFiles */,
+				6F2AC5772C6410F700C8357F /* HookesLaw.bmp in CopyFiles */,
+				6F2AC5782C6410F700C8357F /* SphericalReflection.bmp in CopyFiles */,
+				6F2AC5792C6410F700C8357F /* RLTransient.bmp in CopyFiles */,
+				6F2AC57A2C6410F700C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC57B2C6410F700C8357F /* NMOSTransistor.bmp in CopyFiles */,
+				6F2AC57C2C6410F700C8357F /* Triangle.bmp in CopyFiles */,
+				6F2AC57D2C6410F700C8357F /* 7-display-modes.bmp in CopyFiles */,
+				6F2AC57E2C6410F700C8357F /* 8-help.bmp in CopyFiles */,
+				6F2AC57F2C6410F700C8357F /* ThinLens.bmp in CopyFiles */,
+				6F2AC5802C6410F700C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC5812C6410F700C8357F /* SimplePendulum.bmp in CopyFiles */,
+				6F2AC5822C6410F700C8357F /* MassSpringSystem.bmp in CopyFiles */,
+				6F2AC5832C6410F700C8357F /* ElasticBuckling.bmp in CopyFiles */,
+				6F2AC5842C6410F700C8357F /* PressureAtDepth.bmp in CopyFiles */,
+				6F2AC5852C6410F700C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC5862C6410F700C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC5872C6410F700C8357F /* Conduction+Convection.bmp in CopyFiles */,
+				6F2AC5882C6410F700C8357F /* CantileverDeflection.bmp in CopyFiles */,
+				6F2AC5892C6410F700C8357F /* RCTransient.bmp in CopyFiles */,
+				6F2AC58A2C6410F700C8357F /* SeriesAndParallelR.bmp in CopyFiles */,
+				6F2AC58B2C6410F700C8357F /* Cylinder.bmp in CopyFiles */,
+				6F2AC58C2C6410F700C8357F /* ThermalExpansion.bmp in CopyFiles */,
+				6F2AC58D2C6410F700C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */,
+				6F2AC58E2C6410F700C8357F /* Circle.bmp in CopyFiles */,
+				6F2AC58F2C6410F700C8357F /* JFETs.bmp in CopyFiles */,
+				6F2AC5902C6410F700C8357F /* LawOfRefraction.bmp in CopyFiles */,
+				6F2AC5912C6410F700C8357F /* CantileverShear.bmp in CopyFiles */,
+				6F2AC5922C6410F700C8357F /* BrewstersLaw.bmp in CopyFiles */,
+				6F2AC5932C6410F700C8357F /* CantileverMoment.bmp in CopyFiles */,
+				6F2AC5942C6410F700C8357F /* CircularRing.bmp in CopyFiles */,
+				6F2AC5952C6410F700C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC5962C6410F700C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC5972C6410F700C8357F /* Convection.bmp in CopyFiles */,
+				6F2AC5982C6410F700C8357F /* StressOnAnElement.bmp in CopyFiles */,
+				6F2AC5992C6410F700C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC59A2C6410F700C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC59B2C6410F700C8357F /* EccentricColumns.bmp in CopyFiles */,
+				6F2AC59C2C6410F700C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC59D2C6410F700C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC59E2C6410F700C8357F /* SeriesAndParallelC.bmp in CopyFiles */,
+				6F2AC59F2C6410F700C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC5A02C6410F700C8357F /* Conduction.bmp in CopyFiles */,
+				6F2AC5A12C6410F700C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC5A22C6410F700C8357F /* Ellipse.bmp in CopyFiles */,
+				6F2AC5A32C6410F700C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC5A42C6410F700C8357F /* RLCCurrentDelay.bmp in CopyFiles */,
+				6F2AC5A52C6410F700C8357F /* ToroidInductance.bmp in CopyFiles */,
+				6F2AC5A62C6410F700C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC5A72C6410F700C8357F /* 1DElastiCollisions.bmp in CopyFiles */,
+				6F2AC5A82C6410F700C8357F /* Cone.bmp in CopyFiles */,
+				6F2AC5A92C6410F700C8357F /* ProjectileMotion.bmp in CopyFiles */,
+				6F2AC5AA2C6410F700C8357F /* MohrsCircle.bmp in CopyFiles */,
+				6F2AC5AB2C6410F700C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC5AC2C6410F700C8357F /* RegularPolygon.bmp in CopyFiles */,
+				6F2AC5AD2C6410F700C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC5AE2C6410F700C8357F /* StraightWire.bmp in CopyFiles */,
+				6F2AC5AF2C6410F700C8357F /* ForceBetweenWires.bmp in CopyFiles */,
+				6F2AC5B02C6410F700C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC5B12C6410F700C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC5B22C6410F700C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC5B32C6410F700C8357F /* BipolarTransistor.bmp in CopyFiles */,
+				6F2AC5B42C6410F700C8357F /* SimpleShear.bmp in CopyFiles */,
+				6F2AC5B52C6410F700C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC5B62C6410F700C8357F /* SphericalRefraction.bmp in CopyFiles */,
+				6F2AC5B72C6410F700C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC5B82C6410F700C8357F /* VoltageDivider.bmp in CopyFiles */,
+				6F2AC5B92C6410F700C8357F /* Sphere.bmp in CopyFiles */,
+				6F2AC5BA2C6410F700C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC5BB2C6410F700C8357F /* TorsionalPendulum.bmp in CopyFiles */,
+				6F2AC5BC2C6410F700C8357F /* FlowWIthLosses.bmp in CopyFiles */,
+				6F2AC5BD2C6410F700C8357F /* ShearStress.bmp in CopyFiles */,
+				6F2AC5BE2C6410F700C8357F /* MagneticFieldInToroid.bmp in CopyFiles */,
+				6F2AC5BF2C6410F700C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC5C02C6410F700C8357F /* Rectangle.bmp in CopyFiles */,
+				6F2AC5C12C6410F700C8357F /* FlowInFullPipes.bmp in CopyFiles */,
+				6F2AC5C22C6410F700C8357F /* CriticalAngle.bmp in CopyFiles */,
+				6F2AC5C32C6410F700C8357F /* CurrentDivider.bmp in CopyFiles */,
+				6F2AC5C42C6410F700C8357F /* SolenoidInductance.bmp in CopyFiles */,
+				6F2AC5C52C6410F700C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC5C62C6410F700C8357F /* CylindricalCapacitor.bmp in CopyFiles */,
+				6F2AC5C72C6410F700C8357F /* SimpleMoment.bmp in CopyFiles */,
+				6F2AC5C82C6410F700C8357F /* PNStepJunction.bmp in CopyFiles */,
+				6F2AC5C92C6410F700C8357F /* BlackBodyRadiation.bmp in CopyFiles */,
+				6F2AC5CA2C6410F700C8357F /* Parallelepiped.bmp in CopyFiles */,
+				6F2AC5CB2C6410F700C8357F /* CantileverSlope.bmp in CopyFiles */,
+				6F2AC5CC2C6410F700C8357F /* NormalStress.bmp in CopyFiles */,
+				6F2AC5CD2C6410F700C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC5CE2C6410F700C8357F /* ConicalPendulum.bmp in CopyFiles */,
+				6F2AC5CF2C6410F700C8357F /* PlateCapacitor.bmp in CopyFiles */,
+				6F2AC5D02C6410F700C8357F /* SimpleDeflection.bmp in CopyFiles */,
+				6F2AC5D12C6410F700C8357F /* SimpleSlope.bmp in CopyFiles */,
+				6F2AC5D22C6410F700C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC5D32C6410F700C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC5D42C6410F700C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC5D52C6410F700C8357F /* SeriesAndParallelL.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FF873932B97B82C00C8357F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -389,7 +1089,7 @@
 		1F9D29731C72B9BB000025E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1F9D29751C72B9BB000025E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1F9D29781C72B9BB000025E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		1F9D297A1C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1F9D297A1C72B9BB000025E6 /* DB48X-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DB48X-Info.plist"; sourceTree = "<group>"; };
 		1F9D297F1C72B9BB000025E6 /* DB48XTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DB48XTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F9D29831C72B9BB000025E6 /* DB48XTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DB48XTests.m; sourceTree = "<group>"; };
 		1F9D29851C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -499,6 +1199,16 @@
 		6F2AC3CF2C63E4FB00C8357F /* 8-help.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "8-help.bmp"; sourceTree = "<group>"; };
 		6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "3-fractions.bmp"; sourceTree = "<group>"; };
 		6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CantileverShear.bmp; sourceTree = "<group>"; };
+		6F2AC4FF2C64105F00C8357F /* DB50X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DB50X.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F2AC5D92C6410F700C8357F /* DB40X.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DB40X.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6F2AC5DB2C64170B00C8357F /* DB40X-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DB40X-Info.plist"; sourceTree = "<group>"; };
+		6F2AC5DD2C64171A00C8357F /* DB50X-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DB50X-Info.plist"; sourceTree = "<group>"; };
+		6F2AC5DF2C6418CC00C8357F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		6F2AC5E02C6418CC00C8357F /* qspi_crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qspi_crc.h; sourceTree = "<group>"; };
+		6F2AC5E12C6418CC00C8357F /* stm32_program.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stm32_program.ld; sourceTree = "<group>"; };
+		6F2AC5E52C64195700C8357F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
+		6F2AC5E62C64195700C8357F /* qspi_crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qspi_crc.h; sourceTree = "<group>"; };
+		6F2AC5E72C64195700C8357F /* stm32_program.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stm32_program.ld; sourceTree = "<group>"; };
 		6F4519A92BBC80A600C8357F /* DB48X startup screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DB48X startup screen.png"; sourceTree = "<group>"; };
 		6F4528C52B9C0F4E00C8357F /* equations.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = equations.cc; path = ../../../src/equations.cc; sourceTree = "<group>"; };
 		6F4528C62B9C0F4E00C8357F /* equations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = equations.h; path = ../../../src/equations.h; sourceTree = "<group>"; };
@@ -611,9 +1321,6 @@
 		6FE7F01D2B95E37300C8357F /* constants.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = constants.cc; path = ../../../src/constants.cc; sourceTree = "<group>"; };
 		6FE7F01E2B95E37300C8357F /* fraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fraction.h; path = ../../../src/fraction.h; sourceTree = "<group>"; };
 		6FE7F01F2B95E37300C8357F /* graphics.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = graphics.cc; path = ../../../src/graphics.cc; sourceTree = "<group>"; };
-		6FE7F0212B95E37300C8357F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		6FE7F0222B95E37300C8357F /* qspi_crc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qspi_crc.h; sourceTree = "<group>"; };
-		6FE7F0232B95E37300C8357F /* stm32_program.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stm32_program.ld; sourceTree = "<group>"; };
 		6FE7F0242B95E37300C8357F /* variables.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = variables.cc; path = ../../../src/variables.cc; sourceTree = "<group>"; };
 		6FE7F0252B95E37300C8357F /* symbol.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = symbol.cc; path = ../../../src/symbol.cc; sourceTree = "<group>"; };
 		6FE7F0262B95E37300C8357F /* bignum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bignum.h; path = ../../../src/bignum.h; sourceTree = "<group>"; };
@@ -694,6 +1401,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6F2AC46F2C64105F00C8357F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC4702C64105F00C8357F /* UniformTypeIdentifiers.framework in Frameworks */,
+				6F2AC4712C64105F00C8357F /* WebKit.framework in Frameworks */,
+				6F2AC4722C64105F00C8357F /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC5492C6410F700C8357F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC54A2C6410F700C8357F /* UniformTypeIdentifiers.framework in Frameworks */,
+				6F2AC54B2C6410F700C8357F /* WebKit.framework in Frameworks */,
+				6F2AC54C2C6410F700C8357F /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -714,6 +1441,8 @@
 				1F9D29661C72B9BB000025E6 /* DB48X.app */,
 				1F9D297F1C72B9BB000025E6 /* DB48XTests.xctest */,
 				1F9D298A1C72B9BB000025E6 /* DB48XUITests.xctest */,
+				6F2AC4FF2C64105F00C8357F /* DB50X.app */,
+				6F2AC5D92C6410F700C8357F /* DB40X.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -729,7 +1458,9 @@
 				6F75CED62BA1B23800C8357F /* HelpViewController.m */,
 				6FE7753B2B979AFF00C8357F /* HighlightMarkerView.h */,
 				6FE7753C2B979AFF00C8357F /* HighlightMarkerView.m */,
-				1F9D297A1C72B9BB000025E6 /* Info.plist */,
+				6F2AC5DB2C64170B00C8357F /* DB40X-Info.plist */,
+				1F9D297A1C72B9BB000025E6 /* DB48X-Info.plist */,
+				6F2AC5DD2C64171A00C8357F /* DB50X-Info.plist */,
 				6FE7EFDD2B95DDF100C8357F /* Keyboard.cpp */,
 				6FB5A8822B98035600C8357F /* KeyboardView.h */,
 				6FB5A8832B98035600C8357F /* KeyboardView.m */,
@@ -882,6 +1613,27 @@
 			path = img;
 			sourceTree = "<group>";
 		};
+		6F2AC5E22C6418CC00C8357F /* dm42 */ = {
+			isa = PBXGroup;
+			children = (
+				6F2AC5DF2C6418CC00C8357F /* main.h */,
+				6F2AC5E02C6418CC00C8357F /* qspi_crc.h */,
+				6F2AC5E12C6418CC00C8357F /* stm32_program.ld */,
+			);
+			path = dm42;
+			sourceTree = "<group>";
+		};
+		6F2AC5E82C64195700C8357F /* dm32 */ = {
+			isa = PBXGroup;
+			children = (
+				6F2AC5E52C64195700C8357F /* main.h */,
+				6F2AC5E62C64195700C8357F /* qspi_crc.h */,
+				6F2AC5E72C64195700C8357F /* stm32_program.ld */,
+			);
+			name = dm32;
+			path = ../../../src/dm32;
+			sourceTree = "<group>";
+		};
 		6FB5A87F2B97F50E00C8357F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -968,54 +1720,46 @@
 		6FE7EFE12B95E2F600C8357F /* Runtime */ = {
 			isa = PBXGroup;
 			children = (
-				6F18F27D2C2DAC3400C8357F /* polynomial.cc */,
-				6F18F27E2C2DAC3400C8357F /* polynomial.h */,
-				6FF873992B97BA1E00C8357F /* state */,
-				6FE7750B2B97966E00C8357F /* config */,
-				6FE7750E2B97966E00C8357F /* help */,
-				6FCEDA592B95ED9600C8357F /* fonts */,
-				6FCED99E2B95E51E00C8357F /* sim */,
-				6FCECEF62B95E4BE00C8357F /* recorder */,
 				6FE7F0142B95E37300C8357F /* algebraic.cc */,
 				6FE7F0082B95E37300C8357F /* algebraic.h */,
 				6FE7F0372B95E37400C8357F /* arithmetic.cc */,
-				6F4528CE2B9C0F4E00C8357F /* beep.h */,
-				6F4528C92B9C0F4E00C8357F /* catalog.h */,
-				6F4528CF2B9C0F4E00C8357F /* comment.h */,
-				6F4528CD2B9C0F4E00C8357F /* compare.h */,
-				6F4528C82B9C0F4E00C8357F /* conditionals.h */,
-				6F4528C72B9C0F4E00C8357F /* decimal-e.txt */,
-				6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */,
-				6F4528C52B9C0F4E00C8357F /* equations.cc */,
-				6F4528C62B9C0F4E00C8357F /* equations.h */,
-				6F4528CA2B9C0F4E00C8357F /* library.cc */,
-				6F4528CB2B9C0F4E00C8357F /* library.h */,
 				6FE7F0132B95E37300C8357F /* arithmetic.h */,
 				6FE7EFFC2B95E37200C8357F /* array.cc */,
 				6FE7F0402B95E37400C8357F /* array.h */,
+				6F4528CE2B9C0F4E00C8357F /* beep.h */,
 				6FE7F0542B95E37400C8357F /* bignum.cc */,
 				6FE7F0262B95E37300C8357F /* bignum.h */,
 				6FE7F0012B95E37200C8357F /* blitter.h */,
 				6FCEDA962B95F28F00C8357F /* catalog.cc */,
+				6F4528C92B9C0F4E00C8357F /* catalog.h */,
 				6FD555822B995F8800C8357F /* characters.cc */,
 				6FD555832B995F8900C8357F /* characters.h */,
 				6FE7F0302B95E37400C8357F /* command.cc */,
 				6FE7F0552B95E37400C8357F /* command.h */,
 				6FE7F02C2B95E37300C8357F /* comment.cc */,
+				6F4528CF2B9C0F4E00C8357F /* comment.h */,
 				6FE7F0152B95E37300C8357F /* compare.cc */,
+				6F4528CD2B9C0F4E00C8357F /* compare.h */,
 				6FE7F0322B95E37400C8357F /* complex.cc */,
 				6FE7F0342B95E37400C8357F /* complex.h */,
 				6FE7EFFD2B95E37200C8357F /* conditionals.cc */,
+				6F4528C82B9C0F4E00C8357F /* conditionals.h */,
+				6FE7750B2B97966E00C8357F /* config */,
 				6FE7F01D2B95E37300C8357F /* constants.cc */,
 				6FE7EFEB2B95E37200C8357F /* constants.h */,
 				6FE7F0392B95E37400C8357F /* datetime.cc */,
 				6FE7F0522B95E37400C8357F /* datetime.h */,
 				6FE7F0362B95E37400C8357F /* decimal-e.h */,
+				6F4528C72B9C0F4E00C8357F /* decimal-e.txt */,
 				6FE7EFE92B95E37200C8357F /* decimal-pi.h */,
+				6F4528CC2B9C0F4E00C8357F /* decimal-pi.txt */,
 				6FE7EFEC2B95E37200C8357F /* decimal.cc */,
 				6FE7F03D2B95E37400C8357F /* decimal.h */,
-				6FE7F0202B95E37300C8357F /* dm32 */,
+				6F2AC5E82C64195700C8357F /* dm32 */,
+				6F2AC5E22C6418CC00C8357F /* dm42 */,
 				6FE7F0472B95E37400C8357F /* dmcp */,
+				6F4528C52B9C0F4E00C8357F /* equations.cc */,
+				6F4528C62B9C0F4E00C8357F /* equations.h */,
 				6FE7EFE22B95E37200C8357F /* errors.tbl */,
 				6FE7EFFB2B95E37200C8357F /* expression.cc */,
 				6FE7F0272B95E37300C8357F /* expression.h */,
@@ -1025,6 +1769,7 @@
 				6FE7F0112B95E37300C8357F /* files.h */,
 				6FE7F0122B95E37300C8357F /* font.cc */,
 				6FE7F0022B95E37200C8357F /* font.h */,
+				6FCEDA592B95ED9600C8357F /* fonts */,
 				6FE7F00B2B95E37300C8357F /* fraction.cc */,
 				6FE7F01E2B95E37300C8357F /* fraction.h */,
 				6FE7EFFA2B95E37200C8357F /* functions.cc */,
@@ -1033,6 +1778,7 @@
 				6FE7F00E2B95E37300C8357F /* graphics.h */,
 				6FE7F03B2B95E37400C8357F /* grob.cc */,
 				6FE7F0282B95E37300C8357F /* grob.h */,
+				6FE7750E2B97966E00C8357F /* help */,
 				6FE7F03A2B95E37400C8357F /* hwfp.cc */,
 				6FE7F02D2B95E37300C8357F /* hwfp.h */,
 				6FE7F0382B95E37400C8357F /* ids.tbl */,
@@ -1043,6 +1789,8 @@
 				6FE7F0532B95E37400C8357F /* integrate.cc */,
 				6FE7EFE62B95E37200C8357F /* integrate.h */,
 				6FE7F0072B95E37300C8357F /* leb128.h */,
+				6F4528CA2B9C0F4E00C8357F /* library.cc */,
+				6F4528CB2B9C0F4E00C8357F /* library.h */,
 				6FE7F01A2B95E37300C8357F /* list.cc */,
 				6FE7F0312B95E37400C8357F /* list.h */,
 				6FE7F0002B95E37200C8357F /* locals.cc */,
@@ -1058,9 +1806,12 @@
 				6FE7F0032B95E37200C8357F /* parser.h */,
 				6FE7EFFF2B95E37200C8357F /* plot.cc */,
 				6FE7EFEA2B95E37200C8357F /* plot.h */,
+				6F18F27D2C2DAC3400C8357F /* polynomial.cc */,
+				6F18F27E2C2DAC3400C8357F /* polynomial.h */,
 				6FE7EFF42B95E37200C8357F /* precedence.h */,
 				6FE7F0182B95E37300C8357F /* program.cc */,
 				6FE7F02A2B95E37300C8357F /* program.h */,
+				6FCECEF62B95E4BE00C8357F /* recorder */,
 				6FE7F0052B95E37300C8357F /* recorder.h */,
 				6FE7F02E2B95E37300C8357F /* renderer.cc */,
 				6FE7EFE72B95E37200C8357F /* renderer.h */,
@@ -1068,11 +1819,13 @@
 				6FE7F02F2B95E37400C8357F /* runtime.h */,
 				6FE7F0502B95E37400C8357F /* settings.cc */,
 				6FE7EFF82B95E37200C8357F /* settings.h */,
+				6FCED99E2B95E51E00C8357F /* sim */,
 				6FE7F0452B95E37400C8357F /* solve.cc */,
 				6FE7F01B2B95E37300C8357F /* solve.h */,
 				6FE7F02B2B95E37300C8357F /* stack-cmds.h */,
 				6FE7EFE82B95E37200C8357F /* stack.cc */,
 				6FE7F0462B95E37400C8357F /* stack.h */,
+				6FF873992B97BA1E00C8357F /* state */,
 				6FE7F04F2B95E37400C8357F /* stats.cc */,
 				6FE7F03F2B95E37400C8357F /* stats.h */,
 				6FE7F0252B95E37300C8357F /* symbol.cc */,
@@ -1095,17 +1848,6 @@
 				6FE7F0102B95E37300C8357F /* variables.h */,
 			);
 			name = Runtime;
-			sourceTree = "<group>";
-		};
-		6FE7F0202B95E37300C8357F /* dm32 */ = {
-			isa = PBXGroup;
-			children = (
-				6FE7F0212B95E37300C8357F /* main.h */,
-				6FE7F0222B95E37300C8357F /* qspi_crc.h */,
-				6FE7F0232B95E37300C8357F /* stm32_program.ld */,
-			);
-			name = dm32;
-			path = ../../../src/dm32;
 			sourceTree = "<group>";
 		};
 		6FE7F0472B95E37400C8357F /* dmcp */ = {
@@ -1193,6 +1935,48 @@
 			productReference = 1F9D298A1C72B9BB000025E6 /* DB48XUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		6F2AC4272C64105F00C8357F /* DB50X */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F2AC4FC2C64105F00C8357F /* Build configuration list for PBXNativeTarget "DB50X" */;
+			buildPhases = (
+				6F2AC4282C64105F00C8357F /* Sources */,
+				6F2AC46F2C64105F00C8357F /* Frameworks */,
+				6F2AC4732C64105F00C8357F /* Resources */,
+				6F2AC48C2C64105F00C8357F /* CopyFiles */,
+				6F2AC4902C64105F00C8357F /* CopyFiles */,
+				6F2AC4962C64105F00C8357F /* CopyFiles */,
+				6F2AC4992C64105F00C8357F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DB50X;
+			productName = DB48X;
+			productReference = 6F2AC4FF2C64105F00C8357F /* DB50X.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6F2AC5012C6410F700C8357F /* DB40X */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F2AC5D62C6410F700C8357F /* Build configuration list for PBXNativeTarget "DB40X" */;
+			buildPhases = (
+				6F2AC5022C6410F700C8357F /* Sources */,
+				6F2AC5492C6410F700C8357F /* Frameworks */,
+				6F2AC54D2C6410F700C8357F /* Resources */,
+				6F2AC5662C6410F700C8357F /* CopyFiles */,
+				6F2AC56A2C6410F700C8357F /* CopyFiles */,
+				6F2AC5702C6410F700C8357F /* CopyFiles */,
+				6F2AC5732C6410F700C8357F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DB40X;
+			productName = DB48X;
+			productReference = 6F2AC5D92C6410F700C8357F /* DB40X.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1230,7 +2014,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				6F2AC5012C6410F700C8357F /* DB40X */,
 				1F9D29651C72B9BB000025E6 /* DB48X */,
+				6F2AC4272C64105F00C8357F /* DB50X */,
 				1F9D297E1C72B9BB000025E6 /* DB48XTests */,
 				1F9D29891C72B9BB000025E6 /* DB48XUITests */,
 			);
@@ -1262,10 +2048,10 @@
 				6FE7F0792B95E37400C8357F /* ids.tbl in Resources */,
 				6FF8739D2B97BA1E00C8357F /* Demo.48S in Resources */,
 				6FF8739C2B97BA1E00C8357F /* Test.48S in Resources */,
-				6FE7F0712B95E37400C8357F /* stm32_program.ld in Resources */,
 				6F4519AA2BBC80A600C8357F /* DB48X startup screen.png in Resources */,
 				6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */,
 				6FE775252B97966E00C8357F /* units.csv in Resources */,
+				6F2AC5E42C6418CC00C8357F /* stm32_program.ld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1280,6 +2066,70 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC4732C64105F00C8357F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC4742C64105F00C8357F /* ignored_help.csv in Resources */,
+				6F2AC4752C64105F00C8357F /* keyboard-dm42.png in Resources */,
+				6F2AC4762C64105F00C8357F /* keyboard.png in Resources */,
+				6F2AC4772C64105F00C8357F /* characters.csv in Resources */,
+				6F2AC4782C64105F00C8357F /* LaunchScreen.storyboard in Resources */,
+				6F2AC4792C64105F00C8357F /* Assets.xcassets in Resources */,
+				6F2AC47A2C64105F00C8357F /* constants.csv in Resources */,
+				6F2AC47B2C64105F00C8357F /* recorder.spec in Resources */,
+				6F2AC47C2C64105F00C8357F /* keyboard-db48x.png in Resources */,
+				6F2AC5DE2C64171A00C8357F /* DB50X-Info.plist in Resources */,
+				6F2AC47D2C64105F00C8357F /* library.csv in Resources */,
+				6F2AC47E2C64105F00C8357F /* db48x.md in Resources */,
+				6F2AC47F2C64105F00C8357F /* db50x.md in Resources */,
+				6F2AC4802C64105F00C8357F /* Main.storyboard in Resources */,
+				6F2AC4812C64105F00C8357F /* errors.tbl in Resources */,
+				6F2AC4822C64105F00C8357F /* ignored_menus.csv in Resources */,
+				6F2AC4832C64105F00C8357F /* decimal-pi.txt in Resources */,
+				6F2AC4842C64105F00C8357F /* equations.csv in Resources */,
+				6F2AC4852C64105F00C8357F /* ids.tbl in Resources */,
+				6F2AC4862C64105F00C8357F /* Demo.48S in Resources */,
+				6F2AC4872C64105F00C8357F /* Test.48S in Resources */,
+				6F2AC4892C64105F00C8357F /* DB48X startup screen.png in Resources */,
+				6F2AC48A2C64105F00C8357F /* decimal-e.txt in Resources */,
+				6F2AC48B2C64105F00C8357F /* units.csv in Resources */,
+				6F2AC5E92C64195700C8357F /* stm32_program.ld in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC54D2C6410F700C8357F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC54E2C6410F700C8357F /* ignored_help.csv in Resources */,
+				6F2AC54F2C6410F700C8357F /* keyboard-dm42.png in Resources */,
+				6F2AC5E32C6418CC00C8357F /* stm32_program.ld in Resources */,
+				6F2AC5502C6410F700C8357F /* keyboard.png in Resources */,
+				6F2AC5512C6410F700C8357F /* characters.csv in Resources */,
+				6F2AC5522C6410F700C8357F /* LaunchScreen.storyboard in Resources */,
+				6F2AC5532C6410F700C8357F /* Assets.xcassets in Resources */,
+				6F2AC5542C6410F700C8357F /* constants.csv in Resources */,
+				6F2AC5552C6410F700C8357F /* recorder.spec in Resources */,
+				6F2AC5DC2C64170B00C8357F /* DB40X-Info.plist in Resources */,
+				6F2AC5562C6410F700C8357F /* keyboard-db48x.png in Resources */,
+				6F2AC5572C6410F700C8357F /* library.csv in Resources */,
+				6F2AC5582C6410F700C8357F /* db48x.md in Resources */,
+				6F2AC5592C6410F700C8357F /* db50x.md in Resources */,
+				6F2AC55A2C6410F700C8357F /* Main.storyboard in Resources */,
+				6F2AC55B2C6410F700C8357F /* errors.tbl in Resources */,
+				6F2AC55C2C6410F700C8357F /* ignored_menus.csv in Resources */,
+				6F2AC55D2C6410F700C8357F /* decimal-pi.txt in Resources */,
+				6F2AC55E2C6410F700C8357F /* equations.csv in Resources */,
+				6F2AC55F2C6410F700C8357F /* ids.tbl in Resources */,
+				6F2AC5602C6410F700C8357F /* Demo.48S in Resources */,
+				6F2AC5612C6410F700C8357F /* Test.48S in Resources */,
+				6F2AC5632C6410F700C8357F /* DB48X startup screen.png in Resources */,
+				6F2AC5642C6410F700C8357F /* decimal-e.txt in Resources */,
+				6F2AC5652C6410F700C8357F /* units.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,6 +2226,160 @@
 			buildActionMask = 2147483647;
 			files = (
 				1F9D298F1C72B9BB000025E6 /* DB48XUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC4282C64105F00C8357F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC4292C64105F00C8357F /* graphics.cc in Sources */,
+				6F2AC42A2C64105F00C8357F /* Screen.cpp in Sources */,
+				6F2AC42B2C64105F00C8357F /* logical.cc in Sources */,
+				6F2AC42C2C64105F00C8357F /* fraction.cc in Sources */,
+				6F2AC42D2C64105F00C8357F /* conditionals.cc in Sources */,
+				6F2AC42E2C64105F00C8357F /* font.cc in Sources */,
+				6F2AC42F2C64105F00C8357F /* text.cc in Sources */,
+				6F2AC4302C64105F00C8357F /* catalog.cc in Sources */,
+				6F2AC4312C64105F00C8357F /* integer.cc in Sources */,
+				6F2AC4322C64105F00C8357F /* expression.cc in Sources */,
+				6F2AC4332C64105F00C8357F /* compare.cc in Sources */,
+				6F2AC4342C64105F00C8357F /* stack.cc in Sources */,
+				6F2AC4352C64105F00C8357F /* solve.cc in Sources */,
+				6F2AC4362C64105F00C8357F /* ViewController.mm in Sources */,
+				6F2AC4372C64105F00C8357F /* StackFont.cc in Sources */,
+				6F2AC4382C64105F00C8357F /* plot.cc in Sources */,
+				6F2AC4392C64105F00C8357F /* command.cc in Sources */,
+				6F2AC43A2C64105F00C8357F /* characters.cc in Sources */,
+				6F2AC43B2C64105F00C8357F /* integrate.cc in Sources */,
+				6F2AC43C2C64105F00C8357F /* variables.cc in Sources */,
+				6F2AC43D2C64105F00C8357F /* program.cc in Sources */,
+				6F2AC43E2C64105F00C8357F /* algebraic.cc in Sources */,
+				6F2AC43F2C64105F00C8357F /* unit.cc in Sources */,
+				6F2AC4402C64105F00C8357F /* decimal.cc in Sources */,
+				6F2AC4412C64105F00C8357F /* ScreenView.mm in Sources */,
+				6F2AC4422C64105F00C8357F /* target.cc in Sources */,
+				6F2AC4432C64105F00C8357F /* bignum.cc in Sources */,
+				6F2AC4442C64105F00C8357F /* complex.cc in Sources */,
+				6F2AC4452C64105F00C8357F /* grob.cc in Sources */,
+				6F2AC4462C64105F00C8357F /* loops.cc in Sources */,
+				6F2AC4472C64105F00C8357F /* functions.cc in Sources */,
+				6F2AC4482C64105F00C8357F /* HelpViewController.m in Sources */,
+				6F2AC4492C64105F00C8357F /* array.cc in Sources */,
+				6F2AC44A2C64105F00C8357F /* HighlightMarkerView.m in Sources */,
+				6F2AC44B2C64105F00C8357F /* user_interface.cc in Sources */,
+				6F2AC44C2C64105F00C8357F /* locals.cc in Sources */,
+				6F2AC44D2C64105F00C8357F /* arithmetic.cc in Sources */,
+				6F2AC44E2C64105F00C8357F /* polynomial.cc in Sources */,
+				6F2AC44F2C64105F00C8357F /* main.cc in Sources */,
+				6F2AC4502C64105F00C8357F /* equations.cc in Sources */,
+				6F2AC4512C64105F00C8357F /* AppDelegate.mm in Sources */,
+				6F2AC4522C64105F00C8357F /* renderer.cc in Sources */,
+				6F2AC4532C64105F00C8357F /* constants.cc in Sources */,
+				6F2AC4542C64105F00C8357F /* stats.cc in Sources */,
+				6F2AC4552C64105F00C8357F /* hwfp.cc in Sources */,
+				6F2AC4562C64105F00C8357F /* files.cc in Sources */,
+				6F2AC4572C64105F00C8357F /* settings.cc in Sources */,
+				6F2AC4582C64105F00C8357F /* tag.cc in Sources */,
+				6F2AC4592C64105F00C8357F /* ReducedFont.cc in Sources */,
+				6F2AC45A2C64105F00C8357F /* datetime.cc in Sources */,
+				6F2AC45B2C64105F00C8357F /* file.cc in Sources */,
+				6F2AC45C2C64105F00C8357F /* EditorFont.cc in Sources */,
+				6F2AC45D2C64105F00C8357F /* util.cc in Sources */,
+				6F2AC45E2C64105F00C8357F /* symbol.cc in Sources */,
+				6F2AC45F2C64105F00C8357F /* recorder.c in Sources */,
+				6F2AC4602C64105F00C8357F /* Keyboard.cpp in Sources */,
+				6F2AC4612C64105F00C8357F /* main.mm in Sources */,
+				6F2AC4622C64105F00C8357F /* KeyboardView.m in Sources */,
+				6F2AC4632C64105F00C8357F /* SettingsViewController.m in Sources */,
+				6F2AC4642C64105F00C8357F /* menu.cc in Sources */,
+				6F2AC4652C64105F00C8357F /* comment.cc in Sources */,
+				6F2AC4662C64105F00C8357F /* object.cc in Sources */,
+				6F2AC4672C64105F00C8357F /* dmcp.cpp in Sources */,
+				6F2AC4682C64105F00C8357F /* list.cc in Sources */,
+				6F2AC4692C64105F00C8357F /* sysmenu.cc in Sources */,
+				6F2AC46A2C64105F00C8357F /* recorder_ring.c in Sources */,
+				6F2AC46B2C64105F00C8357F /* tests.cc in Sources */,
+				6F2AC46C2C64105F00C8357F /* library.cc in Sources */,
+				6F2AC46D2C64105F00C8357F /* HelpFont.cc in Sources */,
+				6F2AC46E2C64105F00C8357F /* runtime.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6F2AC5022C6410F700C8357F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6F2AC5032C6410F700C8357F /* graphics.cc in Sources */,
+				6F2AC5042C6410F700C8357F /* Screen.cpp in Sources */,
+				6F2AC5052C6410F700C8357F /* logical.cc in Sources */,
+				6F2AC5062C6410F700C8357F /* fraction.cc in Sources */,
+				6F2AC5072C6410F700C8357F /* conditionals.cc in Sources */,
+				6F2AC5082C6410F700C8357F /* font.cc in Sources */,
+				6F2AC5092C6410F700C8357F /* text.cc in Sources */,
+				6F2AC50A2C6410F700C8357F /* catalog.cc in Sources */,
+				6F2AC50B2C6410F700C8357F /* integer.cc in Sources */,
+				6F2AC50C2C6410F700C8357F /* expression.cc in Sources */,
+				6F2AC50D2C6410F700C8357F /* compare.cc in Sources */,
+				6F2AC50E2C6410F700C8357F /* stack.cc in Sources */,
+				6F2AC50F2C6410F700C8357F /* solve.cc in Sources */,
+				6F2AC5102C6410F700C8357F /* ViewController.mm in Sources */,
+				6F2AC5112C6410F700C8357F /* StackFont.cc in Sources */,
+				6F2AC5122C6410F700C8357F /* plot.cc in Sources */,
+				6F2AC5132C6410F700C8357F /* command.cc in Sources */,
+				6F2AC5142C6410F700C8357F /* characters.cc in Sources */,
+				6F2AC5152C6410F700C8357F /* integrate.cc in Sources */,
+				6F2AC5162C6410F700C8357F /* variables.cc in Sources */,
+				6F2AC5172C6410F700C8357F /* program.cc in Sources */,
+				6F2AC5182C6410F700C8357F /* algebraic.cc in Sources */,
+				6F2AC5192C6410F700C8357F /* unit.cc in Sources */,
+				6F2AC51A2C6410F700C8357F /* decimal.cc in Sources */,
+				6F2AC51B2C6410F700C8357F /* ScreenView.mm in Sources */,
+				6F2AC51C2C6410F700C8357F /* target.cc in Sources */,
+				6F2AC51D2C6410F700C8357F /* bignum.cc in Sources */,
+				6F2AC51E2C6410F700C8357F /* complex.cc in Sources */,
+				6F2AC51F2C6410F700C8357F /* grob.cc in Sources */,
+				6F2AC5202C6410F700C8357F /* loops.cc in Sources */,
+				6F2AC5212C6410F700C8357F /* functions.cc in Sources */,
+				6F2AC5222C6410F700C8357F /* HelpViewController.m in Sources */,
+				6F2AC5232C6410F700C8357F /* array.cc in Sources */,
+				6F2AC5242C6410F700C8357F /* HighlightMarkerView.m in Sources */,
+				6F2AC5252C6410F700C8357F /* user_interface.cc in Sources */,
+				6F2AC5262C6410F700C8357F /* locals.cc in Sources */,
+				6F2AC5272C6410F700C8357F /* arithmetic.cc in Sources */,
+				6F2AC5282C6410F700C8357F /* polynomial.cc in Sources */,
+				6F2AC5292C6410F700C8357F /* main.cc in Sources */,
+				6F2AC52A2C6410F700C8357F /* equations.cc in Sources */,
+				6F2AC52B2C6410F700C8357F /* AppDelegate.mm in Sources */,
+				6F2AC52C2C6410F700C8357F /* renderer.cc in Sources */,
+				6F2AC52D2C6410F700C8357F /* constants.cc in Sources */,
+				6F2AC52E2C6410F700C8357F /* stats.cc in Sources */,
+				6F2AC52F2C6410F700C8357F /* hwfp.cc in Sources */,
+				6F2AC5302C6410F700C8357F /* files.cc in Sources */,
+				6F2AC5312C6410F700C8357F /* settings.cc in Sources */,
+				6F2AC5322C6410F700C8357F /* tag.cc in Sources */,
+				6F2AC5332C6410F700C8357F /* ReducedFont.cc in Sources */,
+				6F2AC5342C6410F700C8357F /* datetime.cc in Sources */,
+				6F2AC5352C6410F700C8357F /* file.cc in Sources */,
+				6F2AC5362C6410F700C8357F /* EditorFont.cc in Sources */,
+				6F2AC5372C6410F700C8357F /* util.cc in Sources */,
+				6F2AC5382C6410F700C8357F /* symbol.cc in Sources */,
+				6F2AC5392C6410F700C8357F /* recorder.c in Sources */,
+				6F2AC53A2C6410F700C8357F /* Keyboard.cpp in Sources */,
+				6F2AC53B2C6410F700C8357F /* main.mm in Sources */,
+				6F2AC53C2C6410F700C8357F /* KeyboardView.m in Sources */,
+				6F2AC53D2C6410F700C8357F /* SettingsViewController.m in Sources */,
+				6F2AC53E2C6410F700C8357F /* menu.cc in Sources */,
+				6F2AC53F2C6410F700C8357F /* comment.cc in Sources */,
+				6F2AC5402C6410F700C8357F /* object.cc in Sources */,
+				6F2AC5412C6410F700C8357F /* dmcp.cpp in Sources */,
+				6F2AC5422C6410F700C8357F /* list.cc in Sources */,
+				6F2AC5432C6410F700C8357F /* sysmenu.cc in Sources */,
+				6F2AC5442C6410F700C8357F /* recorder_ring.c in Sources */,
+				6F2AC5452C6410F700C8357F /* tests.cc in Sources */,
+				6F2AC5462C6410F700C8357F /* library.cc in Sources */,
+				6F2AC5472C6410F700C8357F /* HelpFont.cc in Sources */,
+				6F2AC5482C6410F700C8357F /* runtime.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1534,13 +2538,12 @@
 					"DEBUG=1",
 					"$(inherited)",
 					"__packed=",
-					DM32,
-					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
+					"HELPFILE_NAME=\\\"help/db48x.md\\\"",
 					SIMULATOR,
 					USE_IOS,
-					CONFIG_COLOR,
+					"MEMORY=70",
 				);
-				INFOPLIST_FILE = DB48X/Info.plist;
+				INFOPLIST_FILE = "DB48X/DB48X-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1551,6 +2554,7 @@
 				MARKETING_VERSION = 0.7.13;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB48XPrecompiledHeaders";
 			};
 			name = Debug;
 		};
@@ -1561,13 +2565,12 @@
 				DEVELOPMENT_TEAM = N8TFZFR3PT;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
 					"__packed=",
-					DM32,
-					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
+					"HELPFILE_NAME=\\\"help/db48x.md\\\"",
 					USE_IOS,
 					SIMULATOR,
-					CONFIG_COLOR,
+					"MEMORY=70",
 				);
-				INFOPLIST_FILE = DB48X/Info.plist;
+				INFOPLIST_FILE = "DB48X/DB48X-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = DB48X;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -1578,6 +2581,7 @@
 				MARKETING_VERSION = 0.7.13;
 				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB48X;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB48XPrecompiledHeaders";
 			};
 			name = Release;
 		};
@@ -1645,6 +2649,123 @@
 			};
 			name = Release;
 		};
+		6F2AC4FD2C64105F00C8357F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8TFZFR3PT;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					"$(inherited)",
+					"__packed=",
+					DM32,
+					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
+					SIMULATOR,
+					USE_IOS,
+					CONFIG_COLOR,
+					"MEMORY=768",
+				);
+				INFOPLIST_FILE = "DB48X/DB50X-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = DB50X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.7.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB50X;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB50XPrecompiledHeaders";
+			};
+			name = Debug;
+		};
+		6F2AC4FE2C64105F00C8357F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8TFZFR3PT;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"__packed=",
+					DM32,
+					"HELPFILE_NAME=\\\"help/db50x.md\\\"",
+					USE_IOS,
+					SIMULATOR,
+					CONFIG_COLOR,
+				);
+				INFOPLIST_FILE = "DB48X/DB50X-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = DB50X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.7.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB50X;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB50XPrecompiledHeaders";
+			};
+			name = Release;
+		};
+		6F2AC5D72C6410F700C8357F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8TFZFR3PT;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"DEBUG=1",
+					"$(inherited)",
+					"__packed=",
+					"HELPFILE_NAME=\\\"help/db48x.md\\\"",
+					SIMULATOR,
+					USE_IOS,
+					"MEMORY=48",
+					NOSAVE,
+				);
+				INFOPLIST_FILE = "DB48X/DB40X-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = DB40X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.7.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB40X;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB40XPrecompiledHeaders";
+			};
+			name = Debug;
+		};
+		6F2AC5D82C6410F700C8357F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = N8TFZFR3PT;
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"__packed=",
+					"HELPFILE_NAME=\\\"help/db48x.md\\\"",
+					USE_IOS,
+					SIMULATOR,
+					"MEMORY=48",
+					NOSAVE,
+				);
+				INFOPLIST_FILE = "DB48X/DB40X-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = DB40X;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.7.13;
+				PRODUCT_BUNDLE_IDENTIFIER = org.dinechin.DB40X;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SHARED_PRECOMPS_DIR = "$(OBJROOT)/DB40XPrecompiledHeaders";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1680,6 +2801,24 @@
 			buildConfigurations = (
 				1F9D299A1C72B9BB000025E6 /* Debug */,
 				1F9D299B1C72B9BB000025E6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F2AC4FC2C64105F00C8357F /* Build configuration list for PBXNativeTarget "DB50X" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F2AC4FD2C64105F00C8357F /* Debug */,
+				6F2AC4FE2C64105F00C8357F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6F2AC5D62C6410F700C8357F /* Build configuration list for PBXNativeTarget "DB40X" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6F2AC5D72C6410F700C8357F /* Debug */,
+				6F2AC5D82C6410F700C8357F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

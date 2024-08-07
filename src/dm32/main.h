@@ -31,7 +31,13 @@
 
 #include "version.h"
 
+#if NOSAVE
+#define PROGRAM_NAME    "DB40X"
+#elif !DM32
+#define PROGRAM_NAME    "DB48X"
+#else
 #define PROGRAM_NAME    "DB50X"
+#endif
 #define PROGRAM_VERSION DB48X_VERSION
 
 #define PROGRAM_KEYMAP_ID 0x32334d44
