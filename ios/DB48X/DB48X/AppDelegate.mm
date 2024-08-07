@@ -62,7 +62,7 @@
 
     // Create the DB48X standard structure
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    for (NSString *subdir in @[@"state", @"help", @"config", @"data"])
+    for (NSString *subdir in @[@"state", @"help", @"help/img",@"config", @"data"])
     {
         NSString *directory = [documentsDirectory stringByAppendingPathComponent:subdir];
         NSError *error = nil;
@@ -83,8 +83,93 @@
         @"config/characters.csv",
         @"config/units.csv",
         @"config/constants.csv",
-        @"help/db48x.md",
         @"help/db50x.md",
+        @"help/db48x.md",
+        @"help/shifts.bmp",
+        @"help/img/1-arithmetic-rpl.bmp",
+        @"help/img/10-complex.bmp",
+        @"help/img/1DElastiCollisions.bmp",
+        @"help/img/2-arithmetic-cmd.bmp",
+        @"help/img/3-fractions.bmp",
+        @"help/img/4-basic-math.bmp",
+        @"help/img/5-mixing-rpl-alg.bmp",
+        @"help/img/6-trigonometrics.bmp",
+        @"help/img/7-display-modes.bmp",
+        @"help/img/8-help.bmp",
+        @"help/img/9-angles.bmp",
+        @"help/img/BernouilliEquation.bmp",
+        @"help/img/BipolarTransistor.bmp",
+        @"help/img/BlackBodyRadiation.bmp",
+        @"help/img/BrewstersLaw.bmp",
+        @"help/img/CantileverDeflection.bmp",
+        @"help/img/CantileverMoment.bmp",
+        @"help/img/CantileverShear.bmp",
+        @"help/img/CantileverSlope.bmp",
+        @"help/img/Circle.bmp",
+        @"help/img/CircularRing.bmp",
+        @"help/img/Conduction+Convection.bmp",
+        @"help/img/Conduction.bmp",
+        @"help/img/Cone.bmp",
+        @"help/img/ConicalPendulum.bmp",
+        @"help/img/Convection.bmp",
+        @"help/img/CriticalAngle.bmp",
+        @"help/img/CurrentDivider.bmp",
+        @"help/img/Cylinder.bmp",
+        @"help/img/CylindricalCapacitor.bmp",
+        @"help/img/EccentricColumns.bmp",
+        @"help/img/ElasticBuckling.bmp",
+        @"help/img/Ellipse.bmp",
+        @"help/img/FlowInFullPipes.bmp",
+        @"help/img/FlowWIthLosses.bmp",
+        @"help/img/ForceBetweenWires.bmp",
+        @"help/img/HookesLaw.bmp",
+        @"help/img/IsentropicFlow.bmp",
+        @"help/img/JFETs.bmp",
+        @"help/img/LawOfRefraction.bmp",
+        @"help/img/MagneticFieldInSolenoid.bmp",
+        @"help/img/MagneticFieldInToroid.bmp",
+        @"help/img/MassSpringSystem.bmp",
+        @"help/img/MohrsCircle.bmp",
+        @"help/img/NMOSTransistor.bmp",
+        @"help/img/NewtonGravitation.bmp",
+        @"help/img/NormalStress.bmp",
+        @"help/img/PNStepJunction.bmp",
+        @"help/img/Parallelepiped.bmp",
+        @"help/img/PlateCapacitor.bmp",
+        @"help/img/PressureAtDepth.bmp",
+        @"help/img/ProjectileMotion.bmp",
+        @"help/img/RCTransient.bmp",
+        @"help/img/RLCCurrentDelay.bmp",
+        @"help/img/RLTransient.bmp",
+        @"help/img/Rectangle.bmp",
+        @"help/img/RegularPolygon.bmp",
+        @"help/img/SeriesAndParallelC.bmp",
+        @"help/img/SeriesAndParallelL.bmp",
+        @"help/img/SeriesAndParallelR.bmp",
+        @"help/img/ShearStress.bmp",
+        @"help/img/SimpleDeflection.bmp",
+        @"help/img/SimpleMoment.bmp",
+        @"help/img/SimplePendulum.bmp",
+        @"help/img/SimpleShear.bmp",
+        @"help/img/SimpleSlope.bmp",
+        @"help/img/SolenoidInductance.bmp",
+        @"help/img/Sphere.bmp",
+        @"help/img/SphericalReflection.bmp",
+        @"help/img/SphericalRefraction.bmp",
+        @"help/img/StraightWire.bmp",
+        @"help/img/StressOnAnElement.bmp",
+        @"help/img/ThermalExpansion.bmp",
+        @"help/img/ThinLens.bmp",
+        @"help/img/ToroidInductance.bmp",
+        @"help/img/TorsionalPendulum.bmp",
+        @"help/img/Triangle.bmp",
+        @"help/img/VoltageDivider.bmp",
+        @"help/img/bat-and-jet.bmp",
+        @"help/img/command-line-and-catalog.bmp",
+        @"help/img/definition_of_e.bmp",
+        @"help/img/definition_of_pi.bmp",
+        @"help/img/imaginary_unit.bmp",
+        @"help/img/stack-and-menus.bmp",
     ];
     NSLog(@"Contents of resources: %@", [[fileManager enumeratorAtPath:bundle] allObjects]);
     NSLog(@"Contents of documents before copy: %@", [[fileManager enumeratorAtPath:documentsDirectory] allObjects]);
@@ -92,7 +177,21 @@
     {
         NSString *source = [bundle stringByAppendingPathComponent:file];
         NSString *destination = [documentsDirectory stringByAppendingPathComponent:file];
-        if (![fileManager fileExistsAtPath:destination])
+        bool doCopy = ![fileManager fileExistsAtPath:destination];
+        if (!doCopy)
+        {
+            NSDictionary* sdict = [fileManager attributesOfItemAtPath:source error:nil];
+            NSDate* sdate = [sdict fileModificationDate];
+            NSDictionary* ddict = [fileManager attributesOfItemAtPath:destination error:nil];
+            NSDate* ddate = [ddict fileModificationDate];
+            doCopy = [sdate compare:ddate] == NSOrderedDescending;
+            if (doCopy)
+            {
+                [fileManager removeItemAtPath:destination error:nil];
+            }
+        }
+        NSLog(@"%s copy %@", doCopy ? "Will" : "Won't", file);
+        if (doCopy)
         {
             NSError *error = nil;
             [fileManager copyItemAtPath:source toPath:destination error:&error];

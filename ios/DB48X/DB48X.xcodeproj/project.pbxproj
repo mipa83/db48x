@@ -15,6 +15,105 @@
 		1F9D29841C72B9BB000025E6 /* DB48XTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D29831C72B9BB000025E6 /* DB48XTests.m */; };
 		1F9D298F1C72B9BB000025E6 /* DB48XUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F9D298E1C72B9BB000025E6 /* DB48XUITests.m */; };
 		6F18F27F2C2DAC3400C8357F /* polynomial.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F18F27D2C2DAC3400C8357F /* polynomial.cc */; };
+		6F2AC36D2C63640C00C8357F /* shifts.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35B2C63640C00C8357F /* shifts.bmp */; };
+		6F2AC36E2C63640C00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35C2C63640C00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC36F2C63640C00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35D2C63640C00C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC3702C63640C00C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35E2C63640C00C8357F /* 3-fractions.bmp */; };
+		6F2AC3712C63640C00C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC35F2C63640C00C8357F /* 4-basic-math.bmp */; };
+		6F2AC3722C63640C00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3602C63640C00C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC3732C63640C00C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3612C63640C00C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC3742C63640C00C8357F /* 7-display-modes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3622C63640C00C8357F /* 7-display-modes.bmp */; };
+		6F2AC3752C63640C00C8357F /* 8-help.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3632C63640C00C8357F /* 8-help.bmp */; };
+		6F2AC3762C63640C00C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3642C63640C00C8357F /* 9-angles.bmp */; };
+		6F2AC3772C63640C00C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3652C63640C00C8357F /* 10-complex.bmp */; };
+		6F2AC3782C63640C00C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3662C63640C00C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC3792C63640C00C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3672C63640C00C8357F /* definition_of_e.bmp */; };
+		6F2AC37A2C63640C00C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3682C63640C00C8357F /* definition_of_pi.bmp */; };
+		6F2AC37B2C63640C00C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3692C63640C00C8357F /* imaginary_unit.bmp */; };
+		6F2AC37C2C63640C00C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36A2C63640C00C8357F /* NewtonGravitation.bmp */; };
+		6F2AC37D2C63640C00C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC36B2C63640C00C8357F /* stack-and-menus.bmp */; };
+		6F2AC3D22C63E4FB00C8357F /* ForceBetweenWires.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37E2C63E4F700C8357F /* ForceBetweenWires.bmp */; };
+		6F2AC3D32C63E4FB00C8357F /* SolenoidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC37F2C63E4F700C8357F /* SolenoidInductance.bmp */; };
+		6F2AC3D42C63E4FB00C8357F /* SimpleMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3802C63E4F700C8357F /* SimpleMoment.bmp */; };
+		6F2AC3D52C63E4FB00C8357F /* CriticalAngle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3812C63E4F700C8357F /* CriticalAngle.bmp */; };
+		6F2AC3D62C63E4FB00C8357F /* PressureAtDepth.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3822C63E4F700C8357F /* PressureAtDepth.bmp */; };
+		6F2AC3D72C63E4FB00C8357F /* ConicalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3832C63E4F700C8357F /* ConicalPendulum.bmp */; };
+		6F2AC3D82C63E4FB00C8357F /* Conduction+Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3842C63E4F700C8357F /* Conduction+Convection.bmp */; };
+		6F2AC3D92C63E4FB00C8357F /* 1DElastiCollisions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3852C63E4F700C8357F /* 1DElastiCollisions.bmp */; };
+		6F2AC3DA2C63E4FB00C8357F /* CantileverSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3862C63E4F700C8357F /* CantileverSlope.bmp */; };
+		6F2AC3DB2C63E4FB00C8357F /* SimpleSlope.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3872C63E4F700C8357F /* SimpleSlope.bmp */; };
+		6F2AC3DC2C63E4FB00C8357F /* CircularRing.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3882C63E4F700C8357F /* CircularRing.bmp */; };
+		6F2AC3DD2C63E4FB00C8357F /* VoltageDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3892C63E4F700C8357F /* VoltageDivider.bmp */; };
+		6F2AC3DE2C63E4FB00C8357F /* ShearStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38A2C63E4F700C8357F /* ShearStress.bmp */; };
+		6F2AC3DF2C63E4FB00C8357F /* NormalStress.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38B2C63E4F800C8357F /* NormalStress.bmp */; };
+		6F2AC3E02C63E4FB00C8357F /* ThermalExpansion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38C2C63E4F800C8357F /* ThermalExpansion.bmp */; };
+		6F2AC3E12C63E4FB00C8357F /* ProjectileMotion.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38D2C63E4F800C8357F /* ProjectileMotion.bmp */; };
+		6F2AC3E22C63E4FB00C8357F /* Rectangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38E2C63E4F800C8357F /* Rectangle.bmp */; };
+		6F2AC3E32C63E4FB00C8357F /* Convection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC38F2C63E4F800C8357F /* Convection.bmp */; };
+		6F2AC3E42C63E4FB00C8357F /* HookesLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3902C63E4F800C8357F /* HookesLaw.bmp */; };
+		6F2AC3E52C63E4FB00C8357F /* BernouilliEquation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3912C63E4F800C8357F /* BernouilliEquation.bmp */; };
+		6F2AC3E62C63E4FB00C8357F /* LawOfRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3922C63E4F800C8357F /* LawOfRefraction.bmp */; };
+		6F2AC3E72C63E4FB00C8357F /* RegularPolygon.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3932C63E4F800C8357F /* RegularPolygon.bmp */; };
+		6F2AC3E82C63E4FB00C8357F /* SeriesAndParallelR.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3942C63E4F800C8357F /* SeriesAndParallelR.bmp */; };
+		6F2AC3E92C63E4FB00C8357F /* 9-angles.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3952C63E4F800C8357F /* 9-angles.bmp */; };
+		6F2AC3EA2C63E4FB00C8357F /* SphericalRefraction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3962C63E4F800C8357F /* SphericalRefraction.bmp */; };
+		6F2AC3EB2C63E4FB00C8357F /* definition_of_e.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3972C63E4F800C8357F /* definition_of_e.bmp */; };
+		6F2AC3EC2C63E4FB00C8357F /* Ellipse.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3982C63E4F800C8357F /* Ellipse.bmp */; };
+		6F2AC3ED2C63E4FB00C8357F /* PlateCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3992C63E4F800C8357F /* PlateCapacitor.bmp */; };
+		6F2AC3EE2C63E4FB00C8357F /* 6-trigonometrics.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39A2C63E4F800C8357F /* 6-trigonometrics.bmp */; };
+		6F2AC3EF2C63E4FB00C8357F /* CantileverDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39B2C63E4F800C8357F /* CantileverDeflection.bmp */; };
+		6F2AC3F02C63E4FB00C8357F /* Cone.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39C2C63E4F900C8357F /* Cone.bmp */; };
+		6F2AC3F12C63E4FB00C8357F /* bat-and-jet.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39D2C63E4F900C8357F /* bat-and-jet.bmp */; };
+		6F2AC3F22C63E4FB00C8357F /* imaginary_unit.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39E2C63E4F900C8357F /* imaginary_unit.bmp */; };
+		6F2AC3F32C63E4FB00C8357F /* RLCCurrentDelay.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC39F2C63E4F900C8357F /* RLCCurrentDelay.bmp */; };
+		6F2AC3F42C63E4FB00C8357F /* SeriesAndParallelC.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A02C63E4F900C8357F /* SeriesAndParallelC.bmp */; };
+		6F2AC3F52C63E4FB00C8357F /* 4-basic-math.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A12C63E4F900C8357F /* 4-basic-math.bmp */; };
+		6F2AC3F62C63E4FB00C8357F /* MagneticFieldInToroid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A22C63E4F900C8357F /* MagneticFieldInToroid.bmp */; };
+		6F2AC3F72C63E4FB00C8357F /* Conduction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A32C63E4F900C8357F /* Conduction.bmp */; };
+		6F2AC3F82C63E4FB00C8357F /* definition_of_pi.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A42C63E4F900C8357F /* definition_of_pi.bmp */; };
+		6F2AC3F92C63E4FB00C8357F /* StressOnAnElement.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A52C63E4F900C8357F /* StressOnAnElement.bmp */; };
+		6F2AC3FA2C63E4FB00C8357F /* StraightWire.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A62C63E4F900C8357F /* StraightWire.bmp */; };
+		6F2AC3FB2C63E4FB00C8357F /* stack-and-menus.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A72C63E4F900C8357F /* stack-and-menus.bmp */; };
+		6F2AC3FC2C63E4FB00C8357F /* IsentropicFlow.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A82C63E4F900C8357F /* IsentropicFlow.bmp */; };
+		6F2AC3FD2C63E4FB00C8357F /* NewtonGravitation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3A92C63E4F900C8357F /* NewtonGravitation.bmp */; };
+		6F2AC3FE2C63E4FB00C8357F /* command-line-and-catalog.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AA2C63E4F900C8357F /* command-line-and-catalog.bmp */; };
+		6F2AC3FF2C63E4FB00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AB2C63E4F900C8357F /* 2-arithmetic-cmd.bmp */; };
+		6F2AC4002C63E4FB00C8357F /* SphericalReflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AC2C63E4F900C8357F /* SphericalReflection.bmp */; };
+		6F2AC4012C63E4FB00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AD2C63E4F900C8357F /* 5-mixing-rpl-alg.bmp */; };
+		6F2AC4022C63E4FB00C8357F /* ToroidInductance.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AE2C63E4F900C8357F /* ToroidInductance.bmp */; };
+		6F2AC4032C63E4FB00C8357F /* JFETs.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3AF2C63E4F900C8357F /* JFETs.bmp */; };
+		6F2AC4042C63E4FB00C8357F /* CurrentDivider.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B02C63E4FA00C8357F /* CurrentDivider.bmp */; };
+		6F2AC4052C63E4FB00C8357F /* TorsionalPendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B12C63E4FA00C8357F /* TorsionalPendulum.bmp */; };
+		6F2AC4062C63E4FB00C8357F /* SimpleDeflection.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B22C63E4FA00C8357F /* SimpleDeflection.bmp */; };
+		6F2AC4072C63E4FB00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B32C63E4FA00C8357F /* 1-arithmetic-rpl.bmp */; };
+		6F2AC4082C63E4FB00C8357F /* Sphere.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B42C63E4FA00C8357F /* Sphere.bmp */; };
+		6F2AC4092C63E4FB00C8357F /* CantileverMoment.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B52C63E4FA00C8357F /* CantileverMoment.bmp */; };
+		6F2AC40A2C63E4FB00C8357F /* RLTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B62C63E4FA00C8357F /* RLTransient.bmp */; };
+		6F2AC40B2C63E4FB00C8357F /* SeriesAndParallelL.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B72C63E4FA00C8357F /* SeriesAndParallelL.bmp */; };
+		6F2AC40C2C63E4FB00C8357F /* BrewstersLaw.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B82C63E4FA00C8357F /* BrewstersLaw.bmp */; };
+		6F2AC40D2C63E4FB00C8357F /* BlackBodyRadiation.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3B92C63E4FA00C8357F /* BlackBodyRadiation.bmp */; };
+		6F2AC40E2C63E4FB00C8357F /* Circle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BA2C63E4FA00C8357F /* Circle.bmp */; };
+		6F2AC40F2C63E4FB00C8357F /* BipolarTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BB2C63E4FA00C8357F /* BipolarTransistor.bmp */; };
+		6F2AC4112C63E4FB00C8357F /* SimpleShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BD2C63E4FA00C8357F /* SimpleShear.bmp */; };
+		6F2AC4122C63E4FB00C8357F /* PNStepJunction.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BE2C63E4FA00C8357F /* PNStepJunction.bmp */; };
+		6F2AC4132C63E4FB00C8357F /* 10-complex.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3BF2C63E4FA00C8357F /* 10-complex.bmp */; };
+		6F2AC4142C63E4FB00C8357F /* EccentricColumns.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C02C63E4FA00C8357F /* EccentricColumns.bmp */; };
+		6F2AC4152C63E4FB00C8357F /* FlowWIthLosses.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C12C63E4FA00C8357F /* FlowWIthLosses.bmp */; };
+		6F2AC4162C63E4FB00C8357F /* MassSpringSystem.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C22C63E4FB00C8357F /* MassSpringSystem.bmp */; };
+		6F2AC4172C63E4FB00C8357F /* SimplePendulum.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C32C63E4FB00C8357F /* SimplePendulum.bmp */; };
+		6F2AC4182C63E4FB00C8357F /* Cylinder.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C42C63E4FB00C8357F /* Cylinder.bmp */; };
+		6F2AC4192C63E4FB00C8357F /* CylindricalCapacitor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C52C63E4FB00C8357F /* CylindricalCapacitor.bmp */; };
+		6F2AC41A2C63E4FB00C8357F /* MohrsCircle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C62C63E4FB00C8357F /* MohrsCircle.bmp */; };
+		6F2AC41B2C63E4FB00C8357F /* NMOSTransistor.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C72C63E4FB00C8357F /* NMOSTransistor.bmp */; };
+		6F2AC41C2C63E4FB00C8357F /* ThinLens.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C82C63E4FB00C8357F /* ThinLens.bmp */; };
+		6F2AC41D2C63E4FB00C8357F /* Triangle.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3C92C63E4FB00C8357F /* Triangle.bmp */; };
+		6F2AC41E2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CA2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp */; };
+		6F2AC41F2C63E4FB00C8357F /* RCTransient.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CB2C63E4FB00C8357F /* RCTransient.bmp */; };
+		6F2AC4202C63E4FB00C8357F /* ElasticBuckling.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CC2C63E4FB00C8357F /* ElasticBuckling.bmp */; };
+		6F2AC4212C63E4FB00C8357F /* Parallelepiped.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CD2C63E4FB00C8357F /* Parallelepiped.bmp */; };
+		6F2AC4222C63E4FB00C8357F /* FlowInFullPipes.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */; };
+		6F2AC4242C63E4FB00C8357F /* 3-fractions.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */; };
+		6F2AC4252C63E4FB00C8357F /* CantileverShear.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */; };
 		6F4519AA2BBC80A600C8357F /* DB48X startup screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F4519A92BBC80A600C8357F /* DB48X startup screen.png */; };
 		6F4528D02B9C0F4E00C8357F /* equations.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6F4528C52B9C0F4E00C8357F /* equations.cc */; };
 		6F4528D12B9C0F4E00C8357F /* decimal-e.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F4528C72B9C0F4E00C8357F /* decimal-e.txt */; };
@@ -47,7 +146,6 @@
 		6FD555872B995FB800C8357F /* characters.csv in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6FD555852B995FA500C8357F /* characters.csv */; };
 		6FE775252B97966E00C8357F /* units.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750C2B97966E00C8357F /* units.csv */; };
 		6FE775262B97966E00C8357F /* constants.csv in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750D2B97966E00C8357F /* constants.csv */; };
-		6FE775272B97966E00C8357F /* left-shift.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE7750F2B97966E00C8357F /* left-shift.png */; };
 		6FE775282B97966E00C8357F /* keyboard.png in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775102B97966E00C8357F /* keyboard.png */; };
 		6FE775292B97966E00C8357F /* db48x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775112B97966E00C8357F /* db48x.md */; };
 		6FE775372B97966E00C8357F /* db50x.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FE775202B97966E00C8357F /* db50x.md */; };
@@ -136,6 +234,113 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6F2AC4262C63E5CD00C8357F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = help/img;
+			dstSubfolderSpec = 7;
+			files = (
+				6F2AC3FC2C63E4FB00C8357F /* IsentropicFlow.bmp in CopyFiles */,
+				6F2AC3E52C63E4FB00C8357F /* BernouilliEquation.bmp in CopyFiles */,
+				6F2AC3F12C63E4FB00C8357F /* bat-and-jet.bmp in CopyFiles */,
+				6F2AC3E42C63E4FB00C8357F /* HookesLaw.bmp in CopyFiles */,
+				6F2AC4002C63E4FB00C8357F /* SphericalReflection.bmp in CopyFiles */,
+				6F2AC40A2C63E4FB00C8357F /* RLTransient.bmp in CopyFiles */,
+				6F2AC3792C63640C00C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC41B2C63E4FB00C8357F /* NMOSTransistor.bmp in CopyFiles */,
+				6F2AC41D2C63E4FB00C8357F /* Triangle.bmp in CopyFiles */,
+				6F2AC3742C63640C00C8357F /* 7-display-modes.bmp in CopyFiles */,
+				6F2AC3752C63640C00C8357F /* 8-help.bmp in CopyFiles */,
+				6F2AC41C2C63E4FB00C8357F /* ThinLens.bmp in CopyFiles */,
+				6F2AC36E2C63640C00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC4172C63E4FB00C8357F /* SimplePendulum.bmp in CopyFiles */,
+				6F2AC4162C63E4FB00C8357F /* MassSpringSystem.bmp in CopyFiles */,
+				6F2AC4202C63E4FB00C8357F /* ElasticBuckling.bmp in CopyFiles */,
+				6F2AC3D62C63E4FB00C8357F /* PressureAtDepth.bmp in CopyFiles */,
+				6F2AC3FB2C63E4FB00C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC3F52C63E4FB00C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC3D82C63E4FB00C8357F /* Conduction+Convection.bmp in CopyFiles */,
+				6F2AC3EF2C63E4FB00C8357F /* CantileverDeflection.bmp in CopyFiles */,
+				6F2AC41F2C63E4FB00C8357F /* RCTransient.bmp in CopyFiles */,
+				6F2AC3E82C63E4FB00C8357F /* SeriesAndParallelR.bmp in CopyFiles */,
+				6F2AC4182C63E4FB00C8357F /* Cylinder.bmp in CopyFiles */,
+				6F2AC3E02C63E4FB00C8357F /* ThermalExpansion.bmp in CopyFiles */,
+				6F2AC41E2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp in CopyFiles */,
+				6F2AC40E2C63E4FB00C8357F /* Circle.bmp in CopyFiles */,
+				6F2AC4032C63E4FB00C8357F /* JFETs.bmp in CopyFiles */,
+				6F2AC3E62C63E4FB00C8357F /* LawOfRefraction.bmp in CopyFiles */,
+				6F2AC4252C63E4FB00C8357F /* CantileverShear.bmp in CopyFiles */,
+				6F2AC40C2C63E4FB00C8357F /* BrewstersLaw.bmp in CopyFiles */,
+				6F2AC4092C63E4FB00C8357F /* CantileverMoment.bmp in CopyFiles */,
+				6F2AC3DC2C63E4FB00C8357F /* CircularRing.bmp in CopyFiles */,
+				6F2AC3FE2C63E4FB00C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC3732C63640C00C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC3E32C63E4FB00C8357F /* Convection.bmp in CopyFiles */,
+				6F2AC3F92C63E4FB00C8357F /* StressOnAnElement.bmp in CopyFiles */,
+				6F2AC37D2C63640C00C8357F /* stack-and-menus.bmp in CopyFiles */,
+				6F2AC3782C63640C00C8357F /* command-line-and-catalog.bmp in CopyFiles */,
+				6F2AC4142C63E4FB00C8357F /* EccentricColumns.bmp in CopyFiles */,
+				6F2AC37B2C63640C00C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC4132C63E4FB00C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC3F42C63E4FB00C8357F /* SeriesAndParallelC.bmp in CopyFiles */,
+				6F2AC3F22C63E4FB00C8357F /* imaginary_unit.bmp in CopyFiles */,
+				6F2AC3F72C63E4FB00C8357F /* Conduction.bmp in CopyFiles */,
+				6F2AC3722C63640C00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC3EC2C63E4FB00C8357F /* Ellipse.bmp in CopyFiles */,
+				6F2AC3702C63640C00C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC3F32C63E4FB00C8357F /* RLCCurrentDelay.bmp in CopyFiles */,
+				6F2AC4022C63E4FB00C8357F /* ToroidInductance.bmp in CopyFiles */,
+				6F2AC3F82C63E4FB00C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC3D92C63E4FB00C8357F /* 1DElastiCollisions.bmp in CopyFiles */,
+				6F2AC3F02C63E4FB00C8357F /* Cone.bmp in CopyFiles */,
+				6F2AC3E12C63E4FB00C8357F /* ProjectileMotion.bmp in CopyFiles */,
+				6F2AC41A2C63E4FB00C8357F /* MohrsCircle.bmp in CopyFiles */,
+				6F2AC37A2C63640C00C8357F /* definition_of_pi.bmp in CopyFiles */,
+				6F2AC3E72C63E4FB00C8357F /* RegularPolygon.bmp in CopyFiles */,
+				6F2AC3EE2C63E4FB00C8357F /* 6-trigonometrics.bmp in CopyFiles */,
+				6F2AC3FA2C63E4FB00C8357F /* StraightWire.bmp in CopyFiles */,
+				6F2AC3D22C63E4FB00C8357F /* ForceBetweenWires.bmp in CopyFiles */,
+				6F2AC3712C63640C00C8357F /* 4-basic-math.bmp in CopyFiles */,
+				6F2AC3E92C63E4FB00C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC4242C63E4FB00C8357F /* 3-fractions.bmp in CopyFiles */,
+				6F2AC40F2C63E4FB00C8357F /* BipolarTransistor.bmp in CopyFiles */,
+				6F2AC4112C63E4FB00C8357F /* SimpleShear.bmp in CopyFiles */,
+				6F2AC3762C63640C00C8357F /* 9-angles.bmp in CopyFiles */,
+				6F2AC3EA2C63E4FB00C8357F /* SphericalRefraction.bmp in CopyFiles */,
+				6F2AC3FF2C63E4FB00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC3DD2C63E4FB00C8357F /* VoltageDivider.bmp in CopyFiles */,
+				6F2AC4082C63E4FB00C8357F /* Sphere.bmp in CopyFiles */,
+				6F2AC3FD2C63E4FB00C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC4052C63E4FB00C8357F /* TorsionalPendulum.bmp in CopyFiles */,
+				6F2AC4152C63E4FB00C8357F /* FlowWIthLosses.bmp in CopyFiles */,
+				6F2AC3DE2C63E4FB00C8357F /* ShearStress.bmp in CopyFiles */,
+				6F2AC3F62C63E4FB00C8357F /* MagneticFieldInToroid.bmp in CopyFiles */,
+				6F2AC3772C63640C00C8357F /* 10-complex.bmp in CopyFiles */,
+				6F2AC3E22C63E4FB00C8357F /* Rectangle.bmp in CopyFiles */,
+				6F2AC4222C63E4FB00C8357F /* FlowInFullPipes.bmp in CopyFiles */,
+				6F2AC3D52C63E4FB00C8357F /* CriticalAngle.bmp in CopyFiles */,
+				6F2AC4042C63E4FB00C8357F /* CurrentDivider.bmp in CopyFiles */,
+				6F2AC3D32C63E4FB00C8357F /* SolenoidInductance.bmp in CopyFiles */,
+				6F2AC4072C63E4FB00C8357F /* 1-arithmetic-rpl.bmp in CopyFiles */,
+				6F2AC4192C63E4FB00C8357F /* CylindricalCapacitor.bmp in CopyFiles */,
+				6F2AC3D42C63E4FB00C8357F /* SimpleMoment.bmp in CopyFiles */,
+				6F2AC4122C63E4FB00C8357F /* PNStepJunction.bmp in CopyFiles */,
+				6F2AC40D2C63E4FB00C8357F /* BlackBodyRadiation.bmp in CopyFiles */,
+				6F2AC4212C63E4FB00C8357F /* Parallelepiped.bmp in CopyFiles */,
+				6F2AC3DA2C63E4FB00C8357F /* CantileverSlope.bmp in CopyFiles */,
+				6F2AC3DF2C63E4FB00C8357F /* NormalStress.bmp in CopyFiles */,
+				6F2AC4012C63E4FB00C8357F /* 5-mixing-rpl-alg.bmp in CopyFiles */,
+				6F2AC3D72C63E4FB00C8357F /* ConicalPendulum.bmp in CopyFiles */,
+				6F2AC3ED2C63E4FB00C8357F /* PlateCapacitor.bmp in CopyFiles */,
+				6F2AC4062C63E4FB00C8357F /* SimpleDeflection.bmp in CopyFiles */,
+				6F2AC3DB2C63E4FB00C8357F /* SimpleSlope.bmp in CopyFiles */,
+				6F2AC36F2C63640C00C8357F /* 2-arithmetic-cmd.bmp in CopyFiles */,
+				6F2AC3EB2C63E4FB00C8357F /* definition_of_e.bmp in CopyFiles */,
+				6F2AC37C2C63640C00C8357F /* NewtonGravitation.bmp in CopyFiles */,
+				6F2AC40B2C63E4FB00C8357F /* SeriesAndParallelL.bmp in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FF873932B97B82C00C8357F /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -144,6 +349,7 @@
 			files = (
 				6FF873942B97B84D00C8357F /* db48x.md in CopyFiles */,
 				6FF873952B97B84D00C8357F /* db50x.md in CopyFiles */,
+				6F2AC36D2C63640C00C8357F /* shifts.bmp in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,6 +398,107 @@
 		1F9D29901C72B9BB000025E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6F18F27D2C2DAC3400C8357F /* polynomial.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = polynomial.cc; path = ../../../src/polynomial.cc; sourceTree = "<group>"; };
 		6F18F27E2C2DAC3400C8357F /* polynomial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = polynomial.h; path = ../../../src/polynomial.h; sourceTree = "<group>"; };
+		6F2AC35B2C63640C00C8357F /* shifts.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = shifts.bmp; sourceTree = "<group>"; };
+		6F2AC35C2C63640C00C8357F /* 1-arithmetic-rpl.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "1-arithmetic-rpl.bmp"; sourceTree = "<group>"; };
+		6F2AC35D2C63640C00C8357F /* 2-arithmetic-cmd.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "2-arithmetic-cmd.bmp"; sourceTree = "<group>"; };
+		6F2AC35E2C63640C00C8357F /* 3-fractions.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "3-fractions.bmp"; sourceTree = "<group>"; };
+		6F2AC35F2C63640C00C8357F /* 4-basic-math.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "4-basic-math.bmp"; sourceTree = "<group>"; };
+		6F2AC3602C63640C00C8357F /* 5-mixing-rpl-alg.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "5-mixing-rpl-alg.bmp"; sourceTree = "<group>"; };
+		6F2AC3612C63640C00C8357F /* 6-trigonometrics.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "6-trigonometrics.bmp"; sourceTree = "<group>"; };
+		6F2AC3622C63640C00C8357F /* 7-display-modes.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "7-display-modes.bmp"; sourceTree = "<group>"; };
+		6F2AC3632C63640C00C8357F /* 8-help.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "8-help.bmp"; sourceTree = "<group>"; };
+		6F2AC3642C63640C00C8357F /* 9-angles.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "9-angles.bmp"; sourceTree = "<group>"; };
+		6F2AC3652C63640C00C8357F /* 10-complex.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "10-complex.bmp"; sourceTree = "<group>"; };
+		6F2AC3662C63640C00C8357F /* command-line-and-catalog.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "command-line-and-catalog.bmp"; sourceTree = "<group>"; };
+		6F2AC3672C63640C00C8357F /* definition_of_e.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = definition_of_e.bmp; sourceTree = "<group>"; };
+		6F2AC3682C63640C00C8357F /* definition_of_pi.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = definition_of_pi.bmp; sourceTree = "<group>"; };
+		6F2AC3692C63640C00C8357F /* imaginary_unit.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = imaginary_unit.bmp; sourceTree = "<group>"; };
+		6F2AC36A2C63640C00C8357F /* NewtonGravitation.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = NewtonGravitation.bmp; sourceTree = "<group>"; };
+		6F2AC36B2C63640C00C8357F /* stack-and-menus.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "stack-and-menus.bmp"; sourceTree = "<group>"; };
+		6F2AC37E2C63E4F700C8357F /* ForceBetweenWires.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ForceBetweenWires.bmp; sourceTree = "<group>"; };
+		6F2AC37F2C63E4F700C8357F /* SolenoidInductance.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SolenoidInductance.bmp; sourceTree = "<group>"; };
+		6F2AC3802C63E4F700C8357F /* SimpleMoment.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SimpleMoment.bmp; sourceTree = "<group>"; };
+		6F2AC3812C63E4F700C8357F /* CriticalAngle.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CriticalAngle.bmp; sourceTree = "<group>"; };
+		6F2AC3822C63E4F700C8357F /* PressureAtDepth.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = PressureAtDepth.bmp; sourceTree = "<group>"; };
+		6F2AC3832C63E4F700C8357F /* ConicalPendulum.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ConicalPendulum.bmp; sourceTree = "<group>"; };
+		6F2AC3842C63E4F700C8357F /* Conduction+Convection.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "Conduction+Convection.bmp"; sourceTree = "<group>"; };
+		6F2AC3852C63E4F700C8357F /* 1DElastiCollisions.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = 1DElastiCollisions.bmp; sourceTree = "<group>"; };
+		6F2AC3862C63E4F700C8357F /* CantileverSlope.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CantileverSlope.bmp; sourceTree = "<group>"; };
+		6F2AC3872C63E4F700C8357F /* SimpleSlope.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SimpleSlope.bmp; sourceTree = "<group>"; };
+		6F2AC3882C63E4F700C8357F /* CircularRing.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CircularRing.bmp; sourceTree = "<group>"; };
+		6F2AC3892C63E4F700C8357F /* VoltageDivider.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = VoltageDivider.bmp; sourceTree = "<group>"; };
+		6F2AC38A2C63E4F700C8357F /* ShearStress.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ShearStress.bmp; sourceTree = "<group>"; };
+		6F2AC38B2C63E4F800C8357F /* NormalStress.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = NormalStress.bmp; sourceTree = "<group>"; };
+		6F2AC38C2C63E4F800C8357F /* ThermalExpansion.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ThermalExpansion.bmp; sourceTree = "<group>"; };
+		6F2AC38D2C63E4F800C8357F /* ProjectileMotion.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ProjectileMotion.bmp; sourceTree = "<group>"; };
+		6F2AC38E2C63E4F800C8357F /* Rectangle.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Rectangle.bmp; sourceTree = "<group>"; };
+		6F2AC38F2C63E4F800C8357F /* Convection.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Convection.bmp; sourceTree = "<group>"; };
+		6F2AC3902C63E4F800C8357F /* HookesLaw.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = HookesLaw.bmp; sourceTree = "<group>"; };
+		6F2AC3912C63E4F800C8357F /* BernouilliEquation.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = BernouilliEquation.bmp; sourceTree = "<group>"; };
+		6F2AC3922C63E4F800C8357F /* LawOfRefraction.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = LawOfRefraction.bmp; sourceTree = "<group>"; };
+		6F2AC3932C63E4F800C8357F /* RegularPolygon.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = RegularPolygon.bmp; sourceTree = "<group>"; };
+		6F2AC3942C63E4F800C8357F /* SeriesAndParallelR.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SeriesAndParallelR.bmp; sourceTree = "<group>"; };
+		6F2AC3952C63E4F800C8357F /* 9-angles.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "9-angles.bmp"; sourceTree = "<group>"; };
+		6F2AC3962C63E4F800C8357F /* SphericalRefraction.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SphericalRefraction.bmp; sourceTree = "<group>"; };
+		6F2AC3972C63E4F800C8357F /* definition_of_e.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = definition_of_e.bmp; sourceTree = "<group>"; };
+		6F2AC3982C63E4F800C8357F /* Ellipse.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Ellipse.bmp; sourceTree = "<group>"; };
+		6F2AC3992C63E4F800C8357F /* PlateCapacitor.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = PlateCapacitor.bmp; sourceTree = "<group>"; };
+		6F2AC39A2C63E4F800C8357F /* 6-trigonometrics.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "6-trigonometrics.bmp"; sourceTree = "<group>"; };
+		6F2AC39B2C63E4F800C8357F /* CantileverDeflection.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CantileverDeflection.bmp; sourceTree = "<group>"; };
+		6F2AC39C2C63E4F900C8357F /* Cone.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Cone.bmp; sourceTree = "<group>"; };
+		6F2AC39D2C63E4F900C8357F /* bat-and-jet.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "bat-and-jet.bmp"; sourceTree = "<group>"; };
+		6F2AC39E2C63E4F900C8357F /* imaginary_unit.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = imaginary_unit.bmp; sourceTree = "<group>"; };
+		6F2AC39F2C63E4F900C8357F /* RLCCurrentDelay.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = RLCCurrentDelay.bmp; sourceTree = "<group>"; };
+		6F2AC3A02C63E4F900C8357F /* SeriesAndParallelC.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SeriesAndParallelC.bmp; sourceTree = "<group>"; };
+		6F2AC3A12C63E4F900C8357F /* 4-basic-math.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "4-basic-math.bmp"; sourceTree = "<group>"; };
+		6F2AC3A22C63E4F900C8357F /* MagneticFieldInToroid.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = MagneticFieldInToroid.bmp; sourceTree = "<group>"; };
+		6F2AC3A32C63E4F900C8357F /* Conduction.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Conduction.bmp; sourceTree = "<group>"; };
+		6F2AC3A42C63E4F900C8357F /* definition_of_pi.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = definition_of_pi.bmp; sourceTree = "<group>"; };
+		6F2AC3A52C63E4F900C8357F /* StressOnAnElement.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = StressOnAnElement.bmp; sourceTree = "<group>"; };
+		6F2AC3A62C63E4F900C8357F /* StraightWire.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = StraightWire.bmp; sourceTree = "<group>"; };
+		6F2AC3A72C63E4F900C8357F /* stack-and-menus.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "stack-and-menus.bmp"; sourceTree = "<group>"; };
+		6F2AC3A82C63E4F900C8357F /* IsentropicFlow.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = IsentropicFlow.bmp; sourceTree = "<group>"; };
+		6F2AC3A92C63E4F900C8357F /* NewtonGravitation.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = NewtonGravitation.bmp; sourceTree = "<group>"; };
+		6F2AC3AA2C63E4F900C8357F /* command-line-and-catalog.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "command-line-and-catalog.bmp"; sourceTree = "<group>"; };
+		6F2AC3AB2C63E4F900C8357F /* 2-arithmetic-cmd.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "2-arithmetic-cmd.bmp"; sourceTree = "<group>"; };
+		6F2AC3AC2C63E4F900C8357F /* SphericalReflection.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SphericalReflection.bmp; sourceTree = "<group>"; };
+		6F2AC3AD2C63E4F900C8357F /* 5-mixing-rpl-alg.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "5-mixing-rpl-alg.bmp"; sourceTree = "<group>"; };
+		6F2AC3AE2C63E4F900C8357F /* ToroidInductance.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ToroidInductance.bmp; sourceTree = "<group>"; };
+		6F2AC3AF2C63E4F900C8357F /* JFETs.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = JFETs.bmp; sourceTree = "<group>"; };
+		6F2AC3B02C63E4FA00C8357F /* CurrentDivider.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CurrentDivider.bmp; sourceTree = "<group>"; };
+		6F2AC3B12C63E4FA00C8357F /* TorsionalPendulum.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = TorsionalPendulum.bmp; sourceTree = "<group>"; };
+		6F2AC3B22C63E4FA00C8357F /* SimpleDeflection.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SimpleDeflection.bmp; sourceTree = "<group>"; };
+		6F2AC3B32C63E4FA00C8357F /* 1-arithmetic-rpl.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "1-arithmetic-rpl.bmp"; sourceTree = "<group>"; };
+		6F2AC3B42C63E4FA00C8357F /* Sphere.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Sphere.bmp; sourceTree = "<group>"; };
+		6F2AC3B52C63E4FA00C8357F /* CantileverMoment.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CantileverMoment.bmp; sourceTree = "<group>"; };
+		6F2AC3B62C63E4FA00C8357F /* RLTransient.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = RLTransient.bmp; sourceTree = "<group>"; };
+		6F2AC3B72C63E4FA00C8357F /* SeriesAndParallelL.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SeriesAndParallelL.bmp; sourceTree = "<group>"; };
+		6F2AC3B82C63E4FA00C8357F /* BrewstersLaw.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = BrewstersLaw.bmp; sourceTree = "<group>"; };
+		6F2AC3B92C63E4FA00C8357F /* BlackBodyRadiation.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = BlackBodyRadiation.bmp; sourceTree = "<group>"; };
+		6F2AC3BA2C63E4FA00C8357F /* Circle.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Circle.bmp; sourceTree = "<group>"; };
+		6F2AC3BB2C63E4FA00C8357F /* BipolarTransistor.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = BipolarTransistor.bmp; sourceTree = "<group>"; };
+		6F2AC3BC2C63E4FA00C8357F /* 7-display-modes.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "7-display-modes.bmp"; sourceTree = "<group>"; };
+		6F2AC3BD2C63E4FA00C8357F /* SimpleShear.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SimpleShear.bmp; sourceTree = "<group>"; };
+		6F2AC3BE2C63E4FA00C8357F /* PNStepJunction.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = PNStepJunction.bmp; sourceTree = "<group>"; };
+		6F2AC3BF2C63E4FA00C8357F /* 10-complex.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "10-complex.bmp"; sourceTree = "<group>"; };
+		6F2AC3C02C63E4FA00C8357F /* EccentricColumns.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = EccentricColumns.bmp; sourceTree = "<group>"; };
+		6F2AC3C12C63E4FA00C8357F /* FlowWIthLosses.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = FlowWIthLosses.bmp; sourceTree = "<group>"; };
+		6F2AC3C22C63E4FB00C8357F /* MassSpringSystem.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = MassSpringSystem.bmp; sourceTree = "<group>"; };
+		6F2AC3C32C63E4FB00C8357F /* SimplePendulum.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = SimplePendulum.bmp; sourceTree = "<group>"; };
+		6F2AC3C42C63E4FB00C8357F /* Cylinder.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Cylinder.bmp; sourceTree = "<group>"; };
+		6F2AC3C52C63E4FB00C8357F /* CylindricalCapacitor.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CylindricalCapacitor.bmp; sourceTree = "<group>"; };
+		6F2AC3C62C63E4FB00C8357F /* MohrsCircle.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = MohrsCircle.bmp; sourceTree = "<group>"; };
+		6F2AC3C72C63E4FB00C8357F /* NMOSTransistor.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = NMOSTransistor.bmp; sourceTree = "<group>"; };
+		6F2AC3C82C63E4FB00C8357F /* ThinLens.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ThinLens.bmp; sourceTree = "<group>"; };
+		6F2AC3C92C63E4FB00C8357F /* Triangle.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Triangle.bmp; sourceTree = "<group>"; };
+		6F2AC3CA2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = MagneticFieldInSolenoid.bmp; sourceTree = "<group>"; };
+		6F2AC3CB2C63E4FB00C8357F /* RCTransient.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = RCTransient.bmp; sourceTree = "<group>"; };
+		6F2AC3CC2C63E4FB00C8357F /* ElasticBuckling.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = ElasticBuckling.bmp; sourceTree = "<group>"; };
+		6F2AC3CD2C63E4FB00C8357F /* Parallelepiped.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = Parallelepiped.bmp; sourceTree = "<group>"; };
+		6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = FlowInFullPipes.bmp; sourceTree = "<group>"; };
+		6F2AC3CF2C63E4FB00C8357F /* 8-help.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "8-help.bmp"; sourceTree = "<group>"; };
+		6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = "3-fractions.bmp"; sourceTree = "<group>"; };
+		6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = CantileverShear.bmp; sourceTree = "<group>"; };
 		6F4519A92BBC80A600C8357F /* DB48X startup screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DB48X startup screen.png"; sourceTree = "<group>"; };
 		6F4528C52B9C0F4E00C8357F /* equations.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = equations.cc; path = ../../../src/equations.cc; sourceTree = "<group>"; };
 		6F4528C62B9C0F4E00C8357F /* equations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = equations.h; path = ../../../src/equations.h; sourceTree = "<group>"; };
@@ -239,7 +546,6 @@
 		6FD555852B995FA500C8357F /* characters.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = characters.csv; sourceTree = "<group>"; };
 		6FE7750C2B97966E00C8357F /* units.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = units.csv; sourceTree = "<group>"; };
 		6FE7750D2B97966E00C8357F /* constants.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = constants.csv; sourceTree = "<group>"; };
-		6FE7750F2B97966E00C8357F /* left-shift.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left-shift.png"; sourceTree = "<group>"; };
 		6FE775102B97966E00C8357F /* keyboard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyboard.png; sourceTree = "<group>"; };
 		6FE775112B97966E00C8357F /* db48x.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = db48x.md; sourceTree = "<group>"; };
 		6FE775202B97966E00C8357F /* db50x.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = db50x.md; sourceTree = "<group>"; };
@@ -469,6 +775,113 @@
 			path = DB48XUITests;
 			sourceTree = "<group>";
 		};
+		6F2AC36C2C63640C00C8357F /* img */ = {
+			isa = PBXGroup;
+			children = (
+				6F2AC3B32C63E4FA00C8357F /* 1-arithmetic-rpl.bmp */,
+				6F2AC3852C63E4F700C8357F /* 1DElastiCollisions.bmp */,
+				6F2AC3AB2C63E4F900C8357F /* 2-arithmetic-cmd.bmp */,
+				6F2AC3D02C63E4FB00C8357F /* 3-fractions.bmp */,
+				6F2AC3A12C63E4F900C8357F /* 4-basic-math.bmp */,
+				6F2AC3AD2C63E4F900C8357F /* 5-mixing-rpl-alg.bmp */,
+				6F2AC39A2C63E4F800C8357F /* 6-trigonometrics.bmp */,
+				6F2AC3BC2C63E4FA00C8357F /* 7-display-modes.bmp */,
+				6F2AC3CF2C63E4FB00C8357F /* 8-help.bmp */,
+				6F2AC3952C63E4F800C8357F /* 9-angles.bmp */,
+				6F2AC3BF2C63E4FA00C8357F /* 10-complex.bmp */,
+				6F2AC39D2C63E4F900C8357F /* bat-and-jet.bmp */,
+				6F2AC3912C63E4F800C8357F /* BernouilliEquation.bmp */,
+				6F2AC3BB2C63E4FA00C8357F /* BipolarTransistor.bmp */,
+				6F2AC3B92C63E4FA00C8357F /* BlackBodyRadiation.bmp */,
+				6F2AC3B82C63E4FA00C8357F /* BrewstersLaw.bmp */,
+				6F2AC39B2C63E4F800C8357F /* CantileverDeflection.bmp */,
+				6F2AC3B52C63E4FA00C8357F /* CantileverMoment.bmp */,
+				6F2AC3D12C63E4FB00C8357F /* CantileverShear.bmp */,
+				6F2AC3862C63E4F700C8357F /* CantileverSlope.bmp */,
+				6F2AC3BA2C63E4FA00C8357F /* Circle.bmp */,
+				6F2AC3882C63E4F700C8357F /* CircularRing.bmp */,
+				6F2AC3AA2C63E4F900C8357F /* command-line-and-catalog.bmp */,
+				6F2AC3A32C63E4F900C8357F /* Conduction.bmp */,
+				6F2AC3842C63E4F700C8357F /* Conduction+Convection.bmp */,
+				6F2AC39C2C63E4F900C8357F /* Cone.bmp */,
+				6F2AC3832C63E4F700C8357F /* ConicalPendulum.bmp */,
+				6F2AC38F2C63E4F800C8357F /* Convection.bmp */,
+				6F2AC3812C63E4F700C8357F /* CriticalAngle.bmp */,
+				6F2AC3B02C63E4FA00C8357F /* CurrentDivider.bmp */,
+				6F2AC3C42C63E4FB00C8357F /* Cylinder.bmp */,
+				6F2AC3C52C63E4FB00C8357F /* CylindricalCapacitor.bmp */,
+				6F2AC3972C63E4F800C8357F /* definition_of_e.bmp */,
+				6F2AC3A42C63E4F900C8357F /* definition_of_pi.bmp */,
+				6F2AC3C02C63E4FA00C8357F /* EccentricColumns.bmp */,
+				6F2AC3CC2C63E4FB00C8357F /* ElasticBuckling.bmp */,
+				6F2AC3982C63E4F800C8357F /* Ellipse.bmp */,
+				6F2AC3CE2C63E4FB00C8357F /* FlowInFullPipes.bmp */,
+				6F2AC3C12C63E4FA00C8357F /* FlowWIthLosses.bmp */,
+				6F2AC37E2C63E4F700C8357F /* ForceBetweenWires.bmp */,
+				6F2AC3902C63E4F800C8357F /* HookesLaw.bmp */,
+				6F2AC39E2C63E4F900C8357F /* imaginary_unit.bmp */,
+				6F2AC3A82C63E4F900C8357F /* IsentropicFlow.bmp */,
+				6F2AC3AF2C63E4F900C8357F /* JFETs.bmp */,
+				6F2AC3922C63E4F800C8357F /* LawOfRefraction.bmp */,
+				6F2AC3CA2C63E4FB00C8357F /* MagneticFieldInSolenoid.bmp */,
+				6F2AC3A22C63E4F900C8357F /* MagneticFieldInToroid.bmp */,
+				6F2AC3C22C63E4FB00C8357F /* MassSpringSystem.bmp */,
+				6F2AC3C62C63E4FB00C8357F /* MohrsCircle.bmp */,
+				6F2AC3A92C63E4F900C8357F /* NewtonGravitation.bmp */,
+				6F2AC3C72C63E4FB00C8357F /* NMOSTransistor.bmp */,
+				6F2AC38B2C63E4F800C8357F /* NormalStress.bmp */,
+				6F2AC3CD2C63E4FB00C8357F /* Parallelepiped.bmp */,
+				6F2AC3992C63E4F800C8357F /* PlateCapacitor.bmp */,
+				6F2AC3BE2C63E4FA00C8357F /* PNStepJunction.bmp */,
+				6F2AC3822C63E4F700C8357F /* PressureAtDepth.bmp */,
+				6F2AC38D2C63E4F800C8357F /* ProjectileMotion.bmp */,
+				6F2AC3CB2C63E4FB00C8357F /* RCTransient.bmp */,
+				6F2AC38E2C63E4F800C8357F /* Rectangle.bmp */,
+				6F2AC3932C63E4F800C8357F /* RegularPolygon.bmp */,
+				6F2AC39F2C63E4F900C8357F /* RLCCurrentDelay.bmp */,
+				6F2AC3B62C63E4FA00C8357F /* RLTransient.bmp */,
+				6F2AC3A02C63E4F900C8357F /* SeriesAndParallelC.bmp */,
+				6F2AC3B72C63E4FA00C8357F /* SeriesAndParallelL.bmp */,
+				6F2AC3942C63E4F800C8357F /* SeriesAndParallelR.bmp */,
+				6F2AC38A2C63E4F700C8357F /* ShearStress.bmp */,
+				6F2AC3B22C63E4FA00C8357F /* SimpleDeflection.bmp */,
+				6F2AC3802C63E4F700C8357F /* SimpleMoment.bmp */,
+				6F2AC3C32C63E4FB00C8357F /* SimplePendulum.bmp */,
+				6F2AC3BD2C63E4FA00C8357F /* SimpleShear.bmp */,
+				6F2AC3872C63E4F700C8357F /* SimpleSlope.bmp */,
+				6F2AC37F2C63E4F700C8357F /* SolenoidInductance.bmp */,
+				6F2AC3B42C63E4FA00C8357F /* Sphere.bmp */,
+				6F2AC3AC2C63E4F900C8357F /* SphericalReflection.bmp */,
+				6F2AC3962C63E4F800C8357F /* SphericalRefraction.bmp */,
+				6F2AC3A72C63E4F900C8357F /* stack-and-menus.bmp */,
+				6F2AC3A62C63E4F900C8357F /* StraightWire.bmp */,
+				6F2AC3A52C63E4F900C8357F /* StressOnAnElement.bmp */,
+				6F2AC38C2C63E4F800C8357F /* ThermalExpansion.bmp */,
+				6F2AC3C82C63E4FB00C8357F /* ThinLens.bmp */,
+				6F2AC3AE2C63E4F900C8357F /* ToroidInductance.bmp */,
+				6F2AC3B12C63E4FA00C8357F /* TorsionalPendulum.bmp */,
+				6F2AC3C92C63E4FB00C8357F /* Triangle.bmp */,
+				6F2AC3892C63E4F700C8357F /* VoltageDivider.bmp */,
+				6F2AC35C2C63640C00C8357F /* 1-arithmetic-rpl.bmp */,
+				6F2AC35D2C63640C00C8357F /* 2-arithmetic-cmd.bmp */,
+				6F2AC35E2C63640C00C8357F /* 3-fractions.bmp */,
+				6F2AC35F2C63640C00C8357F /* 4-basic-math.bmp */,
+				6F2AC3602C63640C00C8357F /* 5-mixing-rpl-alg.bmp */,
+				6F2AC3612C63640C00C8357F /* 6-trigonometrics.bmp */,
+				6F2AC3622C63640C00C8357F /* 7-display-modes.bmp */,
+				6F2AC3632C63640C00C8357F /* 8-help.bmp */,
+				6F2AC3642C63640C00C8357F /* 9-angles.bmp */,
+				6F2AC3652C63640C00C8357F /* 10-complex.bmp */,
+				6F2AC3662C63640C00C8357F /* command-line-and-catalog.bmp */,
+				6F2AC3672C63640C00C8357F /* definition_of_e.bmp */,
+				6F2AC3682C63640C00C8357F /* definition_of_pi.bmp */,
+				6F2AC3692C63640C00C8357F /* imaginary_unit.bmp */,
+				6F2AC36A2C63640C00C8357F /* NewtonGravitation.bmp */,
+				6F2AC36B2C63640C00C8357F /* stack-and-menus.bmp */,
+			);
+			path = img;
+			sourceTree = "<group>";
+		};
 		6FB5A87F2B97F50E00C8357F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -542,7 +955,8 @@
 		6FE7750E2B97966E00C8357F /* help */ = {
 			isa = PBXGroup;
 			children = (
-				6FE7750F2B97966E00C8357F /* left-shift.png */,
+				6F2AC36C2C63640C00C8357F /* img */,
+				6F2AC35B2C63640C00C8357F /* shifts.bmp */,
 				6FE775102B97966E00C8357F /* keyboard.png */,
 				6FE775112B97966E00C8357F /* db48x.md */,
 				6FE775202B97966E00C8357F /* db50x.md */,
@@ -732,6 +1146,7 @@
 				6FF873932B97B82C00C8357F /* CopyFiles */,
 				6FF873962B97B85D00C8357F /* CopyFiles */,
 				6FF8739E2B97BAA200C8357F /* CopyFiles */,
+				6F2AC4262C63E5CD00C8357F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -830,7 +1245,6 @@
 				6FE7F05C2B95E37400C8357F /* ignored_help.csv in Resources */,
 				6FCEDA562B95E60700C8357F /* keyboard-dm42.png in Resources */,
 				6FE775282B97966E00C8357F /* keyboard.png in Resources */,
-				6FE775272B97966E00C8357F /* left-shift.png in Resources */,
 				6FD555862B995FA500C8357F /* characters.csv in Resources */,
 				1F9D29791C72B9BB000025E6 /* LaunchScreen.storyboard in Resources */,
 				1F9D29761C72B9BB000025E6 /* Assets.xcassets in Resources */,
