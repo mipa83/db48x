@@ -97,20 +97,23 @@ RECORDER(screenview, 256, "Screen view image generation");
                         pixword bits = (lcd_buffer[woffs] >> bit) & mask;
                         color col(bits);
                         coord xx = (xw * 32 + bit) / color::BPP;
-                        coord yy = y;
-                        s.horizontal_adjust(xx, xx);
-                        s.vertical_adjust(yy, yy);
-                        uint pixoffs = yy * SIM_LCD_W + xx;
-                        byte *pixel = &pixelData[pixoffs * 4];
+                        if (xx < SIM_LCD_W)
+                        {
+                            coord yy = y;
+                            s.horizontal_adjust(xx, xx);
+                            s.vertical_adjust(yy, yy);
+                            uint pixoffs = yy * SIM_LCD_W + xx;
+                            byte *pixel = &pixelData[pixoffs * 4];
 #ifdef CONFIG_COLOR
-                        pixel[0] = col.blue();
-                        pixel[1] = col.green();
-                        pixel[2] = col.red();
-                        pixel[3] = 255;
+                            pixel[0] = col.blue();
+                            pixel[1] = col.green();
+                            pixel[2] = col.red();
+                            pixel[3] = 255;
 #else
-                        byte pixval = bits ? 220 : 0;
-                        pixel[0] = pixel[1] = pixel[2] = pixel[3] = pixval;
+                            byte pixval = bits ? 220 : 0;
+                            pixel[0] = pixel[1] = pixel[2] = pixel[3] = pixval;
 #endif
+                        }
                     }
                 }
                 lcd_copy[woffs] = lcd_buffer[woffs];
