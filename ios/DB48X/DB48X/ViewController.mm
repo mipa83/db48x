@@ -401,7 +401,7 @@ enum FileSelectorState
 {
     audio = [[AVAudioEngine alloc] init];
     AVAudioFormat *format = [audio.outputNode outputFormatForBus:0];
-    float sampleRate = format.sampleRate;
+    float sampleRate = format.sampleRate ? format.sampleRate : 48000;
     float amplitude = 1.0;
     float step = (2*M_PI / 1000) * frequency / sampleRate;
 
@@ -430,16 +430,22 @@ enum FileSelectorState
     AVAudioSourceNode *source = [[AVAudioSourceNode alloc]
         initWithRenderBlock: generator];
 
-    [audio attachNode:source];
-    format = [[AVAudioFormat alloc]
-                 initStandardFormatWithSampleRate:sampleRate channels:1];
-    [audio connect:source to:[audio mainMixerNode] format:format];
-    [audio mainMixerNode].outputVolume = 0.5;
+    @try
+    {
+        [audio attachNode:source];
+        format = [[AVAudioFormat alloc]
+                     initStandardFormatWithSampleRate:sampleRate channels:1];
+        [audio connect:source to:[audio mainMixerNode] format:format];
+        [audio mainMixerNode].outputVolume = 0.5;
 
-    NSError *error = nil;
-    [audio startAndReturnError:&error];
-    if (error)
-        NSLog(@"AVAudioPlayer error %@", error);
+        NSError *error = nil;
+        [audio startAndReturnError:&error];
+        if (error)
+            NSLog(@"AVAudioPlayer error %@", error);
+    } @catch (NSException *exception) {
+        NSLog(@"Got exception %@", exception);
+    } @finally {
+    }
 }
 
 
