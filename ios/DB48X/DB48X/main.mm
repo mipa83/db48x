@@ -85,8 +85,10 @@ size_t recorder_render_object(intptr_t tracing,
 }
 
 
+#if DEBUG
 // Ensure linker keeps debug code
 extern cstring debug();
+#endif // DEBUG
 
 
 int main(int argc, char * argv[])
@@ -101,11 +103,13 @@ int main(int argc, char * argv[])
     recorder_dump_on_common_signals(0, 0);
     recorder_configure_type('t', recorder_render_object);
 
+#ifdef DEBUG
     // This is just to link otherwise unused code intended for use in debugger
     if (traces && traces[0] == char(0xFF))
         if (cstring result = debug())
             record(options, "Strange input %s", result);
-
+#endif // DEBUG\
+    
     // Indicate the first two-byte opcode
     fprintf(stderr,
             "DB48X version %s\n"

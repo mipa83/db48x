@@ -35,9 +35,7 @@
 #include "dmcp.h"
 #include "sysmenu.h"
 
-#ifdef DEBUG
 #include "tests.h"
-#endif
 
 #include <time.h>
 
