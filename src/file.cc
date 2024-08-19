@@ -177,6 +177,10 @@ void file::open_for_writing(cstring path)
 //    Open a file for writing
 // ----------------------------------------------------------------------------
 {
+#if NOSAVE
+    errno = EPERM;
+    return;
+#else
 #if SIMULATOR
     if (open_count++)
     {
@@ -201,6 +205,7 @@ void file::open_for_writing(cstring path)
         data.flag = 0;
     }
 #endif                          // SIMULATOR
+#endif
 }
 
 
