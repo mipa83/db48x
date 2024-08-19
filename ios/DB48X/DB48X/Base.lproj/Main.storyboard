@@ -3,7 +3,7 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22685"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,10 +21,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view multipleTouchEnabled="YES" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="R4Q-96-XuB">
-                                <rect key="frame" x="0.0" y="61" width="393" height="730"/>
+                                <rect key="frame" x="0.0" y="53" width="393" height="746"/>
                                 <subviews>
                                     <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="VyD-TD-Hcr" customClass="ScreenView">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="235.66666666666666"/>
+                                        <rect key="frame" x="0.0" y="15.999999999999986" width="393" height="235.66666666666663"/>
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="VyD-TD-Hcr" secondAttribute="height" multiplier="5:3" id="TEg-nX-cri"/>
@@ -34,7 +34,7 @@
                                         </connections>
                                     </mtkView>
                                     <imageView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="keyboard-db48x.png" translatesAutoresizingMaskIntoConstraints="NO" id="VeI-TE-aJE" customClass="KeyboardView">
-                                        <rect key="frame" x="0.0" y="235.66666666666671" width="393" height="494.33333333333326"/>
+                                        <rect key="frame" x="0.0" y="251.66666666666671" width="393" height="494.33333333333326"/>
                                         <gestureRecognizers/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="height" multiplier="698:878" id="Pzg-fD-vL7"/>
@@ -50,7 +50,7 @@
                                         </accessibility>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mcR-Hw-POX">
-                                        <rect key="frame" x="197" y="714" width="108" height="16"/>
+                                        <rect key="frame" x="178.33333333333334" y="0.0" width="36.333333333333343" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="16" id="jGR-Wh-2T9"/>
                                         </constraints>
@@ -67,16 +67,15 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="bottom" secondItem="mcR-Hw-POX" secondAttribute="bottom" id="0yP-ZE-2bv"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="top" secondItem="mcR-Hw-POX" secondAttribute="bottom" id="0yP-ZE-2bv"/>
                                     <constraint firstItem="VyD-TD-Hcr" firstAttribute="leading" secondItem="R4Q-96-XuB" secondAttribute="leading" id="45Q-z2-FZ5"/>
-                                    <constraint firstAttribute="bottom" secondItem="VeI-TE-aJE" secondAttribute="bottom" id="5MH-8s-T5e"/>
-                                    <constraint firstItem="mcR-Hw-POX" firstAttribute="leading" secondItem="VeI-TE-aJE" secondAttribute="leading" constant="197" id="84G-g2-6pg"/>
+                                    <constraint firstItem="mcR-Hw-POX" firstAttribute="centerX" secondItem="R4Q-96-XuB" secondAttribute="centerX" id="6CS-eU-6gD"/>
                                     <constraint firstAttribute="bottom" secondItem="VeI-TE-aJE" secondAttribute="bottom" id="OtN-Pl-ozO"/>
                                     <constraint firstItem="VyD-TD-Hcr" firstAttribute="width" secondItem="VeI-TE-aJE" secondAttribute="width" id="ZxN-V4-45B"/>
-                                    <constraint firstItem="VeI-TE-aJE" firstAttribute="trailing" secondItem="mcR-Hw-POX" secondAttribute="trailing" constant="88" id="gZq-Cr-0m5"/>
                                     <constraint firstItem="VyD-TD-Hcr" firstAttribute="centerX" secondItem="VeI-TE-aJE" secondAttribute="centerX" id="jod-0f-ORe"/>
-                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="top" secondItem="R4Q-96-XuB" secondAttribute="top" id="mX1-e6-Jfb"/>
+                                    <constraint firstItem="VyD-TD-Hcr" firstAttribute="top" secondItem="mcR-Hw-POX" secondAttribute="bottom" id="mX1-e6-Jfb"/>
                                     <constraint firstAttribute="trailing" secondItem="VyD-TD-Hcr" secondAttribute="trailing" id="ps2-Xr-DSd"/>
+                                    <constraint firstItem="mcR-Hw-POX" firstAttribute="top" secondItem="R4Q-96-XuB" secondAttribute="top" id="yVP-YT-ABn"/>
                                     <constraint firstItem="VeI-TE-aJE" firstAttribute="top" secondItem="VyD-TD-Hcr" secondAttribute="bottom" id="zrb-fz-nT9"/>
                                 </constraints>
                             </view>
