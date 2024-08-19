@@ -349,11 +349,20 @@ enum FileSelectorState
 
 #ifdef DEBUG
             // Running tests
+        case UIKeyboardHIDUsageKeyboardF7:
+            [self startTestWith:2];
+            break;
+        case UIKeyboardHIDUsageKeyboardF8:
+            [self startTestWith:4];
+            break;
+        case UIKeyboardHIDUsageKeyboardF9:
+            [self startTestWith:8];
+            break;
         case UIKeyboardHIDUsageKeyboardF11:
-            [self startTestWithSingle:true];
+            [self startTestWith:1];
             break;
         case UIKeyboardHIDUsageKeyboardF12:
-            [self startTestWithSingle:false];
+            [self startTestWith:0];
             break;
 #endif // Debug
 
@@ -367,7 +376,7 @@ enum FileSelectorState
 
 
 #ifdef DEBUG
-- (void) startTestWithSingle:(bool) single
+- (void) startTestWith:(uint) testSelection
 // ----------------------------------------------------------------------------
 //  Dispatch a test run
 // ----------------------------------------------------------------------------
@@ -376,7 +385,7 @@ enum FileSelectorState
         dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
     dispatch_async(queue, ^{
             tests suite;
-            suite.run(single);
+            suite.run(testSelection);
         });
 }
 #endif // DEBUG
