@@ -56,11 +56,13 @@
         CGPoint pos = [touch locationInView:self];
         CGFloat relx = pos.x / self.frame.size.width;
         CGFloat rely = pos.y / self.frame.size.height;
-        
+
         for (struct tapmap *ptr = tapMap; ptr->key; ptr++)
         {
-            if ((relx >= ptr->left) && (relx <= ptr->right) &&
-                (rely >= ptr->top) && (rely <= ptr->bot))
+            const CGFloat dx = 0.03;
+            const CGFloat dy = 0.03;
+            if ((relx >= ptr->left - dx) && (relx <= ptr->right + dx) &&
+                (rely >= ptr->top - dy) && (rely <= ptr->bot + dy))
             {
                 int key = ptr->keynum;
                 if (key != lastKey)
@@ -68,7 +70,7 @@
                     if (theAppSettings.hapticFeedback)
                     {
                         feedback = [[UISelectionFeedbackGenerator alloc] init];
-                        
+
                         // Prepare the generator when the gesture begins.
                         [feedback selectionChanged];
                     }
