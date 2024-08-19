@@ -285,7 +285,7 @@
 //   Save data if appropriate. See also applicationDidEnterBackground:.
 {
     [self saveApplicationSettings];
-    if (theAppSettings.saveStateWhenMovingToBackground)
+    if (theAppSettings.saveStateOnExit)
         key_push(tests::SAVE_PGM);
 }
 
