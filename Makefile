@@ -120,6 +120,7 @@ IMAGES=$(COLOR:%=color-)images
 cmp-% compare-%:
 	compare $(IMAGES)/$*.png $(IMAGES)/bad/$*.png -compose src $*.png || true
 	open $*.png $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
+	echo mv -f $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
 update-%:
 	mv $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
 
@@ -147,10 +148,18 @@ TTF2FONT=$(TOOLS)/ttf2font/ttf2font
 $(TTF2FONT): $(TTF2FONT).cpp $(TOOLS)/ttf2font/Makefile src/ids.tbl
 	cd $(TOOLS)/ttf2font; $(MAKE) TARGET=opt
 
+TAR_OPTS=$(TAR_OPTS_$(shell uname))
+TAR_OPTS_Darwin=--no-mac-metadata --no-fflags --no-xattrs --no-acls
 dist: all
 	cp $(BUILD)/$(TARGET)_qspi.bin  .
-	tar cvfz $(TARGET)-v$(VERSION).tgz $(TARGET).$(PGM) $(TARGET)_qspi.bin \
-		help/*.md help/*.bmp help/*/*.bmp state/*.48S config/*.csv
+	tar cvfz $(TARGET)-v$(VERSION).tgz 	\
+		$(TAR_OPTS)			\
+		$(TARGET).$(PGM)		\
+		$(TARGET)_qspi.bin		\
+		help/$(TARGET).md		\
+		help/*.bmp help/*/*.bmp		\
+		state/*.48[sSbB]		\
+		config/*.csv
 	@echo "# Distributing $(VERSION)"
 
 $(VERSION_H): $(BUILD)/version-$(VERSION).h

@@ -685,7 +685,7 @@ static const cstring basic_units[] =
     "turn",     "1_turn",               // Full turns
     "°",        "1/360_turn",           // Degree
     "grad",     "1/400_turn",           // Grad
-    "r",        "0.1591549430918953357688837633725144_turn", // Radian
+    "r",        "'0.5/Ⓒπ'_turn",       // Radian
     "πr",       "1/2_turn",             // Pi radians
 
     "dms",      "1_°",                  // Degrees shown as DMS
@@ -851,6 +851,7 @@ unit_p unit::lookup(symbol_p name, int *prefix_info)
             // If we found a definition, use that unless it begins with '='
             if (udef)
             {
+                file_closer ufilec(ufile, "config/units.csv");
                 if (object_p obj = object::parse(utf8(udef), ulen))
                 {
                     if (unit_g u = obj->as<unit>())
@@ -895,6 +896,7 @@ unit_p unit::lookup(symbol_p name, int *prefix_info)
                         ufile.close();
 
                         settings::SaveAutoSimplify sas(false);
+                        settings::SaveNumericalConstants snc(true);
                         uexpr = u->evaluate();
                         if (!uexpr || uexpr->type() != ID_unit)
                         {
