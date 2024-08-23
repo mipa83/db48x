@@ -4,15 +4,45 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>DB40X copy.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>DB40X release.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>DB40X.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>DB48X copy.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>DB48X release.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>DB48X.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
+		</dict>
+		<key>DB50X copy.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>DB50X release.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
 		</dict>
 		<key>DB50X.xcscheme_^#shared#^_</key>
 		<dict>
@@ -38,6 +68,26 @@
 			<true/>
 		</dict>
 		<key>1F9D29891C72B9BB000025E6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F0FDB8F2C7934DF00C8357F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F0FDC5B2C7934E300C8357F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F0FDD1C2C7934E500C8357F</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6F2AC4272C64105F00C8357F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
