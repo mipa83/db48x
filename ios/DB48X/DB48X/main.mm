@@ -44,7 +44,7 @@ bool noisy_tests = false;
 bool db48x_keyboard = true;
 #ifndef MEMORY
 #define MEMORY 70
-#endif // MEMORY
+#endif /* MEMORY */
 uint memory_size = MEMORY;           // Memory size in kilobytes
 
 
