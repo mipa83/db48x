@@ -238,11 +238,12 @@ Here are a few of the interesting RPL-specific key mappings:
 * _N_ (_+/-_) executes the equivalent RPL `Negate` function. While editing, it
   changes the sign of the current number on the command-line.
 
-* _O_ (_EEX_, DM-42 and DM-32 _E_) is used to enter the exponent of a number in
-  scientific notation. However, when not entering or editing values, it invokes
-  the [Cycle](#Cycle) command, which cycles between various representations of
-  a number, for example polar and rectangular for a complex number, or fraction
-  and decimal for a decimal number.
+* _O_ (_×10ⁿ_, _EEX_ or _E_ depending on keyboard labeling, referred to as
+  _×10ⁿ_ in the rest of this document) is used to enter the exponent of a number
+  in scientific notation. However, when not entering or editing values, it
+  invokes the [Cycle](#Cycle) command, which cycles between various
+  representations of a number, for example polar and rectangular for a complex
+  number, or fraction and decimal for a decimal number.
 
 * _EXIT_ (DM-32 _ON_) corresponds to what the HP48 manual calls _Attn_, and
   typically cancels the current activity. It can also be used to interrupt a
@@ -967,14 +968,14 @@ DB50X is a RPL calculator, which means that:
   before putting its result(s). Unlike earlier HP calculators, the RPL stack is
   practically unlimited.
 
-  ![Stack and menus](img/stack-and-menus.png)
+![Stack and menus](img/stack-and-menus.bmp)
 
 * Unlike simpler calculators, it uses a _command line_ for data entry, with
   advanced text editing capabilities, and a rich text-based command
   language. One way to access the hundreds of available commands is by simply
   typing their name.
 
-  ![Command-line and catalog](img/command-line-and-catalog.png)
+![Command-line and catalog](img/command-line-and-catalog.bmp)
 
 
 [![Long demo of 0.7.0](http://img.youtube.com/vi/kzkjE8BZW10/0.jpg)](https://www.youtube.com/watch?v=kzkjE8BZW10&list=PLz1qkflzABy-Cs1R07zGB8A9K5Yjolmlf "Long demo of v0.7.0")
@@ -1024,7 +1025,7 @@ calculators, DB50X by default perform exact computations on fractions instead of
 using approximate decimal numbers.
 
 You can convert that fraction to a decimal value and back using the `Cycle`
-command, which is bound to the _EEX_ key. A first press will show `2.75`, and a
+command, which is bound to the _×10ⁿ_ key. A first press will show `2.75`, and a
 second press will show the value again as fraction `2 ³/₄`.
 
 
@@ -1150,7 +1151,7 @@ specific command.
 
 The _sin⁻¹_ command we used previously returns an *angle* which was shown in
 degrees, the default angle mode for DB50X. When applied to angles, the `Cycle`
-command on the _EEX_ key cycles between various angle units: degrees, radians,
+command on the _×10ⁿ_ key cycles between various angle units: degrees, radians,
 grads and pi-radians, i.e. a number of radians shown as a multiple of π.
 
 <video src="https://github.com/c3d/db48x/assets/1695924/5d23f388-b034-45cd-9d4d-7685b7f211f0"></video>
@@ -1292,13 +1293,13 @@ does not have a `NXT` key unlike HP calculators. Instead, when necessary, the
 
 ### Entering a decimal number
 
-### Entering a number in scientific notation with EEX
+### Entering a number in scientific notation with _×10ⁿ_
 
 ### Arithmetic on decimal values
 
 ### Arithmetic on fractions
 
-### Using EEX to cycle between decimal and fraction
+### Cycling between decimal and fraction with _×10ⁿ_
 
 ### Separators for the fractional part
 
@@ -1516,7 +1517,7 @@ does not have a `NXT` key unlike HP calculators. Instead, when necessary, the
 
 ### Entering numbers in polar form
 
-### Switching between polar and rectangular with EEX
+### Switching between polar and rectangular with Cycle key
 
 ### Arithmetic on complex numbers
 
@@ -2154,8 +2155,8 @@ submenus so that all unit categories fit on a single screen.
 ### Cycle command customization
 
 The menu name `"=Cycle"` is reserved to define sequences of units that the
-`Cycle` command (bound to the _EEX_ key) will recognize as special. For example,
-you can ensure that `mm` and `in` convert to one another as follows:
+`Cycle` command (bound to the _×10ⁿ_ key) will recognize as special. For
+example, you can ensure that `mm` and `in` convert to one another as follows:
 
 ```
 "=Cycle"
@@ -2291,6 +2292,42 @@ You can edit it by recalling its content on the stack using
 `"config:equations.csv" RCL`, editing the values, and then storing the content
 back to disk using `"config:equations.csv" STO`.
 # Release notes
+
+## Release 0.7.16 "Clean" - New commands
+
+The focus of this release is on new commands, notably for matrix and vector
+operations. This release also ships with a DM48X-specific keymap, which fixes a
+problem with teh file selector on the DM32. The equation library has been extended with numerous equations, but they are not fully validated yet.
+
+### Features
+
+* `con`, `idn` and `ranm` matrix generation commands
+* `Array→` and `→Array` commands to convert array to/from stack
+* `dot` product and `cross` product commands for vectors
+* `DispXY` styled text rendering command
+* `DupDup` command duplicating top item twice
+* Add a large number of equations to equation library
+
+### Bug fixes
+
+* Fix `decimal::to_bignum` for small magnitudes
+* Return angle unit for `atan2` and `arg` commands
+* The `for` loop on lists no longer ends leaving the debugger active
+* Interactive stack `DropN` command returns to level 1
+* Fix file selector's "New file" on DM32 so that ENTER terminates it
+* A few fixes in equations in the equation library
+
+
+### Improvements
+
+* Improve graphical rendering of expressions such as multiplication operators
+* doc: Update status
+* font: Fix `v` glyph vertical placement, add dot and cross glyphs
+* ttf2font: Add additional verbose info about source data
+* Add `CONSTANTS` as an alias for `ConstantsMenu`
+* Replace documentation references to `EEX` with `×10ⁿ`
+* Optimize parsing of real numbers in parentheses
+
 
 ## Release 0.7.15 "Teaching" - Bug fixes notably on iOS
 
@@ -3042,7 +3079,7 @@ operations.
 * Inverse trigonometric functions (`asin`, `acos` and `atan`) now
   produce unit objects with the current angle mode as a unit. This can
   be configured by the `SetAngleUnits` / `NoAngleUnits` flags.
-* `Cycle` (EEX key) now cycles between angle units.
+* `Cycle` (_×10ⁿ_ key) now cycles between angle units.
 * `R→D` and `D→R` commands to convert between degree and radian in a
   purely numerical way (no unit). This is for compatibility with HP.
 * Add `→Deg`, `→Rad`, `→Grad`, `→πr` commands, which convert a number
@@ -3775,6 +3812,8 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [ALOG](#alog)
 * [AND](#and)
 * [ARG](#arg)
+* [ARRY→](#fromarray)
+* [→ARRY](#toarray)
 * [ASINH](#asinh)
 * [ASIN](#asin)
 * [ASR](#asr)
@@ -3791,12 +3830,18 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [CASE](#case)
 * [CEIL](#ceil)
 * [CF](#clearflag)
+* [%CH](#percentchange)
 * [CHR](#codetext-chr-codechar)
 * [CLEAR](#clearstack)
 * [CLLCD](#cllcd)
 * [CLΣ](#cleardata)
 * [COLΣ](#columndata)
+* [COMB](#combinations)
+* [CON](#constantarray)
 * [CONJ](#conj)
+* [CONLIB](#constantsmenu)
+* [CONST](#constant)
+* [CONSTANTS](#constantsmenu)
 * [CONT](#continue)
 * [CONVERT](#convert)
 * [COSH](#cosh)
@@ -3810,11 +3855,15 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [DDAYS](#ddays)
 * [DBUG](#debug)
 * [DEC](#dec)
+* [DECR](#decrement)
+* [DEDICACE](#libraryitem)
 * [DEG](#deg)
 * [DEPTH](#depth)
 * [DET](#determinant)
 * [DIR](#dir)
 * [DISP](#disp)
+* [DISPXY](#dispxy)
+* [DIV2](#div2)
 * [DOERR](#doerr)
 * [DO](#do)
 * [DRAW](#draw)
@@ -4034,8 +4083,6 @@ of the HP48 commands.
 * ARC
 * ARCHIVE
 * ARIT
-* ARRY→
-* →ARRY
 * ASIN2C
 * ASIN2T
 * ASN
@@ -4060,7 +4107,6 @@ of the HP48 commands.
 * CASCFG
 * CASCMD
 * CENTR
-* %CH
 * CHINREM
 * CHOLESKY
 * CHOOSE
@@ -4078,13 +4124,8 @@ of the HP48 commands.
 * COL+
 * COLCT
 * COLLECT
-* COMB
-* CON
 * COND
 * CONIC
-* CONLIB
-* CONST
-* CONSTANTS
 * CORR
 * CR
 * CROSS
@@ -4094,8 +4135,6 @@ of the HP48 commands.
 * CYLIN
 * C→PX
 * DARCY
-* DECR
-* DEDICACE
 * DEF
 * DEFINE
 * DEGREE
@@ -4112,10 +4151,8 @@ of the HP48 commands.
 * DIAGMAP
 * DIFF
 * DIFFEQ
-* DISPXY
 * DISTRIB
 * DIV
-* DIV2
 * DIV2MOD
 * DIVIS
 * DIVMOD
@@ -5624,14 +5661,18 @@ Nth Tchebycheff polynomial of the second kind
 Nth Hermite polynomial as used in probabilities
 
 
-## DIV2
-Euclidean division, returning quotient and remainder
+## DIV2 (QuoRem, IDIV2, QuotientRemainder)
+
+Euclidean division, returning quotient and remainder.
+
 On HP calculators, this only applies for polynomials.
-On DB50X, this applies to integers, big integers, decimals, fractions and polynomials. It puts both the quotient and the remainder on the stack. For many data types, this operation is significantly more efficient than computing the quotient and the remainder separately.
+
+On DB50X, this applies to integers, big integers, decimals, fractions and
+polynomials. It puts both the quotient and the remainder on the stack. For many
+data types, this operation is significantly more efficient than computing the
+quotient and the remainder separately.
 
 `Y` `X` ▶ `IP(Y/X)` `Y rem X`
-
-Aliases: `idiv2`, `QuoRem`, `QuotientRemainder`
 
 
 ## PDIV2
@@ -6658,12 +6699,12 @@ Note that unlike on the HP48, a complex value in DB50X can
 contain a based number.
 
 
-## ClearLCD (cllcd)
+## ClearLCD (CLLCD)
 
 Clear the LCD display, and block updates of the header or menu areas.
 
 
-## DrawText (disp)
+## DrawText (DISP)
 
 Draw the text or object in level 2 at the position indicated by level 1. A text
 is drawn without the surrounding quotation marks.
@@ -6693,10 +6734,30 @@ provide:
 * An *invert* flag (default false) which, if set, will swap the foreground and
   background patterns.
 
-For example, `"Hello" { #0 #0 0 true true } DrawText` will draw `Hello` in the
-top-left corner (`#0 #0`) with the largest (editor) font (font identifier `0`),
+For example, `"Hello" { #0 #0 3 true true } DrawText` will draw `Hello` in the
+top-left corner (`#0 #0`) with the largest (editor) font (font identifier `3`),
 erasing the background (the first `true`), in reverse colors (the second
 `true`).
+
+## DrawStyledText (DISPXY)
+
+Draw the text or object in level 3 at the position indicated by level 2, using
+the font specified in level 1. This behaves like [DrawText](#drawtext), except
+for the additional parameter specifying the font size.
+
+This command is compatible with the HP50G usage, where the position is specified
+by a list containing two decimal integer values. A font size of 1 displays with
+a small font, a font size of 2 displays with a regular font.
+
+In addition to this HP50G-compatible usage, `DispXY` will also accept:
+
+* A smaller font size, 0, for the help size, and other font sizes above 2, which
+  are compatible with the values given to [StackFont](#stackfont).
+
+* The position can accept the same values as [DrawText](#drawtext), including a
+  single integer value indicating a line number, a fractional line position, or
+  coordinates scaled according to [PlotParameters](#plotparameters).
+
 
 ## Show
 
@@ -6986,12 +7047,26 @@ Add elements to a list, keep only the last N elements
 Assemble a list from results of sequential procedure
 # Operations with Matrices and vectors
 
-## TOARRAY
-Assemble an array from its elements
+## ToArray (→Arry)
+
+Stack to Array Command: Returns a vector of n real or complex elements or a
+matrix of n × m real or complex elements.
+
+The elements of the result array should be entered in row order.
+
+`A1` ... `An` `n` ▶ `[ A1 ... An ]`
+
+`A11` ... `Arc` `{ r c }` ▶ `[[ A11 A1c] [ A21 ... Arc ]]`
 
 
-## ARRAYDECOMP
-Split an array into its elements
+## FromArray (Arry→)
+
+Array to Stack Command: Takes an array and returns its elements as separate real or complex numbers. Also returns a list of the dimensions of the array.
+If the argument is an n-element vector, the first element is returned to level n + 1 (not level nm + 1), and the nth element to level 2.
+
+`[ A1 ... An ]`  ▶ `A1` ... `An` `n`
+
+`[[ A11 A1c] [ A21 ... Arc ]]`  ▶ `A11` ... `Arc` `{ r c }`
 
 
 ## TOCOL
@@ -7062,8 +7137,40 @@ Perform Cholesky decomposition on a matrix
 Column norm (one norm) of a matrix
 
 
-## CON
-Assemble an array with given constant value
+## CON (ConstantArray)
+
+Returns a constant array, defined as an array whose elements all have the same
+value.
+
+The constant value is an object taken from argument 2/level 1. The resulting
+array is either a new array, or an existing array with its elements replaced by
+the constant, depending on the object in argument 1/level 2.
+
+* Creating a new array: If level 2 contains a list of one or two integers, `CON`
+  returns a new array. If the list contains a single integer `n`, `CON` returns
+  a constant vector with `n` elements. If the list contains two integers `n` and
+  `m`, `CON` returns a constant matrix with `n` rows and `m` columns.
+
+* Replacing the elements of an existing array: If level 2 contains an array,
+  `CON` returns an array of the same dimensions, with each element equal to the
+  constant.
+
+* If level 2 contains a name, the name must identify a variable that contains a
+  valid input for `con`, such as an array. In this case, the content of the
+  variable is replaced with the value generated by `CON`
+
+`n` `k` ▶ `[ k ... k ]`
+
+`{ n }` `k` ▶ `[ k ... k ]`
+
+`{ n m }` `k` ▶ `[ [ k ... k ] [ k ... k ] ... [ k ... k ] ]`
+
+`[ vec ]` `k` ▶ `[ k ... k]`
+
+`[ [ mat ] ]` `k` ▶ `[ [ k ... k ]]`
+
+`'name'` `k` ▶
+
 
 
 ## COND
@@ -7112,8 +7219,39 @@ Assemble a Hilbert symbolic array
 Find a basis of the intersection of two vector spaces
 
 
-## IDN
-Assemble an identity matrix
+## IDN (IdentityMatrix)
+
+Identity Matrix Command: Returns an identity matrix, that is, a square matrix
+with its diagonal elements equal to 1 and its off-diagonal elements equal to 0.
+
+The result is either a new square matrix, or an existing square matrix with its
+elements replaced by the elements of the identity matrix, according to the
+argument.
+
+* Creating a new matrix: If the argument is an integer `n`, a new real identity
+  matrix is returned, with its number of rows and number of columns equal to
+  `n`.
+
+* Replacing the elements of an existing matrix: If the argument is a square
+  matrix, an identity matrix of the same dimensions is returned.
+
+* Generating the identity matrix for a vector: If the argument is a vector with
+  `n` elements, an identity matrix with `n` rows and `n` columns is created.
+
+* If the argument is a name, the name must identify a variable containing on of the valid inputs. In this case, it is replaced with the result.
+
+
+`n`  ▶ `IDN(n)`
+
+`{ n }` ▶ `IDN(n)`
+
+`{ n n }`  ▶ `IDN(n)`
+
+`[ n-vec ]` ▶ `IDN(n)`
+
+`[[ nxn-mat ]]` ▶ `IDN(n)`
+
+`'name'` ▶
 
 
 ## IMAGE
@@ -7158,8 +7296,9 @@ QR Decomposition of a matrix
 Rank of a matrix
 
 
-## RANM
-Assemble a matrix with random numbers
+## RANM (RandomMatrix)
+
+Returns an array containing random integer values between -9 and 9.
 
 
 ## RCI

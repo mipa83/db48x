@@ -165,12 +165,12 @@ void tests::run(uint onlyCurrent)
     RECORDER_TRACE(errors) = false;
 
     // Reset to known settings state
-    Settings               = settings();
+    reset_settings();
     if (onlyCurrent)
     {
         here().begin("Current");
         if (onlyCurrent & 1)
-            units_and_conversions();
+            matrix_functions();
         if (onlyCurrent & 2)
             demo_ui();
         if (onlyCurrent & 4)
@@ -180,7 +180,6 @@ void tests::run(uint onlyCurrent)
     }
     else
     {
-        reset_settings();
         shift_logic();
         keyboard_entry();
         data_types();
@@ -1415,6 +1414,14 @@ void tests::stack_operations()
         .test(BSP).expect("13")
         .test(BSP).noerror()
         .test(BSP).error("Too few arguments");
+    step("DupDup in program")
+        .test(CLEAR, "13 17 42 DUPDUP", ENTER).expect("42")
+        .test(BSP).expect("42")
+        .test(BSP).expect("42")
+        .test(BSP).expect("17")
+        .test(BSP).expect("13")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
 
     step("Over in stack menu")
         .test(CLEAR, I, "13 25", F5, DIV, ADD).expect("14 ¹²/₁₃");
@@ -1498,6 +1505,14 @@ void tests::stack_operations()
         .test(BSP).expect("17")
         .test(BSP).expect("42")
         .test(BSP).expect("25")
+        .test(BSP).expect("17")
+        .test(BSP).expect("13")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DupDup in stack menu")
+        .test(CLEAR, "13 17 42", F6, LSHIFT, F2, F6).expect("42")
+        .test(BSP).expect("42")
+        .test(BSP).expect("42")
         .test(BSP).expect("17")
         .test(BSP).expect("13")
         .test(BSP).noerror()
@@ -2162,6 +2177,14 @@ void tests::for_loops()
         .test(BSP).expect("3")
         .test(BSP).noerror()
         .test(BSP).error("Too few arguments");
+
+    step("Nested for loop on lists")
+        .test(CLEAR,
+              "{ A B C} for i { D E F G } for j i j * next next "
+              "12 →List", ENTER)
+        .expect("{ 'A·D' 'A·E' 'A·F' 'A·G' "
+                "'B·D' 'B·E' 'B·F' 'B·G' "
+                "'C·D' 'C·E' 'C·F' 'C·G' }");
 
     step("Restore auto-simplification")
         .test(CLEAR, "'noautosimplify' purge", ENTER).noerror();
@@ -3158,16 +3181,16 @@ void tests::decimal_numerical_functions()
 
     step("atan2 pos / pos quadrant")
         .test(CLEAR, "3.21 1.23 atan2", ENTER)
-        .expect("1.20487 56251 52809 23400 86691 05495 30674");
+        .expect("1.20487 56251 52809 23400 86691 05495 30674 r");
     step("atan2 pos / neg quadrant")
         .test(CLEAR, "3.21 -1.23 atan2", ENTER)
-        .expect("1.93671 70284 36984 00445 39742 77784 19614");
+        .expect("1.93671 70284 36984 00445 39742 77784 19614 r");
     step("atan2 neg / pos quadrant")
         .test(CLEAR, "-3.21 1.23 atan2", ENTER)
-        .expect("-1.20487 56251 52809 23400 86691 05495 30674");
+        .expect("-1.20487 56251 52809 23400 86691 05495 30674 r");
     step("atan2 neg / neg quadrant")
         .test(CLEAR, "-3.21 -1.23 atan2", ENTER)
-        .expect("-1.93671 70284 36984 00445 39742 77784 19614");
+        .expect("-1.93671 70284 36984 00445 39742 77784 19614 r");
 
     step("Restore default 24-digit precision");
     test(CLEAR, "24 PRECISION 12 SIG", ENTER).noerror();
@@ -3331,16 +3354,16 @@ void tests::float_numerical_functions()
 
     step("atan2 pos / pos quadrant")
         .test(CLEAR, "3.21 1.23 atan2", ENTER)
-        .expect("1.20488");
+        .expect("1.20488 r");
     step("atan2 pos / neg quadrant")
         .test(CLEAR, "3.21 -1.23 atan2", ENTER)
-        .expect("1.93672");
+        .expect("1.93672 r");
     step("atan2 neg / pos quadrant")
         .test(CLEAR, "-3.21 1.23 atan2", ENTER)
-        .expect("-1.20488");
+        .expect("-1.20488 r");
     step("atan2 neg / neg quadrant")
         .test(CLEAR, "-3.21 -1.23 atan2", ENTER)
-        .expect("-1.93672");
+        .expect("-1.93672 r");
 
     step("Restore default 24-digit precision");
     test(CLEAR, "24 PRECISION 12 SIG SoftFP", ENTER).noerror();
@@ -3498,16 +3521,16 @@ void tests::double_numerical_functions()
 
     step("atan2 pos / pos quadrant")
         .test(CLEAR, "3.21 1.23 atan2", ENTER)
-        .expect("1.20487 56251 5281");
+        .expect("1.20487 56251 5281 r");
     step("atan2 pos / neg quadrant")
         .test(CLEAR, "3.21 -1.23 atan2", ENTER)
-        .expect("1.93671 70284 3698");
+        .expect("1.93671 70284 3698 r");
     step("atan2 neg / pos quadrant")
         .test(CLEAR, "-3.21 1.23 atan2", ENTER)
-        .expect("-1.20487 56251 5281");
+        .expect("-1.20487 56251 5281 r");
     step("atan2 neg / neg quadrant")
         .test(CLEAR, "-3.21 -1.23 atan2", ENTER)
-        .expect("-1.93671 70284 3698");
+        .expect("-1.93671 70284 3698 r");
 
     step("Restore default 24-digit precision");
     test(CLEAR, "24 PRECISION 12 SIG SoftFP", ENTER).noerror();
@@ -3662,16 +3685,16 @@ void tests::high_precision_numerical_functions()
 
     step("atan2 pos / pos quadrant")
         .test(CLEAR, "3.21 1.23 atan2", ENTER)
-        .expect("1.20487 56251 52809 23400 86691 05495 30674 32743 54426 68497 01001 78719 37086 47165 61508 05592 53255 02332 28917 23139 67613 92267 03142 769");
+        .expect("1.20487 56251 52809 23400 86691 05495 30674 32743 54426 68497 01001 78719 37086 47165 61508 05592 53255 02332 28917 23139 67613 92267 03142 769 r");
     step("atan2 pos / neg quadrant")
         .test(CLEAR, "3.21 -1.23 atan2", ENTER)
-        .expect("1.93671 70284 36984 00445 39742 77784 19614 09228 14972 69013 57207 96225 22144 30998 44778 15307 33025 32493 05294 47540 14534 16384 29680 297");
+        .expect("1.93671 70284 36984 00445 39742 77784 19614 09228 14972 69013 57207 96225 22144 30998 44778 15307 33025 32493 05294 47540 14534 16384 29680 297 r");
     step("atan2 neg / pos quadrant")
         .test(CLEAR, "-3.21 1.23 atan2", ENTER)
-        .expect("-1.20487 56251 52809 23400 86691 05495 30674 32743 54426 68497 01001 78719 37086 47165 61508 05592 53255 02332 28917 23139 67613 92267 03142 769");
+        .expect("-1.20487 56251 52809 23400 86691 05495 30674 32743 54426 68497 01001 78719 37086 47165 61508 05592 53255 02332 28917 23139 67613 92267 03142 769 r");
     step("atan2 neg / neg quadrant")
         .test(CLEAR, "-3.21 -1.23 atan2", ENTER)
-        .expect("-1.93671 70284 36984 00445 39742 77784 19614 09228 14972 69013 57207 96225 22144 30998 44778 15307 33025 32493 05294 47540 14534 16384 29680 297");
+        .expect("-1.93671 70284 36984 00445 39742 77784 19614 09228 14972 69013 57207 96225 22144 30998 44778 15307 33025 32493 05294 47540 14534 16384 29680 297 r");
 
     step("Restore default 24-digit precision");
     test(CLEAR, "24 PRECISION 12 SIG", ENTER).noerror();
@@ -4652,15 +4675,6 @@ void tests::complex_functions()
     test(CLEAR, "3+4ⅈ modulus", ENTER).expect("5.");
     test(CLEAR, "a+bⅈ modulus", ENTER).expect("'a⊿b'");
 
-    step("Complex argument");
-    test(CLEAR, "1+1ⅈ arg", ENTER).expect("0.78539 81633 97448 30962");
-    step("Symbolic complex argument");
-    test(CLEAR, "a+bⅈ arg", ENTER).expect("'b∠a'");
-    step("Complex argument on integers");
-    test(CLEAR, "31 arg", ENTER).expect("0");
-    step("Complex argument on decimals");
-    test(CLEAR, "31.234 arg", ENTER).expect("0");
-
     step("Complex conjugate");
     test(CLEAR, "3+4ⅈ conj", ENTER).expect("3-4ⅈ");
     step("Symbolic complex conjugate");
@@ -4669,6 +4683,33 @@ void tests::complex_functions()
     test(CLEAR, "31 conj", ENTER).expect("31");
     step("Complex conjugate on decimals");
     test(CLEAR, "31.234 conj", ENTER).expect("31.234");
+
+    step("Complex argument");
+    test(CLEAR, "1+1ⅈ arg", ENTER).expect("0.78539 81633 97448 30962 r");
+    step("Symbolic complex argument");
+    test(CLEAR, "a+bⅈ arg", ENTER).expect("'b∠a'");
+    step("Complex argument on integers");
+    test(CLEAR, "31 arg", ENTER).expect("0 r");
+    step("Complex argument on decimals");
+    test(CLEAR, "31.234 arg", ENTER).expect("0 r");
+    step("Complex argument on negative integers");
+    test(CLEAR, "-31 arg", ENTER).expect("3.14159 26535 89793 2385 r");
+    step("Complex argument on negative decimals");
+    test(CLEAR, "-31.234 arg", ENTER).expect("3.14159 26535 89793 2385 r");
+
+    step("Complex argument in degrees");
+    test(CLEAR, "DEG", ENTER);
+    test(CLEAR, "1+1ⅈ arg", ENTER).expect("45 °");
+    step("Symbolic complex argument in degrees");
+    test(CLEAR, "a+bⅈ arg", ENTER).expect("'b∠a'");
+    step("Complex argument on integers in degrees");
+    test(CLEAR, "31 arg", ENTER).expect("0 °");
+    step("Complex argument on decimals in degrees");
+    test(CLEAR, "31.234 arg", ENTER).expect("0 °");
+    test(CLEAR, "-31 arg", ENTER).expect("180 °");
+    step("Complex argument on decimals in degrees");
+    test(CLEAR, "-31.234 arg", ENTER).expect("180 °");
+    test(CLEAR, "RAD", ENTER);
 
     step("Restore default 24-digit precision");
     test(CLEAR, "24 PRECISION 12 SIG", ENTER).noerror();
@@ -5426,6 +5467,110 @@ void tests::matrix_functions()
     step("Component-wise application of functions");
     test(CLEAR, "[[a b] [c d]] SIN", ENTER)
         .want("[[ 'sin a' 'sin b' ] [ 'sin c' 'sin d' ]]");
+
+    step("Dot product (numerical)")
+        .test(CLEAR, "[2 3 4 5 6] [7 8 9 10 11] DOT", ENTER)
+        .expect("190");
+    step("Dot product (symbolic)")
+        .test(CLEAR, "[a b c d] [e f g h] DOT", ENTER)
+        .expect("'a·e+b·f+c·g+d·h'");
+    step("Dot product (type error)")
+        .test(CLEAR, "2 3 DOT", ENTER)
+        .error("Bad argument type");
+    step("Dot product (dimension error)")
+        .test(CLEAR, "[1 2 3] [4 5] DOT", ENTER)
+        .error("Invalid dimension");
+
+    step("Cross product (numerical)")
+        .test(CLEAR, "[2 3 4] [7 8 9] CROSS", ENTER)
+        .expect("[ -5 10 -5 ]");
+    step("Cross product (symbolic)")
+        .test(CLEAR, "[a b c] [e f g] CROSS", ENTER)
+        .expect("[ 'b·g-c·f' 'c·e-a·g' 'a·f-b·e' ]");
+    step("Cross product (zero-extend)")
+        .test(CLEAR, "[a b] [e f g] CROSS", ENTER)
+        .expect("[ 'b·g' '-(a·g)' 'a·f-b·e' ]")
+        .test(CLEAR, "[a b c] [e f] CROSS", ENTER)
+        .expect("[ '-(c·f)' 'c·e' 'a·f-b·e' ]")
+        .test(CLEAR, "[a b] [e f] CROSS", ENTER)
+        .expect("[ 0 0 'a·f-b·e' ]");
+    step("Cross product (type error)")
+        .test(CLEAR, "2 3 CROSS", ENTER)
+        .error("Bad argument type");
+    step("Cross product (dimension error)")
+        .test(CLEAR, "[1 2 3 4] [4 5] CROSS", ENTER)
+        .error("Invalid dimension");
+
+    step("Array→ and →Array on vectors")
+        .test(CLEAR, "[1 2 3 4]", ENTER, RSHIFT, KEY9)
+        .test(LSHIFT, F4).expect("{ 4 }")
+        .test(LSHIFT, F3).expect("[ 1 2 3 4 ]")
+        .test(CLEAR, "[[1 2 3][4 5 6]]", ENTER, RSHIFT, KEY9)
+        .test(LSHIFT, F4).expect("{ 2 3 }")
+        .test(LSHIFT, F3).want("[[ 1 2 3 ] [ 4 5 6 ]]");
+
+    step("Constant vector")
+        .test(CLEAR, "3 10 CON", ENTER)
+        .expect("[ 10 10 10 ]");
+    step("Constant complex vector")
+        .test(CLEAR, "2 1ⅈ2", RSHIFT, KEY9, F3)
+        .expect("[ 1+2ⅈ 1+2ⅈ ]");
+    step("Constant text vector")
+        .test(CLEAR, "1 \"ABC\"", RSHIFT, KEY9, F3)
+        .expect("[ \"ABC\" ]");
+    step("Constant vector from list size")
+        .test(CLEAR, "{ 4 } 42", RSHIFT, KEY9, F3)
+        .expect("[ 42 42 42 42 ]");
+
+    step("Constant matrix")
+        .test(CLEAR, "{ 3 2 } 10 CON", ENTER)
+        .want("[[ 10 10 ] [ 10 10 ] [ 10 10 ]]");
+    step("Constant matrix")
+        .test(CLEAR, "{ 3 2 5 } 10 CON", ENTER)
+        .error("Invalid dimension");
+    step("Constant vector from vector")
+        .test(CLEAR, "[ 1 2 3] 2ⅈ3", RSHIFT, KEY9, F3)
+        .expect("[ 2+3ⅈ 2+3ⅈ 2+3ⅈ ]");
+    step("Constant matrix from matrix")
+        .test(CLEAR, "[[1 2]] \"ABC\"", RSHIFT, KEY9, F3)
+        .want("[[ \"ABC\" \"ABC\" ]]");
+    step("Constant vector in name")
+        .test(CLEAR, "{ 4 } 24", RSHIFT, KEY9, F3)
+        .expect("[ 24 24 24 24 ]")
+        .test("'MyVec'", NOSHIFT, G)
+        .noerror()
+        .test("'MyVec' 1.5 CON", ENTER)
+        .noerror()
+        .test("MyVec", ENTER)
+        .expect("[ 1.5 1.5 1.5 1.5 ]")
+        .test("'MyVec'", ENTER, LSHIFT, BSP, F2);
+
+    step("Idenitity matrix")
+        .test(CLEAR, "3 IDN", ENTER)
+        .want("[[ 1 0 0 ] [ 0 1 0 ] [ 0 0 1 ]]");
+    step("Identity from list")
+        .test(CLEAR, "{ 2 }", RSHIFT, KEY9, F2)
+        .want("[[ 1 0 ] [ 0 1 ]]");
+    step("Identity from 2-list")
+        .test(CLEAR, "{ 2 2 }", RSHIFT, KEY9, F2)
+        .want("[[ 1 0 ] [ 0 1 ]]");
+    step("Identity from 2-list")
+        .test(CLEAR, "{ 2 3 }", RSHIFT, KEY9, F2)
+        .error("Invalid dimension");
+    step("Identity from vector")
+        .test(CLEAR, "[ 1  2 3 ]", RSHIFT, KEY9, F2)
+        .want("[[ 1 0 0 ] [ 0 1 0 ] [ 0 0 1 ]]");
+    step("Identity matrix in name")
+        .test(CLEAR, "{ 4 }", RSHIFT, KEY9, F2)
+        .test(KEY3, MUL, KEY2, ADD)
+        .want("[[ 5 2 2 2 ] [ 2 5 2 2 ] [ 2 2 5 2 ] [ 2 2 2 5 ]]")
+        .test("'MyIdn'", NOSHIFT, G)
+        .noerror()
+        .test("'MyIdn' IDN", ENTER)
+        .noerror()
+        .test("MyIdn", ENTER)
+        .want("[[ 1 0 0 0 ] [ 0 1 0 0 ] [ 0 0 1 0 ] [ 0 0 0 1 ]]")
+        .test("'MyIdn'", ENTER, LSHIFT, BSP, F2);
 }
 
 
@@ -8729,13 +8874,13 @@ void tests::regression_checks()
     test(CLEAR, "'x' #2134AF AND", ENTER).error("Bad argument type");
 
     step("Bug 277: 1+i should have positive arg");
-    test(CLEAR, "1+1ⅈ arg", ENTER).expect("45");
-    test(CLEAR, "1-1ⅈ arg", ENTER).expect("-45");
-    test(CLEAR, "1 1 atan2", ENTER).expect("45");
+    test(CLEAR, "1+1ⅈ arg", ENTER).expect("45 °");
+    test(CLEAR, "1-1ⅈ arg", ENTER).expect("-45 °");
+    test(CLEAR, "1 1 atan2", ENTER).expect("45 °");
     test(CLEAR, "1+1ⅈ ToPolar", ENTER).match("1.414.*∡45°");
 
     step("Bug 287: arg of negative number");
-    test(CLEAR, "-35 arg", ENTER).expect("180");
+    test(CLEAR, "-35 arg", ENTER).expect("180 °");
 
     step("Bug 288: Abusive simplification of multiplication by -1");
     test(CLEAR, "-1 3 *", ENTER).expect("-3");
@@ -9070,11 +9215,11 @@ void tests::graphic_commands()
         .noerror().image("text-pixxy").test(ENTER);
 
     step("Displaying text, font ID");
-    test(CLEAR, "\"Hello\" { 0 0 0 } DISP \"World\" { 0 1 2 } DISP ", ENTER)
+    test(CLEAR, "\"Hello\" { 0 1 2 } DISP \"World\" { 0 -1 3 } DISP ", ENTER)
         .noerror().image("text-font").test(ENTER);
 
     step("Displaying text, erase and invert");
-    test(CLEAR, "\"Inverted\" { 0 0 0 true true } DISP", ENTER)
+    test(CLEAR, "\"Inverted\" { 0 0 3 true true } DISP", ENTER)
         .noerror().image("text-invert").test(ENTER);
 
     step("Displaying text, background and foreground");
@@ -9093,6 +9238,16 @@ void tests::graphic_commands()
     step("Displaying text, type check");
     test(CLEAR, "\"Bad\" \"Hello\" DISP", ENTER)
         .error("Bad argument type");
+
+    step("Displaying styled text");
+    test(CLEAR,
+         "0 10 for i"
+         "  \"Hello\" { }"
+         "  i 135 * 321 mod 25 + R→B +"
+         "  i  51 * 200 mod  3 + R→B +"
+         "  i DISPXY "
+         "next", ENTER)
+        .noerror().image("text-dispxy");
 
     step("Lines");
     test(CLEAR, "3 50 for i ⅈ i * exp i 2 + ⅈ * exp 5 * Line next", ENTER)
@@ -9989,6 +10144,8 @@ tests &tests::itest(cstring txt)
         case L'Ⓓ': itest(RSHIFT, KEY2, F2, F6, F6, F1); NEXT;
         case L'ⓧ': itest(RSHIFT, KEY2, F2, F6, F6, F2); NEXT;
         case L'°': itest(RSHIFT, KEY2, F2, F6, SHIFT, F3); NEXT;
+        case L'⨯': itest(RSHIFT, KEY2, F4, LSHIFT, F6, LSHIFT, F1); NEXT;
+        case L'⋅': itest(RSHIFT, KEY2, F4, LSHIFT, F6, LSHIFT, F2); NEXT;
 #undef NEXT
         }
 

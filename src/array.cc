@@ -30,8 +30,11 @@
 #include "array.h"
 
 #include "arithmetic.h"
+#include "expression.h"
 #include "functions.h"
 #include "grob.h"
+#include "stats.h"
+#include "variables.h"
 
 
 RECORDER(matrix, 16, "Determinant computation");
@@ -167,7 +170,7 @@ bool array::is_vector(size_t *size, bool push) const
         }
         if (!result)
             rt.drop(count);
-        else
+        else if (size)
             *size = count;
     }
     return result;
@@ -211,8 +214,10 @@ bool array::is_matrix(size_t *rows, size_t *cols, bool push) const
         }
         else
         {
-            *rows = r;
-            *cols = c;
+            if (rows)
+                *rows = r;
+            if (cols)
+                *cols = c;
         }
     }
     return result;
@@ -262,6 +267,122 @@ array_p array::wrap(object_p o)
 // ----------------------------------------------------------------------------
 {
     return array_p(list::make(ID_array, byte_p(o), o->size()));
+}
+
+
+bool array::size_from_stack(size_t *rows, size_t *columns, uint level)
+// ----------------------------------------------------------------------------
+//   Take the given level of the stack and interpret that as array size
+// ----------------------------------------------------------------------------
+{
+    if (object_g dims = rt.stack(level))
+        return size_from_object(rows, columns, dims);
+    return false;
+}
+
+
+bool array::size_from_object(size_t *rows, size_t *columns, object_r dims)
+// ----------------------------------------------------------------------------
+//   Take the given object and interpret that as array size
+// ----------------------------------------------------------------------------
+{
+    id     ty = dims->type();
+    if (ty == ID_list || ty == ID_array)
+    {
+        object_g robj = list_p(+dims)->at(0);
+        object_g cobj = list_p(+dims)->at(1);
+        if (list_p(+dims)->at(2))
+        {
+            rt.dimension_error();
+        }
+        else
+        {
+            if (robj && rows)
+                *rows = robj->as_uint32(0, true);
+            if (cobj && columns)
+                *columns = cobj->as_uint32(0, true);
+            return !rt.error();
+        }
+    }
+    else
+    {
+        if (rows)
+            *rows = dims->as_uint32(0, true);
+        if (columns)
+            *columns = 0;
+        return !rt.error();
+    }
+    return false;
+}
+
+
+static object_p item_from_stack(size_t rows, size_t columns,
+                                size_t r, size_t c, void *)
+// ----------------------------------------------------------------------------
+//   Return an item from the stack
+// ----------------------------------------------------------------------------
+{
+    if (!columns)
+        columns = 1;
+    size_t nitems = rows * columns;
+    size_t idx = r * columns + c;
+    if (object_p obj = rt.stack(nitems + ~idx))
+        return obj;
+    return nullptr;
+}
+
+
+array_p array::from_stack(size_t rows, size_t columns)
+// ----------------------------------------------------------------------------
+//   Build an array from items on the stack
+// ----------------------------------------------------------------------------
+{
+    array_p result = build(rows, columns, item_from_stack);
+    if (result)
+        rt.drop(rows * (columns ? columns : 1));
+    return result;
+}
+
+
+array_p array::build(size_t rows, size_t columns, item_fn items, void *data)
+// ----------------------------------------------------------------------------
+//   Build an a matrix or vector (columns == 0) from items in function
+// ----------------------------------------------------------------------------
+{
+    scribble scr;
+    if (rows)
+    {
+        if (columns)
+        {
+            list_g row = nullptr;
+            for (size_t r = 0; r < rows; r++)
+            {
+                {
+                    scribble srow;
+                    for (size_t c = 0; c < columns; c++)
+                    {
+                        object_g it = items(rows, columns, r, c, data);
+                        if (!it || !rt.append(it->size(), byte_p(+it)))
+                            return nullptr;
+                    }
+                    row = list::make(ID_array, srow.scratch(), srow.growth());
+                }
+                if (!row || !rt.append(row->size(), byte_p(+row)))
+                    return nullptr;
+            }
+        }
+        else
+        {
+            for (size_t r = 0; r < rows; r++)
+            {
+                object_g it = items(rows, columns, r, 0, data);
+                if (!it || !rt.append(it->size(), byte_p(+it)))
+                    return nullptr;
+            }
+        }
+    }
+    list_p result = list::make(ID_array, scr.scratch(), scr.growth());
+    return array_p(result);
 }
 
 
@@ -1063,7 +1184,380 @@ COMMAND_BODY(det)
             rt.type_error();
         }
     }
+    return ERROR;
+}
 
+
+COMMAND_BODY(dot)
+// ----------------------------------------------------------------------------
+//   Implement a dot product
+// ----------------------------------------------------------------------------
+{
+    object_p x = rt.stack(1);
+    object_p y = rt.stack(0);
+    if (x && y)
+    {
+        array_g xa = x->as<array>();
+        array_g ya = y->as<array>();
+        if (xa && ya && rt.drop(2))
+        {
+            size_t      depth = rt.depth();
+            size_t      xs    = 0;
+            size_t      ys    = 0;
+            algebraic_g xi, yi;
+            if (xa->is_vector(&xs) && ya->is_vector(&ys))
+            {
+                if (xs == ys)
+                {
+                    algebraic_g result;
+                    for (size_t i = 0; i < xs; i++)
+                    {
+                        xi = rt.stack(xs + ys + ~i)->as_algebraic();
+                        yi = rt.stack(     ys + ~i)->as_algebraic();
+                        result = result ? result + xi * yi : xi * yi;
+                    }
+                    rt.drop(rt.depth() - depth);
+                    if (result && rt.push(+result))
+                        return OK;
+                }
+                else
+                {
+                    rt.dimension_error();
+                }
+            }
+            rt.drop(rt.depth() - depth);
+            rt.push(+ya);
+            rt.push(+xa);
+        }
+        else if ((xa || x->is_symbolic()) && (ya || y->is_symbolic()))
+        {
+            algebraic_g xe = x->as_algebraic_or_list();
+            algebraic_g ye = y->as_algebraic_or_list();
+            xe = expression::make(ID_dot, xe, ye);
+            if (xe && rt.drop(2) && rt.push(+xe))
+                return OK;
+        }
+        else
+        {
+            rt.type_error();
+        }
+    }
+    return ERROR;
+}
+
+
+COMMAND_BODY(cross)
+// ----------------------------------------------------------------------------
+//   Implement a cross product
+// ----------------------------------------------------------------------------
+{
+    object_p x = rt.stack(1);
+    object_p y = rt.stack(0);
+    if (x && y)
+    {
+        array_g xa = x->as<array>();
+        array_g ya = y->as<array>();
+        if (xa && ya && rt.drop(2))
+        {
+            size_t      depth = rt.depth();
+            size_t      xs    = 0;
+            size_t      ys    = 0;
+            algebraic_g xi, yi;
+            if (xa->is_vector(&xs) && ya->is_vector(&ys))
+            {
+                if ((xs == 2 || xs == 3) && (ys == 2 || ys == 3))
+                {
+                    algebraic_g x1 = rt.stack(xs + ys + ~0)->as_algebraic();
+                    algebraic_g x2 = rt.stack(xs + ys + ~1)->as_algebraic();
+                    algebraic_g x3 = xs == 3
+                        ? rt.stack(xs + ys + ~2)->as_algebraic()
+                        : integer::make(0);
+                    algebraic_g y1 = rt.stack(ys + ~0)->as_algebraic();
+                    algebraic_g y2 = rt.stack(ys + ~1)->as_algebraic();
+                    algebraic_g y3 = ys == 3
+                        ? rt.stack(ys + ~2)->as_algebraic()
+                        : integer::make(0);
+                    algebraic_g r1 = x2 * y3 - x3 * y2;
+                    algebraic_g r2 = x3 * y1 - x1 * y3;
+                    algebraic_g r3 = x1 * y2 - x2 * y1;
+                    algebraic_g r = list::make(ID_array, r1, r2, r3);
+                    rt.drop(rt.depth() - depth);
+                    if (r && rt.push(+r))
+                        return OK;
+                }
+                else
+                {
+                    rt.dimension_error();
+                }
+            }
+            rt.drop(rt.depth() - depth);
+            rt.push(+ya);
+            rt.push(+xa);
+        }
+        else if ((xa || x->is_symbolic()) && (ya || y->is_symbolic()))
+        {
+            algebraic_g xe = x->as_algebraic();
+            algebraic_g ye = y->as_algebraic();
+            xe = expression::make(ID_cross, xe, ye);
+            if (xe && rt.drop(2) && rt.push(+xe))
+                return OK;
+        }
+        else
+        {
+            rt.type_error();
+        }
+    }
+    return ERROR;
+}
+
+
+COMMAND_BODY(FromArray)
+// ----------------------------------------------------------------------------
+//   Array to stack
+// ----------------------------------------------------------------------------
+{
+    object_p obj = rt.top();
+    if (array_p a = obj->as<array>())
+    {
+        rt.pop();
+        if (a->expand())
+            return OK;
+    }
+    else
+    {
+        rt.type_error();
+    }
+    return ERROR;
+}
+
+
+COMMAND_BODY(ToArray)
+// ----------------------------------------------------------------------------
+//   Stack to array
+// ----------------------------------------------------------------------------
+{
+    size_t rows = 0, columns = 0;
+    if (array::size_from_stack(&rows, &columns))
+    {
+        size_t items = columns ? rows * columns : rows;
+        if (rt.args(items+1))
+        {
+            rt.drop();
+            if (array_p a = array::from_stack(rows, columns))
+                if (rt.push(a))
+                    return OK;
+        }
+    }
+
+    return ERROR;
+}
+
+
+static object_p item_from_constant(size_t, size_t,
+                                   size_t, size_t, void *data)
+// ----------------------------------------------------------------------------
+//   Return an item from a constant
+// ----------------------------------------------------------------------------
+{
+    object_g *ptr = (object_g *) data;
+    return *ptr;
+}
+
+
+COMMAND_BODY(ConstantArray)
+// ----------------------------------------------------------------------------
+//   Build a constant array
+// ----------------------------------------------------------------------------
+{
+    if (object_p value = rt.stack(0))
+    {
+        if (object_g dims = rt.stack(1))
+        {
+            symbol_g name = dims->as_quoted<symbol>();
+            if (name)
+            {
+                dims = directory::recall_all(name, true);
+                if (!dims)
+                    return ERROR;
+            }
+
+            size_t  rows = 0, columns = 0;
+            array_g da = dims->as<array>();
+            bool is_array = da && (da->is_matrix(&rows, &columns, false) ||
+                                   da->is_vector(&rows, false));
+            if (is_array || array::size_from_object(&rows, &columns, dims))
+            {
+                if (array_g a = array::build(rows, columns,
+                                             item_from_constant, &value))
+                {
+                    if (rt.drop(2))
+                    {
+                        if (name)
+                        {
+                            if (directory::store_here(name, a))
+                                return OK;
+                        }
+                        else if (rt.push(+a))
+                        {
+                            return OK;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (!rt.error())
+        rt.type_error();
+    return ERROR;
+}
+
+
+struct random_matrix_range
+// ----------------------------------------------------------------------------
+//    Random number range
+// ----------------------------------------------------------------------------
+{
+    algebraic_g min;
+    algebraic_g max;
+};
+
+
+static object_p item_from_random(size_t, size_t, size_t, size_t, void *rng)
+// ----------------------------------------------------------------------------
+//   Return a random value between -9 and 9
+// ----------------------------------------------------------------------------
+{
+    random_matrix_range *range = (random_matrix_range *) rng;
+    object_g value = random_number(range->min, range->max);
+    return value;
+}
+
+
+COMMAND_BODY(RandomMatrix)
+// ----------------------------------------------------------------------------
+//   Build a random matrix
+// ----------------------------------------------------------------------------
+{
+    if (object_g dims = rt.top())
+    {
+        symbol_g name = dims->as_quoted<symbol>();
+        if (name)
+        {
+            dims = directory::recall_all(name, true);
+            if (!dims)
+                return ERROR;
+        }
+
+        size_t  rows = 0, columns = 0;
+        array_g da = dims->as<array>();
+        bool is_array = da && (da->is_matrix(&rows, &columns, false) ||
+                               da->is_vector(&rows, false));
+        if (is_array || array::size_from_object(&rows, &columns, dims))
+        {
+            random_matrix_range range =
+            {
+                .min = integer::make(-9),
+                .max = integer::make(9)
+            };
+
+            if (array_g a = array::build(rows, columns,
+                                         item_from_random, &range))
+            {
+                if (rt.drop())
+                {
+                    if (name)
+                    {
+                        if (directory::store_here(name, a))
+                            return OK;
+                    }
+                    else if (rt.push(+a))
+                    {
+                        return OK;
+                    }
+                }
+            }
+        }
+    }
+    if (!rt.error())
+        rt.type_error();
+    return ERROR;
+}
+
+
+static object_p item_from_identity(size_t, size_t,
+                                   size_t r, size_t c, void *)
+// ----------------------------------------------------------------------------
+//   Return an item from a constant
+// ----------------------------------------------------------------------------
+{
+    return integer::make(uint(r == c));
+}
+
+
+COMMAND_BODY(IdentityMatrix)
+// ----------------------------------------------------------------------------
+//   Build an identity matrix
+// ----------------------------------------------------------------------------
+{
+    if (object_g dims = rt.top())
+    {
+        symbol_g name = dims->as_quoted<symbol>();
+        if (name)
+        {
+            dims = directory::recall_all(name, true);
+            if (!dims)
+                return ERROR;
+        }
+
+        size_t  rows = 0, columns = 0;
+        array_g da = dims->as<array>();
+        if (da)
+        {
+            if (da->is_matrix(&rows, &columns, false))
+            {
+            }
+            else if (da->is_vector(&rows, false))
+            {
+                columns = rows;
+            }
+            else
+            {
+                columns = 1;
+            }
+        }
+        else if (array::size_from_object(&rows, &columns, dims))
+        {
+            if (!columns)
+                columns = rows;
+        }
+        else
+        {
+            rt.type_error();
+            return ERROR;
+        }
+        if (rows != columns)
+        {
+            rt.dimension_error();
+            return ERROR;
+        }
+        if (array_g a = array::build(rows, columns, item_from_identity))
+        {
+            if (rt.drop())
+            {
+                if (name)
+                {
+                    if (directory::store_here(name, a))
+                        return OK;
+                }
+                else if (rt.push(+a))
+                {
+                    return OK;
+                }
+                }
+        }
+    }
+    if (!rt.error())
+        rt.type_error();
     return ERROR;
 }
 

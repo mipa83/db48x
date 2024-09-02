@@ -310,11 +310,18 @@ CMD(CaseWhen)
 
 // Data processing
 NAMED(ToList, "→List")
-NAMED(Explode, "Object→") ALIAS(Explode, "FromObj") ALIAS(Explode, "Obj→")
+NAMED(Explode, "Object→")       ALIAS(Explode, "FromObj") ALIAS(Explode, "Obj→")
 CMD(Get)
 CMD(Put)
 CMD(Size)
 CMD(Sort)
+
+// Array / Matrix commands
+NAMED(ToArray, "→Arry")         ALIAS(ToArray, "→Array")
+NAMED(FromArray, "Arry→")       ALIAS(FromArray, "Array→")
+NAMED(ConstantArray, "Con")
+NAMED(IdentityMatrix, "Idn")
+NAMED(RandomMatrix, "RanM")     ALIAS(RandomMatrix, "RandomArray")
 
 // Tests
 NAMED(IFT, "IfThen")
@@ -387,6 +394,8 @@ CMD(re)
 CMD(im)
 CMD(arg)
 CMD(conj)
+OP(dot, "⋅")
+OP(cross, "⨯")
 NAMED(det, "Determinant")
 
 
@@ -701,6 +710,7 @@ CMD(Pick3)
 CMD(UnPick)
 CMD(UnRot)
 NAMED(NDupN, "NDuplicateN")
+NAMED(DupDup, "DuplicateTwice")
 CMD(Show)
 
 
@@ -1080,7 +1090,7 @@ MENU(StatisticsMenu)
 MENU(RegressionMenu)
 MENU(PopulationMenu)
 MENU(SignalProcessingMenu)
-MENU(ConstantsMenu)
+MENU(ConstantsMenu)             ALIAS(ConstantsMenu, "CONSTANTS")
 MENU(EquationsMenu)
 MENU(Library)
 MENU(UnitsMenu)
