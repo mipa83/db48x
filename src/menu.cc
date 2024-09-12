@@ -214,12 +214,13 @@ COMMAND_BODY(ToolsMenu)
     {
         switch(ui.editing_mode())
         {
-        case ui.DIRECT:                 menu = ID_EditMenu; break;
-        case ui.TEXT:                   menu = ID_TextMenu; break;
-        case ui.PROGRAM:                menu = ID_ProgramMenu; break;
-        case ui.ALGEBRAIC:              menu = ID_RealMenu; break;
-        case ui.MATRIX:                 menu = ID_MatrixMenu; break;
-        case ui.BASED:                  menu = ID_BasesMenu; break;
+        case ui.DIRECT:                 menu = ID_EditMenu;     break;
+        case ui.TEXT:                   menu = ID_TextMenu;     break;
+        case ui.PROGRAM:                menu = ID_ProgramMenu;  break;
+        case ui.ALGEBRAIC:              menu = ID_RealMenu;     break;
+        case ui.MATRIX:                 menu = ID_MatrixMenu;   break;
+        case ui.BASED:                  menu = ID_BasesMenu;    break;
+        case ui.UNIT:                   menu = ID_UnitsMenu;    break;
         default:
         case ui.STACK:                  break;
         }
@@ -1043,6 +1044,12 @@ MENU(ListMenu,
      "PutI",    ID_PutI,
      "Reverse", ID_ReverseList,
 
+     "DoList",  ID_DoList,
+     "DoSubs",  ID_DoSubs,
+     "NSub",    ID_NSub,
+     "EndSub",  ID_EndSub,
+     "Loops",   ID_LoopsMenu,
+
      "Obj→",    ID_Explode,
      "Find",    ID_Unimplemented,
      "Objects", ID_ObjectMenu,
@@ -1356,7 +1363,8 @@ MENU(PlotMenu,
      "No Axes", ID_NoPlotAxes,
 
      "Backgnd", ID_Background,
-     "Clear",   ID_ClLCD);
+     "Clear",   ID_ClLCD,
+     "Freeze",  ID_Freeze);
 
 MENU(ClearThingsMenu,
 // ----------------------------------------------------------------------------
@@ -1568,6 +1576,7 @@ MENU(GraphicsMenu,
      "Pix?",    ID_PixTest,
      "PixCol?", ID_PixColor,
 
+     "Freeze",  ID_Freeze,
      "Plot",    ID_PlotMenu);
 
 MENU(MemoryMenu,

@@ -67,6 +67,7 @@ struct user_interface
         CONSTANT,               // Entities like ⅈ or π have no parentheses
         MATRIX,                 // Matrix/vector mode
         BASED,                  // Based number: A-F map switch to alpha
+        UNIT,                   // After a unit sign
     };
 
     enum
@@ -112,6 +113,8 @@ struct user_interface
     void        menu_auto_complete()    { autoComplete = true; }
     symbol_p    label(uint index);
     cstring     label_text(uint index);
+
+    bool        freeze(uint flags);
 
     void        draw_start(bool force, uint refresh = ~0U);
     void        draw_refresh(uint delay);
@@ -274,6 +277,9 @@ protected:
     bool     autoComplete : 1;  // Menu is auto-complete
     bool     adjustSeps   : 1;  // Need to adjust separators
     bool     graphics     : 1;  // Displaying user-defined graphics screen
+    bool     freezeHeader : 1;  // Freeze the header area
+    bool     freezeStack  : 1;  // Freeze the stack area
+    bool     freezeMenu   : 1;  // Freeze the menu area
     bool     dbl_release  : 1;  // Double release
 
 protected:

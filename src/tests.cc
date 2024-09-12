@@ -30,6 +30,7 @@
 #include "tests.h"
 
 #include "dmcp.h"
+#include "equations.h"
 #include "recorder.h"
 #include "settings.h"
 #include "sim-dmcp.h"
@@ -116,6 +117,7 @@ TESTS(text,             "Text operations");
 TESTS(vectors,          "Vectors");
 TESTS(matrices,         "Matrices");
 TESTS(solver,           "Solver");
+TESTS(equations,        "Built-in equations");
 TESTS(colnbeams,        "Columns and Beams equations in library");
 TESTS(integrate,        "Numerical integration");
 TESTS(simplify,         "Auto-simplification of expressions");
@@ -170,7 +172,7 @@ void tests::run(uint onlyCurrent)
     {
         here().begin("Current");
         if (onlyCurrent & 1)
-            matrix_functions();
+            editor_operations();
         if (onlyCurrent & 2)
             demo_ui();
         if (onlyCurrent & 4)
@@ -215,6 +217,7 @@ void tests::run(uint onlyCurrent)
         vector_functions();
         matrix_functions();
         solver_testing();
+        eqnlib_parsing();
         eqnlib_columns_and_beams();
         numerical_integration_testing();
         text_functions();
@@ -716,7 +719,7 @@ void tests::keyboard_entry()
 
     step("Separators with auto-spacing");
     cstring seps2     = "{}()[]";
-    cstring seps2auto = "{ } ( ) []";
+    cstring seps2auto = "{ } () []";
     test(CLEAR, seps2).editor(seps2auto);
 
     step("Key repeat");
@@ -743,13 +746,13 @@ void tests::keyboard_entry()
         .test(KEY3).editor("'1=2+3'");
     step("F key in equation inserts parentheses")
         .test(MUL).editor("'1=2+3·'")
-        .test(F).editor("'1=2+3· ()'");
+        .test(F).editor("'1=2+3·()'");
     step("Automatic insertion of parentheses after functions")
-        .test(D).editor("'1=2+3· (exp())'")
-        .test(KEY0).editor("'1=2+3· (exp(0))'");
+        .test(D).editor("'1=2+3·(exp())'")
+        .test(KEY0).editor("'1=2+3·(exp(0))'");
     step("Space key in parentheses insert semi-colon")
-        .test(SPACE).editor("'1=2+3· (exp(0;))'")
-        .test(KEY7).editor("'1=2+3· (exp(0;7))'");
+        .test(SPACE).editor("'1=2+3·(exp(0;))'")
+        .test(KEY7).editor("'1=2+3·(exp(0;7))'");
 
     step("STO key while entering equation (bug #390)")
         .test(CLEAR, EXIT, KEY1, KEY2, F,
@@ -1127,6 +1130,16 @@ void tests::editor_operations()
 
     step("Implicit multiplication")
         .test(CLEAR, "'2X'", ENTER).expect("'2·X'");
+
+    step("Graphical rendering of integrals - Simple expression")
+        .test(CLEAR, "'integrate(A;B;sin(X);X)'", ENTER, EXIT)
+        .image_noheader("integral");
+    step("Graphical rendering of integrals - Additive expression")
+        .test(CLEAR, "'integrate(A;B;1+sin(X);X)'", ENTER, EXIT)
+        .image_noheader("integral-add");
+    step("Graphical rendering of integrals - Divide expression")
+        .test(CLEAR, "'integrate(A;B;1/sin(X);X)'", ENTER, EXIT)
+        .image_noheader("integral-div");
 
     step("Enter X mod Y and checking it can be edited")
         .test(CLEAR, NOSHIFT, F, "X", RSHIFT, L, F3, "Y")
@@ -2264,7 +2277,7 @@ void tests::conditionals()
     step("IfErr reading error number");
     test(CLEAR, "iferr 1 0 / drop then errn end", ENTER)
         .type(object::ID_based_integer)
-        .expect("#A₁₆");        // May change if you update errors.tbl
+        .expect("#B₁₆");        // May change if you update errors.tbl
 
     step("DoErr with built-in message");
     test(CLEAR, "3 DoErr", ENTER)
@@ -4798,6 +4811,8 @@ void tests::units_and_conversions()
         .expect("1 m·s");
     step("Insert unit with soft key")
         .test(CLEAR, SHIFT, KEY5, KEY1, F2, F1)
+        .editor("1_in")
+        .test(ENTER)
         .type(object::ID_unit)
         .expect("1 in");
     step("Convert integer unit with soft key")
@@ -4805,23 +4820,29 @@ void tests::units_and_conversions()
         .type(object::ID_unit)
         .expect("25 ²/₅ mm");
     step("Convert decimal unit with soft key")
-        .test(CLEAR, KEY2, DOT, F1, SHIFT, F2)
+        .test(CLEAR, KEY2, DOT, F1, ENTER, SHIFT, F2)
         .type(object::ID_unit)
         .expect("50.8 mm");
     step("Do not apply simplifications for unit conversions")
-        .test(CLEAR, KEY1, DOT, F1, SHIFT, F2)
+        .test(CLEAR, KEY1, DOT, F1, ENTER, SHIFT, F2)
         .type(object::ID_unit)
         .expect("25.4 mm");
     step("Multiply by unit using softkey")
         .test(CLEAR, SHIFT, KEY5, KEY1, F2, F1, F2)
+        .editor("1_in·mm")
+        .test(ENTER)
         .type(object::ID_unit)
         .expect("1 in·mm");
     step("Divide by unit using softkey")
         .test(CLEAR, SHIFT, KEY5, KEY1, F2, F1, RSHIFT, F2)
+        .editor("1_in/(mm)")
+        .test(ENTER)
         .type(object::ID_unit)
         .expect("1 in/mm");
     step("Conversion across compound units")
         .test(CLEAR, SHIFT, KEY5, KEY1, F2, F3)
+        .editor("1_km/h")
+        .test(ENTER)
         .type(object::ID_unit).expect("1 km/h")
         .test(SHIFT, F4).type(object::ID_unit).expect("¹⁵ ⁶²⁵/₂₅ ₁₄₆ mph")
         .test(SHIFT, F3).type(object::ID_unit).expect("1 km/h");
@@ -4836,35 +4857,41 @@ void tests::units_and_conversions()
         .test(BSP).expect("⁵/₁₈");
     step("Convert operation")
         .test(CLEAR, KEY1, SHIFT, KEY5, F2, F3)
+        .editor("1_km/h")
+        .test(ENTER)
         .type(object::ID_unit).expect("1 km/h")
         .test(KEY1, F1, SHIFT, KEY5, SHIFT, F1, RSHIFT, F2)
+        .editor("1_in/(min)")
+        .test(ENTER)
         .type(object::ID_unit).expect("1 in/min")
         .test(RSHIFT, KEY5, F1) // Convert
         .type(object::ID_unit).expect("656 ⁶⁴/₃₈₁ in/min");
     step("Convert to unit")
         .test(CLEAR, KEY3, KEY7, ENTER).expect("37")
-        .test(SHIFT, KEY5, KEY4, KEY2, F2, F3).expect("42 km/h")
+        .test(LSHIFT, KEY5, KEY4, KEY2, F2, F3).editor("42_km/h")
+        .test(ENTER).expect("42 km/h")
         .test(RSHIFT, KEY5, F5).expect("37 km/h");
     step("Factoring out a unit")
-        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2).expect("3 kW")
-        .test(KEY1, SHIFT, KEY5, SHIFT, F4, F1).expect("1 N")
+        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2, ENTER).expect("3 kW")
+        .test(KEY1, SHIFT, KEY5, SHIFT, F4, F1, ENTER).expect("1 N")
         .test(RSHIFT, KEY5, F4).expect("3 000 N·m/s");
     step("Orders of magnitude")
-        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2).expect("3 kW")
+        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2, ENTER).expect("3 kW")
         .test(RSHIFT, KEY5, SHIFT, F2).expect("300 000 cW")
-        .test(SHIFT, F3).expect("3 kW")
-        .test(SHIFT, F4).expect("³/₁ ₀₀₀ MW");
+        .test(LSHIFT, F3).expect("3 kW")
+        .test(LSHIFT, F4).expect("³/₁ ₀₀₀ MW");
     step("Unit simplification (same unit)")
-        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2).expect("3 kW")
+        .test(CLEAR, KEY3, SHIFT, KEY5, SHIFT, F6, F2, ENTER).expect("3 kW")
         .test(SHIFT, KEY5, SHIFT, F4, F1).expect("3 kW·N")
-        .test(SHIFT, KEY5, SHIFT, F6, RSHIFT, F2).expect("3 N");
+        .test(SHIFT, KEY5, SHIFT, F6, RSHIFT, F2, ENTER).expect("3 N");
     step("Arithmetic on units")
-        .test(CLEAR, KEY3, KEY7, SHIFT, KEY5, F2, F4).expect("37 mph")
-        .test(SHIFT, KEY5, KEY4, KEY2, F2, F3).expect("42 km/h")
+        .test(CLEAR, KEY3, KEY7, SHIFT, KEY5, F2, F4, ENTER).expect("37 mph")
+        .test(SHIFT, KEY5, KEY4, KEY2, F2, F3, ENTER).expect("42 km/h")
         .test(ADD).expect("101 ⁸ ⁵²⁷/₁₅ ₆₂₅ km/h");
     step("Arithmetic on units (decimal)")
-        .test(CLEAR, KEY3, KEY7, DOT, SHIFT, KEY5, F2, F4).expect("37. mph")
-        .test(SHIFT, KEY5, KEY4, KEY2, F2, F3).expect("42 km/h")
+        .test(CLEAR, KEY3, KEY7, DOT, SHIFT, KEY5, F2, F4).editor("37._mph")
+        .test(ENTER).expect("37. mph")
+        .test(SHIFT, KEY5, KEY4, KEY2, F2, F3, ENTER).expect("42 km/h")
         .test(ADD).expect("101.54572 8 km/h");
     step("Unit parsing on command line")
         .test(CLEAR, "12_km/s^2", ENTER).expect("12 km/s↑2");
@@ -4903,7 +4930,13 @@ void tests::units_and_conversions()
 
     step("Invalid unit exponent")
         .test(CLEAR, "1_km^s", ENTER).error("Invalid unit expression");
-    step("Invalid unit expression")
+    step("Invalid unit expression for 1_km/(s+N)")
+        .test(CLEAR, "1_km/",
+              ALPHA, SHIFT, F,
+              LOWERCASE, S, NOSHIFT, ADD, ALPHA, N,
+              ENTER).error("Invalid unit expression")
+        .test(CLEAR);
+    step("Invalid unit expression for 1_km(s+N)")
         .test(CLEAR, "1_km/",
               ALPHA, SHIFT, F, UP, BSP, DOWN,
               LOWERCASE, S, NOSHIFT, ADD, ALPHA, N,
@@ -5080,6 +5113,83 @@ void tests::list_functions()
         .expect("{ 16 -19 16 43 31 }")
         .test(CLEAR, "{ A B C 1 2 3 }",LSHIFT, F5)
         .expect("{ 'B-A' 'C-B' '1-C' 1 1 }");
+
+    step("DoList with explicit size in program")
+        .test(CLEAR, "{ A B 3 } { D 5 6 } { E 8 F } 3 « + * » DOLIST", ENTER)
+        .expect("{ 'A·(D+E)' '13·B' '3·(F+6)' }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoList with explicit size from menu")
+        .test(CLEAR, "{ 1 2 3 } { 4 5 6 } { 7 8 9 } 3 « + * »",
+              LSHIFT, MUL, LSHIFT, SUB, F6, LSHIFT, F1)
+        .expect("{ 11 26 45 }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoList with implicit size in program")
+        .test(CLEAR, "{ 3 A B } { 5 D 6 } { 8 F E } « + » DOLIST", ENTER)
+        .expect("{ 13 'D+F' 'E+6' }")
+        .test(BSP)
+        .expect("{ 3 A B }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoList with implicit size from menu")
+        .test(CLEAR, "{ 1 2 3 } { 4 5 6 } { 7 8 9 } « * »",
+              LSHIFT, MUL, LSHIFT, SUB, F6, LSHIFT, F1)
+        .expect("{ 28 40 54 }")
+        .test(BSP).expect("{ 1 2 3 }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoList with bad arguments")
+        .test(CLEAR, "{ A B 3 } { D 5 6 } { E 8 F }  « + »  DUP DOLIST", ENTER)
+        .error("Bad argument type");
+
+    step("DoSubs with explicit size in program")
+        .test(CLEAR, "{ A B 3 D 5 6 E 8 F } 3 « + * » DOSUBS", ENTER)
+        .expect("{ 'A·(B+3)' 'B·(D+3)' '3·(D+5)' "
+                "'11·D' '5·(E+6)' '6·(E+8)' 'E·(F+8)' }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with explicit size from menu")
+        .test(CLEAR, "{ 1 2 3 4 5 6 7 8 9 } 3 « + * »",
+              LSHIFT, MUL, LSHIFT, SUB, F6, LSHIFT, F2)
+        .expect("{ 5 14 27 44 65 90 119 }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with implicit size in program")
+        .test(CLEAR, "{ 3 A B 5 D 6 8 F E } « + » DOSUBS", ENTER)
+        .expect("{ 'A+3' 'A+B' 'B+5' 'D+5' 'D+6' 14 'F+8' 'F+E' }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with implicit size in program from HP50G ARM")
+        .test(CLEAR, "{ A B C D E } « - » DOSUBS", ENTER)
+        .expect("{ 'A-B' 'B-C' 'C-D' 'D-E' }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with explicit size in program from HP50G ARM")
+        .test(CLEAR, "{ A B C } 2 « DUP * * » DOSUBS", ENTER)
+        .expect("{ 'A·B²' 'B·C²' }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with explicit size in program from HP50G ARM")
+        .test(CLEAR,
+              "{ 1 2 3 4 5 } "
+              "« → a b "
+              "« CASE "
+              "  'NSUB=1' THEN a END "
+              "  'NSUB=ENDSUB' THEN b END "
+              "  'a+b' EVAL END » » DOSUBS", ENTER)
+        .expect("{ 1 5 7 5 }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with implicit size from menu")
+        .test(CLEAR, "{ 1 2 A D 5 6 B 8 9 } « * »",
+              LSHIFT, MUL, LSHIFT, SUB, F6, LSHIFT, F2)
+        .expect("{ 2 '2·A' 'A·D' '5·D' 30 '6·B' '8·B' 72 }")
+        .test(BSP).noerror()
+        .test(BSP).error("Too few arguments");
+    step("DoSubs with bad arguments")
+        .test(CLEAR, "{ A B 3 D 5 6 E 8 F }  « + »  DUP DOSUBS", ENTER)
+        .error("Bad argument type");
 }
 
 
@@ -5587,6 +5697,11 @@ void tests::solver_testing()
     step("Solver with expression")
         .test(CLEAR, "'X+3' 'X' 0 ROOT", ENTER)
         .noerror().expect("X:-3.");
+    step("Solver with arithmetic syntax")
+        .test(CLEAR, "'ROOT(X+3;X;0)'", ENTER)
+        .expect("'Root(X+3;X;0)'")
+        .test(RUNSTOP)
+        .expect("X:-3.");
     step("Solver with equation")
         .test(CLEAR, "'sq(x)=3' 'X' 0 ROOT", ENTER)
         .noerror().expect("X:1.73205 08075 7");
@@ -5622,6 +5737,36 @@ void tests::solver_testing()
 
     step("Exit: Clear variables")
         .test(CLEAR, "UPDIR 'SLVTST' PURGE", ENTER);
+}
+
+
+void tests::eqnlib_parsing()
+// ----------------------------------------------------------------------------
+//   Test that we can parse every single builtin equation
+// ----------------------------------------------------------------------------
+{
+    BEGIN(equations);
+
+    size_t nbuiltins = equation::equations.nbuiltins;
+    const cstring *eq = equation::equations.builtins;
+
+    for (size_t i = 0; i < nbuiltins; i += 2)
+    {
+        if (eq[i+1])
+        {
+            istep(eq[i]);
+            test(CLEAR, eq[i+1], ENTER).noerror();
+        }
+        else
+        {
+            begin(eq[i], true);
+        }
+        if (!ok)
+        {
+            test(eq[i+1]);
+            break;
+        }
+    }
 }
 
 
@@ -5819,6 +5964,27 @@ void tests::numerical_integration_testing()
         .test("'sq(Z)+Z'", ENTER).expect("'Z²+Z'")
         .test(F, ALPHA, Z, ENTER).expect("'Z'")
         .test(SHIFT, KEY8, F2).expect("8.83333 33333 3", 350);
+    step("Integrate with symbols")
+        .test(CLEAR, "A B '1/X' 'X' INTEGRATE", ENTER)
+        .expect("'∫(A;B;1÷X;X)'")
+        .test(DOWN)
+        .editor("'∫(A;B;1÷X;X)'")
+        .test(ENTER)
+        .expect("'∫(A;B;1÷X;X)'");
+    step("Integrate with one symbol")
+        .test(CLEAR, "1 B '1/X' 'X' INTEGRATE", ENTER)
+        .expect("'∫(1;B;1÷X;X)'")
+        .test(DOWN)
+        .editor("'∫(1;B;1÷X;X)'")
+        .test(ENTER)
+        .expect("'∫(1;B;1÷X;X)'");
+    step("Integrate with second symbol")
+        .test(CLEAR, "A 1 '1/X' 'X' INTEGRATE", ENTER)
+        .expect("'∫(A;1;1÷X;X)'")
+        .test(DOWN)
+        .editor("'∫(A;1;1÷X;X)'")
+        .test(ENTER)
+        .expect("'∫(A;1;1÷X;X)'");
 }
 
 
@@ -7998,31 +8164,31 @@ void tests::insertion_of_variables_constants_and_units()
     step("Select units menu")
         .test(CLEAR, LSHIFT, KEY5, F4).image_menus("units-menu", 3);
     step("Select meter")
-        .test(CLEAR, KEY1, F1).expect("1 m");
+        .test(CLEAR, KEY1, F1).editor("1_m").test(ENTER).expect("1 m");
     step("Convert to yards")
         .test(LSHIFT, F2).expect("1 ¹⁰⁷/₁ ₁₄₃ yd");
     step("Select yards")
-        .test(CLEAR, KEY1, F2).expect("1 yd");
+        .test(CLEAR, KEY1, F2).editor("1_yd").test(ENTER).expect("1 yd");
     step("Convert to feet")
         .test(LSHIFT, F3).expect("3 ft");
     step("Select feet")
-        .test(CLEAR, KEY1, F3).expect("1 ft");
+        .test(CLEAR, KEY1, F3).editor("1_ft").test(ENTER).expect("1 ft");
     step("Convert to meters")
         .test(LSHIFT, F1).expect("³⁸¹/₁ ₂₅₀ m");
 
     step("Enter 27_m in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", NOSHIFT, F1).editor("«27_m »")
+        .test("27", NOSHIFT, F1).editor("«27_m»")
         .test(ENTER).want("« 27 m »")
         .test(RUNSTOP).expect("27 m");
     step("Enter 27_yd in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", NOSHIFT, F2).editor("«27_yd »")
+        .test("27", NOSHIFT, F2).editor("«27_yd»")
         .test(ENTER).want("« 27 yd »")
         .test(RUNSTOP).expect("27 yd");
     step("Enter 27_ft in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", NOSHIFT, F3).editor("«27_ft »")
+        .test("27", NOSHIFT, F3).editor("«27_ft»")
         .test(ENTER).want("« 27 ft »")
         .test(RUNSTOP).expect("27 ft");
 
@@ -8034,17 +8200,17 @@ void tests::insertion_of_variables_constants_and_units()
 
     step("Enter 27_m⁻¹ in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", RSHIFT, F1).editor("«27_(m)⁻¹ »")
+        .test("27", RSHIFT, F1).editor("«27_(m)⁻¹»")
         .test(ENTER).want("« 27 m⁻¹ »")
         .test(RUNSTOP).expect("27 m⁻¹");
     step("Enter 27_yd⁻¹ in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", RSHIFT, F2).editor("«27_(yd)⁻¹ »")
+        .test("27", RSHIFT, F2).editor("«27_(yd)⁻¹»")
         .test(ENTER).want("« 27 yd⁻¹ »")
         .test(RUNSTOP).expect("27 yd⁻¹");
     step("Enter 27_ft⁻¹ in program and evaluate it")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»")
-        .test("27", RSHIFT, F3).editor("«27_(ft)⁻¹ »")
+        .test("27", RSHIFT, F3).editor("«27_(ft)⁻¹»")
         .test(ENTER).want("« 27 ft⁻¹ »")
         .test(RUNSTOP).expect("27 ft⁻¹");
 
@@ -8255,7 +8421,7 @@ void tests::constants_menu()
         .test(LSHIFT, F1).expect("55 263 469.6 F/(m·C)");
     step("Permittivity - elementary charge product")
         .test(CLEAR, NOSHIFT, F2).expect("qε0")
-        .test(LSHIFT, F2).expect("1.41859 78⁳⁻³⁰");
+        .test(LSHIFT, F2).expect("1.41859 78⁳⁻³⁰ F·C/m");
     step("Dielectric constant of silicon")
         .test(CLEAR, NOSHIFT, F3).expect("εsi")
         .test(LSHIFT, F3).expect("11.9");
@@ -10141,11 +10307,61 @@ tests &tests::itest(cstring txt)
         case L'∜': itest(RSHIFT, KEY2, F4, F6, F6, F6, F6, LSHIFT, F3); NEXT;
         case L'⊿': itest(RSHIFT, KEY2, F4, F6, F6, F6, F6, F6, F5); NEXT;
         case L'∠': itest(RSHIFT, KEY2, F4, F6, F6, F6, F6, F6, F3); NEXT;
+        case L'Ⓒ': itest(RSHIFT, KEY2, F2, RSHIFT, F1); NEXT;
+        case L'Ⓔ': itest(RSHIFT, KEY2, F2, RSHIFT, F2); NEXT;
+        case L'Ⓛ': itest(RSHIFT, KEY2, F2, LSHIFT, F3); NEXT;
         case L'Ⓓ': itest(RSHIFT, KEY2, F2, F6, F6, F1); NEXT;
         case L'ⓧ': itest(RSHIFT, KEY2, F2, F6, F6, F2); NEXT;
         case L'°': itest(RSHIFT, KEY2, F2, F6, SHIFT, F3); NEXT;
         case L'⨯': itest(RSHIFT, KEY2, F4, LSHIFT, F6, LSHIFT, F1); NEXT;
         case L'⋅': itest(RSHIFT, KEY2, F4, LSHIFT, F6, LSHIFT, F2); NEXT;
+        case L'α': itest(RSHIFT, KEY2, LSHIFT, F1, F1); NEXT;
+        case L'β': itest(RSHIFT, KEY2, LSHIFT, F1, F2); NEXT;
+        case L'γ': itest(RSHIFT, KEY2, LSHIFT, F1, F3); NEXT;
+        case L'δ': itest(RSHIFT, KEY2, LSHIFT, F1, F4); NEXT;
+        case L'ε': itest(RSHIFT, KEY2, LSHIFT, F1, F5); NEXT;
+        case L'ζ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F1); NEXT;
+        case L'η': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F2); NEXT;
+        case L'ι': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F4); NEXT;
+        case L'κ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F5); NEXT;
+        case L'λ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F1); NEXT;
+        case L'μ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F2); NEXT;
+        case L'ν': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F3); NEXT;
+        case L'ξ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F4); NEXT;
+        case L'ο': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F5); NEXT;
+        case L'σ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F3); NEXT;
+        case L'τ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F4); NEXT;
+        case L'υ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F5); NEXT;
+        case L'φ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, F1); NEXT;
+        case L'χ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, F2); NEXT;
+        case L'ψ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, F3); NEXT;
+        case L'ω': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, F4); NEXT;
+
+        case L'Α': itest(RSHIFT, KEY2, LSHIFT, F1, LSHIFT, F1); NEXT;
+        case L'Β': itest(RSHIFT, KEY2, LSHIFT, F1, LSHIFT, F2); NEXT;
+        case L'Γ': itest(RSHIFT, KEY2, LSHIFT, F1, LSHIFT, F3); NEXT;
+        case L'Δ': itest(RSHIFT, KEY2, LSHIFT, F1, LSHIFT, F4); NEXT;
+        case L'Ε': itest(RSHIFT, KEY2, LSHIFT, F1, LSHIFT, F5); NEXT;
+        case L'Ζ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, LSHIFT, F1); NEXT;
+        case L'Η': itest(RSHIFT, KEY2, LSHIFT, F1, F6, LSHIFT, F2); NEXT;
+        case L'Θ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, LSHIFT, F3); NEXT;
+        case L'Ι': itest(RSHIFT, KEY2, LSHIFT, F1, F6, LSHIFT, F4); NEXT;
+        case L'Κ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, LSHIFT, F5); NEXT;
+        case L'Λ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, LSHIFT, F1); NEXT;
+        case L'Μ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, LSHIFT, F2); NEXT;
+        case L'Ν': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, LSHIFT, F3); NEXT;
+        case L'Ξ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, LSHIFT, F4); NEXT;
+        case L'Ο': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, LSHIFT, F5); NEXT;
+        case L'Π': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, LSHIFT, F1); NEXT;
+        case L'Ρ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, LSHIFT, F2); NEXT;
+        case L'Τ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, LSHIFT, F4); NEXT;
+        case L'Υ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, LSHIFT, F5); NEXT;
+        case L'Φ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, LSHIFT, F1); NEXT;
+        case L'Χ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, LSHIFT, F2); NEXT;
+        case L'Ψ': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, LSHIFT, F3); NEXT;
+        case L'Ω': itest(RSHIFT, KEY2, LSHIFT, F1, F6, F6, F6, F6, LSHIFT, F4); NEXT;
+        case L'∞': itest(RSHIFT, KEY2, F4, F6, F6, RSHIFT, F5); NEXT;
+        case L'ℏ': itest(RSHIFT, KEY2, F4, F6, F6, F6, F6, LSHIFT, F5); NEXT;
 #undef NEXT
         }
 
@@ -10763,12 +10979,8 @@ tests &tests::error(cstring msg, uint extrawait)
     if (msg && !err)
         explain("Expected error message [", msg, "], got none");
     if (msg && err && strcmp(cstring(err), msg) != 0)
-        explain("Expected error message [",
-                msg,
-                "], "
-                "got [",
-                err,
-                "]");
+        explain("Expected error message [", msg, "], "
+                "got [", err, "]");
     fail();
     return *this;
 }

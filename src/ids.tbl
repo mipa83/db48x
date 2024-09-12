@@ -369,6 +369,8 @@ NAMED(comb, "Combinations")
 NAMED(perm, "Permutations")
 NAMED(Sum, "Σ")
 NAMED(Product, "∏")
+CMD(Root)
+NAMED(Integrate, "∫")
 
 NAMED(cbrt, "∛")        ALIAS(cbrt, "CubeRoot")
 OP(hypot, "⊿")          ALIAS(hypot, "Hypothenuse")
@@ -389,6 +391,9 @@ NAMED(PercentChange,    "%Change")              ALIAS(PercentChange, "%Ch")
 NAMED(PercentTotal,     "%Total")               ALIAS(PercentChange, "%T")
 CMD(Min)
 CMD(Max)
+
+CMD(NSub)
+CMD(EndSub)
 
 CMD(re)
 CMD(im)
@@ -430,6 +435,7 @@ NAMED(Bar,              "BarPlot")
 
 CMD(Clip)
 CMD(CurrentClip)
+CMD(Freeze)
 
 NAMED(Gray,             "GrayPattern")          ALIAS(Gray,     "GreyPattern")
                                                 ALIAS(Gray,     "Grey")
@@ -579,10 +585,6 @@ CMD(TypeName)
 CMD(Version)
 CMD(ScreenCapture)
 
-// High-level applications
-CMD(Root)
-NAMED(Integrate, "∫")
-
 // Special arithmetic
 NAMED(Div2, "QuoRem")                   ALIAS(Div2, "IDiv2")
                                         ALIAS(Div2, "QuotientRemainder")
@@ -598,6 +600,8 @@ CMD(Tail)
 CMD(Map)
 CMD(Reduce)                             ALIAS(Reduce, "Stream")
 CMD(Filter)
+CMD(DoList)
+CMD(DoSubs)
 OP(ListSum, "ΣList")
 OP(ListProduct, "∏List")
 OP(ListDifferences, "∆List")

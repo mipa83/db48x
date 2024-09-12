@@ -665,7 +665,7 @@ static const cstring basic_units[] =
     "A",        "1_A",                  // Ampere
     "V",        "1_kg*m^2/(A*s^3)",     // Volt
     "C",        "1_A*s",                // Coulomb
-    "Ω",        "1_V/A",                // Ohm
+    "Ω",        "1_V/A",                // Ohm
     "F",        "1_C/V",                // Farad
 
     "Fdy",      "96487_A*s",            // Faraday
@@ -727,15 +727,39 @@ static const cstring basic_units[] =
 
     "bit",      "1_bit",                // Bit
     "byte",     "8_bit",                // Byte
-    "B",        "1_byte",               // Byte
     "bps",      "1_bit/s",              // bit per second
     "baud",     "1_bps/SR",             // baud
+    "flops",    "1_flops",              // Floating point operation per second
 
+    "KiB",      "=",                    // Usual sizes with powers of two
+    "MiB",      "=",                    //
+    "GiB",      "=",                    //
+    "TiB",      "=",                    //
+    "PiB",      "=",                    //
+
+    "KB",       "=",                    // Usual sizes  with powers of 10
+    "MB",       "=",                    //
+    "GB",       "=",                    //
+    "TB",       "=",                    //
+    "PB",       "=",                    //
+
+    "B",        "1_byte",               // Byte
     "Bd",       "1_baud",               // baud (standard unit)
     "mips",     "1_mips",               // Million instructions per second
-    "flops",    "1_flops",              // Floating point operation per second
     "SR",       "1",                    // Symbol rate (default is 1)
-    "dB",       "1_dB"                  // decibel
+    "dB",       "1_dB",                  // decibel
+
+    "kbit/s",   "=",
+    "Mbit/s",   "=",
+    "Gbit/s",   "=",
+    "kbaud",    "=",
+    "kbps",     "=",
+
+    "Mflops",   "=",
+    "Gflops",   "=",
+    "Tflops",   "=",
+    "Pflops",   "=",
+    "Eflops",   "=",
 };
 
 
@@ -1763,8 +1787,12 @@ INSERT_BODY(ApplyUnit)
 // ----------------------------------------------------------------------------
 {
     int key = ui.evaluating;
+    if (ui.editing_mode() == ui.UNIT)
+        return ui.insert_softkey(key,
+                                 is_valid_in_name(ui.character_left_of_cursor())
+                                 ? "·" : "", "", false);
     if (ui.at_end_of_number())
-        return ui.insert_softkey(key, "_", " ", false);
+        return ui.insert_softkey(key, "_", "", false);
     return ui.insert_softkey(key, " 1_", " * ", false);
 }
 
@@ -1794,8 +1822,18 @@ INSERT_BODY(ApplyInverseUnit)
 // ----------------------------------------------------------------------------
 {
     int key = ui.evaluating;
+    if (ui.editing_mode() == ui.UNIT)
+    {
+        unicode c = ui.character_left_of_cursor();
+        return ui.insert_softkey(key,
+                                 c == '_'                  ? "1/("
+                                 : (c == '/' || c == L'÷') ? "("
+                                                           : "/(",
+                                 ")",
+                                 false);
+    }
     if (ui.at_end_of_number())
-        return ui.insert_softkey(key, "_(", ")⁻¹ ", false);
+        return ui.insert_softkey(key, "_(", ")⁻¹", false);
     return ui.insert_softkey(key, " 1_", " / ", false);
 }
 
