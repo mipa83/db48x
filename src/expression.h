@@ -619,4 +619,8 @@ FUNCTION(FoldConstants);
 FUNCTION(ReorderTerms);
 FUNCTION(Simplify);
 
+COMMAND_DECLARE(Apply, 2);
+COMMAND_DECLARE_SPECIAL(Where, arithmetic, 2, PREC_DECL(WHERE); );
+NFUNCTION(Subst, 2, static bool can_be_symbolic(uint) { return true; } );
+
 #endif // EXPRESSION_H

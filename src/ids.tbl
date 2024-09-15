@@ -395,6 +395,9 @@ CMD(Max)
 CMD(NSub)
 CMD(EndSub)
 
+OP(Where, "|")
+NAMED(Subst, "Substitute")
+
 CMD(re)
 CMD(im)
 CMD(arg)
@@ -506,6 +509,10 @@ CMD(ReorderTerms)
 CMD(Simplify)
 NAMED(ToPolynomial, "→Polynomial")    ALIAS(ToPolynomial, "→Poly")
 NAMED(FromPolynomial, "Polynomial→")  ALIAS(FromPolynomial, "Poly→")
+CMD(Apply)
+
+// Differentiation
+
 
 // Complex numbers
 NAMED(RealToRectangular, "ℝ→ℂ")
@@ -704,6 +711,7 @@ CMD(EquationSolver)
 NAMED(XLib, "LibraryItem")
 CMD(XlibName)
 CMD(XlibValue)
+CMD(Constants)
 
 // Last things and stack
 NAMED(LastArg, "LastArguments")
@@ -1094,8 +1102,10 @@ MENU(StatisticsMenu)
 MENU(RegressionMenu)
 MENU(PopulationMenu)
 MENU(SignalProcessingMenu)
-MENU(ConstantsMenu)             ALIAS(ConstantsMenu, "CONSTANTS")
-MENU(EquationsMenu)
+MENU(ConstantsMenu)             ALIAS(ConstantsMenu, "ConLib")
+                                ALIAS(ConstantsMenu, "ConstantsLibrary")
+MENU(EquationsMenu)             ALIAS(EquationsMenu, "EqnLib")
+                                ALIAS(EquationsMenu, "EquationsLibrary")
 MENU(Library)
 MENU(UnitsMenu)
 MENU(UnitsConversionsMenu)

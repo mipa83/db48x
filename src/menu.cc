@@ -229,7 +229,10 @@ COMMAND_BODY(ToolsMenu)
     {
         if (object_p top = rt.top())
         {
-            switch(top->type())
+            id ty = top->type();
+            if (is_algebraic_fn(ty))
+                ty = ID_expression;
+            switch(ty)
             {
             case ID_integer:
             case ID_neg_integer:
@@ -259,6 +262,7 @@ COMMAND_BODY(ToolsMenu)
             case ID_based_bignum:       menu = ID_BasesMenu; break;
             case ID_text:               menu = ID_TextMenu; break;
             case ID_symbol:
+            case ID_funcall:
             case ID_expression:         menu = ID_SymbolicMenu; break;
             case ID_program:            menu = ID_DebugMenu; break;
             case ID_list:               menu = ID_ListMenu; break;
@@ -430,18 +434,19 @@ MENU(NumbersMenu,
      "∏",       ID_Product,
      "QuoRem",  ID_Div2,
      "Factors", ID_Unimplemented,
-
      "Ran#",    ID_RandomNumber,
      "Random",  ID_Random,
 
+     "→Num",    ID_ToDecimal,
+     "→Q",      ID_ToFraction,
+     "→Qπ",     ID_Unimplemented,
+     "R#Seed",  ID_RandomSeed,
+     RandomGeneratorBits::label,        ID_RandomGeneratorBits,
+     RandomGeneratorOrder::label,       ID_RandomGeneratorOrder,
+
      "IsPrime", ID_Unimplemented,
      "NextPr",  ID_Unimplemented,
-     "PrevPr",  ID_Unimplemented,
-
-     "R#Seed",  ID_RandomSeed,
-     RandomGeneratorBits::label, ID_RandomGeneratorBits,
-     RandomGeneratorOrder::label, ID_RandomGeneratorOrder
-    );
+     "PrevPr",  ID_Unimplemented);
 
 
 MENU(AnglesMenu,
@@ -779,8 +784,6 @@ MENU(SymbolicMenu,
      ID_Expand,
      ID_Simplify,
      "→Poly",           ID_ToPolynomial,
-     "→Num",            ID_ToDecimal,
-     "→Q",              ID_ToFraction,
 
      "Algbra",          ID_AlgebraMenu,
      "Arith",           ID_ArithmeticMenu,
@@ -803,9 +806,9 @@ MENU(AlgebraMenu,
      "↓Match",          ID_MatchDown,
      "↑Match",          ID_MatchUp,
      "Isolate",         ID_Unimplemented,
-     "Apply",           ID_Unimplemented,
-     "→Num",            ID_ToDecimal,
-     "→Q",              ID_ToFraction,
+     "Apply",           ID_Apply,
+     "Subst",           ID_Subst,
+     "|",               ID_Where,
 
      "∂",               ID_Unimplemented,
      "∫",               ID_Integrate,

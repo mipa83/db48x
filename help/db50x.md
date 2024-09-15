@@ -2293,6 +2293,29 @@ You can edit it by recalling its content on the stack using
 back to disk using `"config:equations.csv" STO`.
 # Release notes
 
+## Release 0.7.18 "Who" - Subst, Where, Apply
+
+This release implements the `Apply`, `Subst` and `|` (`Where`) commands.
+
+### Features
+
+* ui: Allow Shift-SPC to enter `=` in an expression
+* Implement `subst` and `where`
+* Implement the `Apply` command
+* Implement the `EQNLIB` command
+* Add `CONSTANTS` as a way to select mathematical constants menu
+* Add `CONLIB` as an alias for `ConstantsMenu`.
+
+### Bug fixes
+
+* solver: Adjust detection of "epsilon" for large values
+* ttf2font: Flip x coordinates for dense fonts
+
+### Improvements
+
+* doc: List commands that will never be implemented
+
+
 ## Release 0.7.17 "Open" - DoSubs, DoList, entering units
 
 This release adds `DoSubs`, `DoList`, `NSub` and `EndSub` commands, and fixes
@@ -3827,6 +3850,7 @@ HP48 implementation.
 
 * [Implemented](#implemented-commands)
 * [Not implemented](#unimplemented-commands)
+* [Unapplicable commands](#unapplicable-commands)
 * [Additional](#additional-commands)
 
 
@@ -3919,6 +3943,7 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [ELSE](#else)
 * [END](#end)
 * [ENG](#eng)
+* [EQNLIB](#equationsmenu)
 * [ERR0](#err0)
 * [ERRM](#errm)
 * [ERRN](#errn)
@@ -3934,6 +3959,7 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [FIX](#fix)
 * [FOR](#for)
 * [FP](#FractionalPart)
+* [FREEZE](#freeze)
 * [FS?C](#testflagsetthenclear)
 * [FS?](#testflagset)
 * [FUNCTION](#function)
@@ -3989,7 +4015,11 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 * [PATH](#path)
 * [PGDIR](#pgdir)
 * [PICK](#pick)
+* [PICK3](#pick3)
 * [PICT](#pict)
+* [PIX?](#pixtest)
+* [PIXOFF](#pixon)
+* [PIXON](#pixoff)
 * [POLAR](#polar)
 * [PMAX](#plotmax)
 * [PMIN](#plotmin)
@@ -4105,8 +4135,7 @@ The following is a list of the HP50 RPL commands which are implemented in DB50X.
 
 # Unimplemented commands
 
-The following is a list of unimplemented HP50 RPL commands, which is a superset
-of the HP48 commands.
+The following is a list of unimplemented HP50 RPL commands which should be implemented by the time the project reaches version 1.0.
 
 * ABCUV
 * ACK
@@ -4128,7 +4157,6 @@ of the HP48 commands.
 * ASSUME
 * ATAN2S
 * ATICK
-* ATTACH
 * AUGMENT
 * AUTO
 * AXL
@@ -4136,12 +4164,9 @@ of the HP48 commands.
 * AXQ
 * BAR
 * BASIS
-* BAUD
 * BINS
 * BLANK
 * BOX
-* BUFLEN
-* C$
 * C2P
 * CASCFG
 * CASCMD
@@ -4150,9 +4175,6 @@ of the HP48 commands.
 * CHOLESKY
 * CHOOSE
 * CIRC
-* CKSM
-* CLKADJ
-* CLOSEIO
 * CLUSR
 * CLVAR
 * CMPLX
@@ -4166,7 +4188,6 @@ of the HP48 commands.
 * COND
 * CONIC
 * CORR
-* CR
 * CSWP
 * CURL
 * CYCLOTOMIC
@@ -4177,13 +4198,11 @@ of the HP48 commands.
 * DEFINE
 * DEGREE
 * DELALARM
-* DELAY
 * DELKEYS
 * DEPND
 * DERIV
 * DERVX
 * DESOLVE
-* DETACH
 * DIAG→
 * →DIAG
 * DIAGMAP
@@ -4207,7 +4226,6 @@ of the HP48 commands.
 * EGVL
 * ENDSUB
 * EPSX0
-* EQNLIB
 * EQW
 * EQ→
 * ERASE
@@ -4228,10 +4246,7 @@ of the HP48 commands.
 * FCOEF
 * FDISTRIB
 * FFT
-* FILER
 * FINDALARM
-* FINISH
-* FLASHEVAL
 * FLOOR
 * FONT6
 * FONT7
@@ -4239,8 +4254,6 @@ of the HP48 commands.
 * FONT→
 * →FONT
 * FOURIER
-* FREE
-* FREEZE
 * FROOTS
 * FXND
 * GAUSS
@@ -4292,16 +4305,10 @@ of the HP48 commands.
 * I→R
 * JORDAN
 * KER
-* KERRM
 * KEY
 * KEYEVAL
-* →KEYTIME
-* KEYTIME→
-* KGET
 * LABEL
 * LAGRANGE
-* LANGUAGE→
-* →LANGUAGE
 * LAP
 * LAPL
 * LAST
@@ -4312,8 +4319,6 @@ of the HP48 commands.
 * LDEC
 * LEGENDRE
 * LGCD
-* LIBEVAL
-* LIBS
 * lim
 * LIMIT
 * LIN
@@ -4344,8 +4349,6 @@ of the HP48 commands.
 * MCALC
 * MENU
 * MENUXY
-* MERGE
-* MINEHUNT
 * MINIFONT→
 * →MINIFONT
 * MINIT
@@ -4361,7 +4364,6 @@ of the HP48 commands.
 * MSOLVR
 * MULTMOD
 * MUSER
-* →NDISP
 * NDIST
 * NDUPN
 * NEWOB
@@ -4371,12 +4373,9 @@ of the HP48 commands.
 * NSUB
 * NUMX
 * NUMY
-* OLDPRT
-* OPENIO
 * ORDER
 * P2C
 * PA2B2
-* PARITY
 * PARSURFACE
 * PARTFRAC
 * PCAR
@@ -4388,13 +4387,7 @@ of the HP48 commands.
 * PERM
 * PERTBL
 * PEVAL
-* PICK3
 * PICTURE
-* PINIT
-* PIX?
-* PIXOFF
-* PIXON
-* PKT
 * PLOT
 * PLOTADD
 * PMINI
@@ -4404,27 +4397,21 @@ of the HP48 commands.
 * POTENTIAL
 * POWEXPAND
 * POWMOD
-* PR1
 * PREDV
 * PREDX
 * PREDY
 * PREVAL
 * PREVPRIME
-* PRLCD
 * PROMPT
 * PROMPTSTO
 * PROOT
 * PROPFRAC
-* PRST
-* PRSTC
-* PRVAR
 * PSDEV
 * PSI
 * Psi
 * PTAYL
 * PTPROP
 * PUSH
-* PVARS
 * PVIEW
 * PX→C
 * →Qπ
@@ -4448,15 +4435,12 @@ of the HP48 commands.
 * RCLVX
 * RDM
 * RDZ
-* RECN
-* RECV
 * REF
 * REMAINDER
 * RENAME
 * REORDER
 * REPL
 * RES
-* RESTORE
 * RESULTANT
 * RISCH
 * RKF
@@ -4464,12 +4448,10 @@ of the HP48 commands.
 * RKFSTEP
 * RND
 * RNRM
-* ROMUPLOAD
 * ROW–
 * ROW+
 * ROW→
 * →ROW
-* RPL>
 * rref
 * RREF
 * RREFMOD
@@ -4480,7 +4462,6 @@ of the HP48 commands.
 * RSWP
 * RULES
 * R→I
-* SBRK
 * SCATRPLOT
 * SCATTER
 * SCHUR
@@ -4488,10 +4469,8 @@ of the HP48 commands.
 * SCONJ
 * SCROLL
 * SDEV
-* SEND
 * SEQ
 * SERIES
-* SERVER
 * SEVAL
 * SHOW
 * SIDENS
@@ -4512,10 +4491,8 @@ of the HP48 commands.
 * SOLVEVX
 * SPHERE
 * SRAD
-* SRECV
 * SREPL
 * STEQ
-* STIME
 * STOALARM
 * STOF
 * STOKEYS
@@ -4525,7 +4502,6 @@ of the HP48 commands.
 * STO*
 * STO/
 * STREAM
-* STRM
 * STURM
 * STURMAB
 * SUB
@@ -4533,7 +4509,6 @@ of the HP48 commands.
 * SUBTMOD
 * SVD
 * SVL
-* SYSEVAL
 * SYLVESTER
 * SYST2MAT
 * TABVAL
@@ -4556,7 +4531,6 @@ of the HP48 commands.
 * TMENU
 * TRACE
 * TRAN
-* TRANSIO
 * TRIG
 * TRIGCOS
 * TRIGO
@@ -4573,7 +4547,6 @@ of the HP48 commands.
 * TVMBEG
 * TVMEND
 * TVMROOT
-* UFL1→MINIF
 * UNASSIGN
 * UNASSUME
 * UNBIND
@@ -4595,16 +4568,9 @@ of the HP48 commands.
 * VTYPE
 * *W
 * WIREFRAME
-* WSLOG
-* XGET
-* XMIT
 * XNUM
 * XPON
-* XPUT
 * XQ
-* XRECV
-* XSEND
-* XSERV
 * XVOL
 * XXRNG
 * YSLICE
@@ -4620,6 +4586,72 @@ of the HP48 commands.
 * ∂
 *  (Store)
 * ; (Semicolon)
+
+## Unapplicable commands
+
+The following commands are not applicable to the DB50X implementation of RPL,
+for example because they are dealing with hardware details or system-level
+features that have no equivalent on the hardware DB50X runs on.
+As a result, they behave like normal names on DB50X.
+
+* ATTACH
+* BAUD
+* BUFLEN
+* C$
+* CKSM
+* CLKADJ
+* CLOSEIO
+* CR
+* DELAY
+* DETACH
+* FILER
+* FINISH
+* FLASHEVAL
+* FREE
+* KERRM
+* →KEYTIME
+* KEYTIME→
+* KGET
+* LANGUAGE→
+* →LANGUAGE
+* LIBEVAL
+* LIBS
+* MERGE
+* MINEHUNT
+* →NDISP
+* OLDPRT
+* OPENIO
+* PARITY
+* PINIT
+* PKT
+* PR1
+* PRLCD
+* PRST
+* PRSTC
+* PRVAR
+* PVARS
+* RECN
+* RECV
+* RESTORE
+* ROMUPLOAD
+* RPL>
+* SBRK
+* SEND
+* SERVER
+* SRECV
+* STIME
+* STRM
+* SYSEVAL
+* TRANSIO
+* UFL1→MINIF
+* WSLOG
+* XGET
+* XMIT
+* XPUT
+* XRECV
+* XSEND
+* XSERV
+
 
 ## Additional commands
 
