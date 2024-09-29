@@ -47,7 +47,7 @@ DECIMIZE = $(TOOLS)/decimize/decimize
 FLASH=$(BUILD)/$(TARGET)_flash.bin
 QSPI =$(BUILD)/$(TARGET)_qspi.bin
 
-VERSION=$(shell git describe --dirty=Z --abbrev=4| sed -e 's/^v//g' -e 's/-g/-/g')
+VERSION=$(shell git describe --dirty=Z --abbrev=4 | sed -e 's/^v//g' -e 's/-g/-/g' | cut -c 1-16)
 VERSION_H=src/$(PLATFORM)/version.h
 
 
@@ -66,30 +66,6 @@ dm32-%:
 	$(MAKE) PLATFORM=dmcp SDK=dmcp5/dmcp PGM=pg5 VARIANT=dm32 TARGET=db50x $*
 color-%:
 	$(MAKE) COLOR=color $*
-
-# installation steps
-COPY=cp
-install: install-pgm install-qspi install-keymap install-help install-demo install-config
-	$(EJECT)
-	@echo "# Installed $(VERSION)"
-install-fast: install-pgm
-	$(EJECT)
-install-pgm: all
-	$(COPY) $(TARGET).$(PGM) $(MOUNTPOINT)
-install-qspi: all
-	$(COPY) $(QSPI) $(MOUNTPOINT)
-install-keymap: keymap.bin
-	$(COPY) $< $(MOUNTPOINT)
-install-help: help/$(TARGET).md
-	mkdir -p $(MOUNTPOINT)help/ $(MOUNTPOINT)help/img
-	$(COPY) help/$(TARGET).md help/*.bmp $(MOUNTPOINT)help/
-	$(COPY) help/$(TARGET).md help/img/*.bmp $(MOUNTPOINT)help/img/
-install-demo:
-	mkdir -p $(MOUNTPOINT)state/
-	$(COPY) state/*.48S $(MOUNTPOINT)state/
-install-config:
-	mkdir -p $(MOUNTPOINT)config/
-	$(COPY) config/*.csv $(MOUNTPOINT)config/
 
 sim: sim/$(TARGET).mak
 	cd sim; $(MAKE) -f $(<F) TARGET=$(shell awk '/^TARGET/ { print $$3; }' sim/$(TARGET).mak)
@@ -126,6 +102,10 @@ cmp-% compare-%:
 update-%:
 	mv $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
 
+BAD_IMAGES=$(wildcard $(IMAGES)/bad/*.png)
+compare: $(BAD_IMAGES:$(IMAGES)/bad/%.png=cmp-%)
+update: $(BAD_IMAGES:$(IMAGES)/bad/%.png=update-%)
+
 keyboard: Keyboard-Layout.png Keyboard-Cutout.png sim/keyboard-db48x.png help/keyboard.png doc/keyboard.png
 Keyboard-Layout.png: DB48X-Keys/DB48X-Keys.001.png
 	cp $< $@
@@ -152,17 +132,26 @@ $(TTF2FONT): $(TTF2FONT).cpp $(TOOLS)/ttf2font/Makefile src/ids.tbl
 
 TAR_OPTS=$(TAR_OPTS_$(shell uname))
 TAR_OPTS_Darwin=--no-mac-metadata --no-fflags --no-xattrs --no-acls
-dist: all
-	cp $(BUILD)/$(TARGET)_qspi.bin  .
-	tar cvfz $(TARGET)-v$(VERSION).tgz 	\
-		$(TAR_OPTS)			\
-		$(TARGET).$(PGM)		\
+TAR_FILES=	$(TARGET).$(PGM)		\
 		$(TARGET)_qspi.bin		\
 		keymap.bin			\
 		help/$(TARGET).md		\
 		help/*.bmp help/*/*.bmp		\
 		state/*.48[sSbB]		\
-		config/*.csv
+		config/*.csv			\
+		library/*.48[sSbB]
+
+# installation steps
+COPY=cp
+install: all
+	cp $(BUILD)/$(TARGET)_qspi.bin  .
+	tar cf - $(TAR_OPTS) $(TAR_FILES) | tar xvf - -C $(MOUNTPOINT)
+	$(EJECT)
+	@echo "# Installed $(VERSION)"
+
+dist: all
+	cp $(BUILD)/$(TARGET)_qspi.bin  .
+	tar cvfz $(TARGET)-v$(VERSION).tgz $(TAR_OPTS) $(TAR_FILES)
 	@echo "# Distributing $(VERSION)"
 
 $(VERSION_H): $(BUILD)/version-$(VERSION).h

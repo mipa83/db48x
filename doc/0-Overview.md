@@ -654,6 +654,35 @@ operate on these items when it makes sense. Therefore:
   variable name, e.g. `i` or `j` for positive integers, or `u` and `v` for
   unique terms, i.e. terms that are only matched once in the expression.
 
+* When differentiating a user-defined function, HP calculators would replace `F`
+  with `d1F`. The HP50G advanced reference manual suggests it should be `derF`.
+  Thanks to Unicode support, DB48X will instead use `F′` as the name
+  for the derivative function, making it closer to the standard mathematical
+  notation. If `F` has multiple parameters, then the partial derivative relative
+  to the first argument will be denoted as `F′₁`, the partial derivative
+  relative to the second argument will be denoted as `F′₂` and so on.
+
+* For built-in functions that have no known derivative, such as `GAMMA`, the
+  HP50G would generate `d1GAMMA`, whereas DB48X will generate an
+  `Unknown derivative` error.
+
+* HP calculators would also accept `d1` for standard functions, which is only
+  the name of the derivative relative to the first argument, but does not
+  actually compute a partial derivative. For example, `d1SIN(2*X)` gives
+  `COS(2*X)`, whereas `∂X(SIN(2*X))` evaluates as `2*COS(2*X)`. DB48X does not
+  recognize this `dn` notation.
+
+* The behaviour of the HP derivative function `∂` depends on whether it is in an
+  algebraic object (stepwise differentiation) or whether it is used in stack
+  syntax (full differentiation). The DB48X variant always perform full
+  differentiation irrespective of the syntax used.
+
+* The _HP50G advanced reference manual_ indicates that `∂` substitutes the value
+  of global variables. For example, if `Y` contains `X+3*X^2`, `'Y' 'X' ∂` is
+  expected to return `1+6*X`. It actually returns `0`, unless you evaluate `Y`
+  first. DB48X matches the actual behaviour of the HP50G and not the documented
+  one.
+
 
 ### Unicode support
 

@@ -122,12 +122,15 @@ TESTS(colnbeams,        "Columns and Beams equations in library");
 TESTS(integrate,        "Numerical integration");
 TESTS(simplify,         "Auto-simplification of expressions");
 TESTS(rewrites,         "Equation rewrite engine");
-TESTS(expand,           "Expand");
+TESTS(symbolic,         "Symbolic operations");
+TESTS(derivative,       "Symbolic differentiation");
+TESTS(primitive,        "Symbolic integration (primitive)");
 TESTS(tagged,           "Tagged objects");
 TESTS(catalog,          "Catalog of commands");
 TESTS(cycle,            "Cycle command for quick conversions");
 TESTS(rotate,           "Shift and rotate instructions");
 TESTS(flags,            "User flags");
+TESTS(explode,          "Extracting object structure");
 TESTS(regressions,      "Regression checks");
 TESTS(plotting,         "Plotting, graphing and charting");
 TESTS(graphics,         "Graphic commands");
@@ -146,6 +149,7 @@ TESTS(poly,             "Polynomials");
 TESTS(quorem,           "Quotient and remainder");
 TESTS(expr,             "Operations on expressions");
 TESTS(random,           "Random number generation");
+TESTS(library,          "Library entries");
 
 EXTRA(plotfns,          "Plot all functions");
 EXTRA(sysflags,         "Enable/disable every RPL flag");
@@ -172,7 +176,7 @@ void tests::run(uint onlyCurrent)
     {
         here().begin("Current");
         if (onlyCurrent & 1)
-            editor_operations();
+            library();
         if (onlyCurrent & 2)
             demo_ui();
         if (onlyCurrent & 4)
@@ -223,7 +227,9 @@ void tests::run(uint onlyCurrent)
         text_functions();
         auto_simplification();
         rewrite_engine();
-        expand_collect_simplify();
+        symbolic_operations();
+        symbolic_differentiation();
+        symbolic_integration();
         tagged_objects();
         catalog_test();
         cycle_test();
@@ -250,6 +256,8 @@ void tests::run(uint onlyCurrent)
         quotient_and_remainder();
         expression_operations();
         random_number_generation();
+        object_structure();
+        library();
         regression_checks();
         demo_ui();
         demo_math();
@@ -848,8 +856,15 @@ void tests::data_types()
         .test(CLEAR, LSHIFT, O, LSHIFT, F6, F6);
     step("Comma as decimal dot is accepted after changing flag")
         .test(CLEAR, "0,123", ENTER).type(object::ID_decimal).expect("0,123");
+    step("Dot as decimal dot is accepted after selecting comma separator")
+        .test(CLEAR, "0,123", ENTER).type(object::ID_decimal).expect("0,123");
     step("Restoring dot as decimal separator")
-        .test(F5, ENTER, BSP).type(object::ID_decimal).expect("0.123");;
+        .test(F5, ENTER, BSP).type(object::ID_decimal).expect("0.123");
+    step("Do not generate extra object when wrong decimal is used")
+        .test(CLEAR, "{ 0,123 4.567 }", ENTER).expect("{ 0.123 4.567 }");
+    step("Do not generate extra object when wrong decimal is used")
+        .test(CLEAR, F6, "{ 0,123 4.567 }", ENTER).expect("{ 0,123 4,567 }")
+        .test(F5).expect("{ 0.123 4.567 }");
 
     step("Symbols");
     cstring symbol = "ABC123Z";
@@ -935,6 +950,13 @@ void tests::data_types()
     test(CHS).type(object::ID_big_fraction).expect(mbf+1);
     test(CHS).type(object::ID_neg_big_fraction).expect(mbf);
     test(DOWN, CHS, ENTER).type(object::ID_big_fraction).expect(mbf+1);
+
+    step("Directory from command line")
+        .test(CLEAR, "DIR { A 2 B 3 }", ENTER)
+        .want("Directory { A 2 B 3 }");
+    step("Empty directory on command line")
+        .test(CLEAR, "DIR A 2 B 3", ENTER)
+        .got("3", "'B'", "2", "'A'", "Directory {}");
 
     step("Graphic objects")
         .test(CLEAR,
@@ -1306,6 +1328,9 @@ void tests::interactive_stack_operations()
     step("Interactive stack revert")
         .test(RSHIFT, F4)
         .image_noheader("istack-22", 0, 1000);
+    step("Interactive stack DropN")
+        .test(KEY2, LSHIFT, F2)
+        .image_noheader("istack-22b", 0, 1000);
     step("Interactive stack value sort")
         .test(NOSHIFT, KEY3, RSHIFT, F2)
         .image_noheader("istack-23", 0, 1000);
@@ -1316,64 +1341,27 @@ void tests::interactive_stack_operations()
     step("Interactive stack DupN and sort")
         .test(ENTER, CLEAR, "111 222 333 444", ENTER,
               UP, KEY3, LSHIFT, F1, KEY6, RSHIFT, F2, ENTER)
-        .expect("222")
-        .test(BSP).expect("222")
-        .test(BSP).expect("333")
-        .test(BSP).expect("333")
-        .test(BSP).expect("444")
-        .test(BSP).expect("444")
-        .test(BSP).expect("111")
-        .test(BSP).noerror()
-        .test(BSP).error("Too few arguments");
+        .got("222", "222", "333", "333", "444", "444", "111");
 
     step("Interactive stack DupN and non-reverted sort")
         .test(ENTER, CLEAR, "123 456 789 ABC", ENTER,
               UP, KEY3, LSHIFT, F1, KEY6, RSHIFT, F3, ENTER)
-        .expect("'ABC'")
-        .test(BSP).expect("'ABC'")
-        .test(BSP).expect("789")
-        .test(BSP).expect("789")
-        .test(BSP).expect("456")
-        .test(BSP).expect("456")
-        .test(BSP).expect("123")
-        .test(BSP).noerror()
-        .test(BSP).error("Too few arguments");
+        .got("789", "789", "456", "456", "'ABC'", "'ABC'", "123");
 
     step("Interactive stack DupN and reverted sort")
         .test(ENTER, CLEAR, "123 456 789 ABC", ENTER,
               UP, KEY3, LSHIFT, F1, KEY6, RSHIFT, F3, RSHIFT, F4, ENTER)
-        .expect("456")
-        .test(BSP).expect("456")
-        .test(BSP).expect("789")
-        .test(BSP).expect("789")
-        .test(BSP).expect("'ABC'")
-        .test(BSP).expect("'ABC'")
-        .test(BSP).expect("123")
-        .test(BSP).noerror()
-        .test(BSP).error("Too few arguments");
+        .got("'ABC'", "'ABC'", "456", "456", "789", "789", "123");
 
     step("Interactive stack Keep")
         .test(ENTER, CLEAR, "123 456 789 ABC DEF GHI", ENTER,
               UP, UP, UP, LSHIFT, F3, ENTER)
-        .expect("'GHI'")
-        .test(BSP).expect("'DEF'")
-        .test(BSP).expect("'ABC'")
-        .test(BSP).noerror()
-        .test(BSP).error("Too few arguments");
+        .got("'GHI'", "'DEF'", "'ABC'");
 
    step("Interactive stack Swap and Level")
         .test(ENTER, CLEAR, "123 456 789 ABC DEF GHI", ENTER,
               UP, UP, UP, RSHIFT, F5, RSHIFT, F6, ENTER)
-        .expect("3")
-        .test(BSP).expect("'GHI'")
-        .test(BSP).expect("'DEF'")
-        .test(BSP).expect("789")
-        .test(BSP).expect("'ABC'")
-        .test(BSP).expect("456")
-        .test(BSP).expect("123")
-        .test(BSP).noerror()
-        .test(BSP).error("Too few arguments");
-
+       .got("3", "'GHI'", "'DEF'", "789", "'ABC'", "456", "123");
 }
 
 
@@ -2541,7 +2529,7 @@ void tests::command_display_formats()
     cstring prgm =
         "«"
         "  1 1.0 "
-        "+ - * / ^ "
+        "+ - * / ^ sqrt sq inv neg "
         "sin cos tan asin acos atan "
         "LowerCase PurgeAll Precision "
         "start step next start step for i next for i step "
@@ -2550,28 +2538,28 @@ void tests::command_display_formats()
     test(CLEAR, prgm, ENTER).noerror();
     step("Lower case");
     test("lowercase", ENTER)
-        .want("« 1 1. + - * / ^ sin cos tan asin acos atan "
+        .want("« 1 1. + - * / ^ √ sq inv neg sin cos tan asin acos atan "
               "lowercase purgeall precision "
               "start  step next start  step for i  next for i  step "
               "while  repeat  end do  until  end »");
 
     step("Upper case");
     test("UPPERCASE", ENTER)
-        .want("« 1 1. + - * / ^ SIN COS TAN ASIN ACOS ATAN "
+        .want("« 1 1. + - * / ^ √ SQ INV NEG SIN COS TAN ASIN ACOS ATAN "
               "LOWERCASE PURGEALL PRECISION "
               "START  STEP next START  STEP FOR i  NEXT FOR i  STEP "
               "WHILE  REPEAT  END DO  UNTIL  END »");
 
     step("Capitalized");
     test("Capitalized", ENTER)
-        .want("« 1 1. + - * / ^ Sin Cos Tan Asin Acos Atan "
+        .want("« 1 1. + - * / ^ √ Sq Inv Neg Sin Cos Tan Asin Acos Atan "
               "LowerCase PurgeAll Precision "
               "Start  Step next Start  Step For i  Next For i  Step "
               "While  Repeat  End Do  Until  End »");
 
     step("Long form");
     test("LongForm", ENTER)
-        .want("« 1 1. + - × ÷ ↑ sin cos tan sin⁻¹ cos⁻¹ tan⁻¹ "
+        .want("« 1 1. + - × ÷ ↑ √ x² x⁻¹ Negate sin cos tan sin⁻¹ cos⁻¹ tan⁻¹ "
               "LowerCaseCommands PurgeAll Precision "
               "start  step next start  step for i  next for i  step "
               "while  repeat  end do  until  end »");
@@ -5212,19 +5200,19 @@ void tests::sorting_functions()
 
     step("Value sort (SORT)")
         .test(CLEAR, "{ 7 2.5 3 9.2 \"DEF\" 8.4 \"ABC\" } SORT", ENTER)
-        .expect("{ \"ABC\" \"DEF\" 2.5 3 7 8.4 9.2 }");
+        .expect("{ 2.5 3 7 8.4 9.2 \"ABC\" \"DEF\" }");
     step("Reverse list (REVLIST)")
          .test("revlist", ENTER)
-         .expect("{ 9.2 8.4 7 3 2.5 \"DEF\" \"ABC\" }");
+         .expect("{ \"DEF\" \"ABC\" 9.2 8.4 7 3 2.5 }");
     step("Memory sort (QUICKSORT)")
         .test("QUICKSORT", ENTER)
-        .expect("{ \"ABC\" \"DEF\" 3 7 2.5 8.4 9.2 }");
+        .expect("{ 2.5 8.4 9.2 3 7 \"ABC\" \"DEF\" }");
     step("Reverse memory sort (ReverseQuickSort)")
         .test("reverseQuickSort", ENTER)
-        .expect("{ 9.2 8.4 2.5 7 3 \"DEF\" \"ABC\" }");
+        .expect("{ \"DEF\" \"ABC\" 7 3 9.2 8.4 2.5 }");
     step("Reverse sort (ReverseSort)")
         .test("ReverseSort", ENTER)
-        .expect("{ 9.2 8.4 7 3 2.5 \"DEF\" \"ABC\" }");
+        .expect("{ \"DEF\" \"ABC\" 9.2 8.4 7 3 2.5 }");
     step("Min function (integer)")
         .test(CLEAR, "1 2 MIN", ENTER).expect("1");
     step("Max function (integer)")
@@ -6229,17 +6217,17 @@ void tests::rewrite_engine()
         .expect("'A·(C-sin B)'");
 
     step("Variable matching");
-    test(CLEAR, "'A*(B+C)' { 'X+X' 'X-sin X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A*(B+C)' { 'X+X' 'X-sin X' }", RSHIFT, KEY7, F6, F1)
         .expect("0")
         .test(BSP)
         .expect("'A·(B+C)'");
-    test(CLEAR, "'A*(B+(B))' { 'X+X' 'X-sin X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A*(B+(B))' { 'X+X' 'X-sin X' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'A·(B-sin B)'");
 
     step("Constant folding");
-    test(CLEAR, "'A+B+0' { 'X+0' 'X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A+B+0' { 'X+0' 'X' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'A+B'");
@@ -6247,24 +6235,24 @@ void tests::rewrite_engine()
     step("Clearing final flag")
         .test(CLEAR, "-100 CF", ENTER).noerror();
     step("Single substitutions (down)");
-    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'C-(A+B)'");
     step("Multiple substitutions (up)");
-    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F5, F2)
+    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F6, F2)
         .expect("1")
         .test(BSP)
         .expect("'B-A+C'");
     step("Setting final flag")
         .test(CLEAR, "-100 SF", ENTER).noerror();
     step("Multiple substitutions (down repeat)");
-    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F6, F1)
         .expect("2")
         .test(BSP)
         .expect("'C-(B-A)'");
     step("Multiple substitutions (up repeat)");
-    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'A+B+C' { 'X+Y' 'Y-X' }", RSHIFT, KEY7, F6, F1)
         .expect("2")
         .test(BSP)
         .expect("'C-(B-A)'");
@@ -6272,62 +6260,62 @@ void tests::rewrite_engine()
         .test(CLEAR, "StepByStepAlgebraResults", ENTER).noerror();
 
     step("Deep substitution");
-    test(CLEAR, "'tan(A-B)+3' { 'X-Y' '-Y+X' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'tan(A-B)+3' { 'X-Y' '-Y+X' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'tan(-B+A)+3'");
     step("Deep substitution with multiple changes (down single)");
     test(CLEAR, "StepByStepAlgebraResults", ENTER,
          "'5+tan(A-B)+(3-sin(C+D-A))' { 'X-Y' '-Y+X' }",
-         RSHIFT, KEY7, F5, F1)
+         RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'5+tan(A-B)+(-sin(C+D-A)+3)'");
     step("Deep substitution with multiple changes (up single)");
     test(CLEAR, "StepByStepAlgebraResults", ENTER,
          "'5+tan(A-B)+(3-sin(C+D-A))' { 'X-Y' '-Y+X' }",
-         RSHIFT, KEY7, F5, F2)
+         RSHIFT, KEY7, F6, F2)
         .expect("1")
         .test(BSP)
         .expect("'5+tan(-B+A)+(3-sin(C+D-A))'");
     step("Deep substitution with multiple changes (down multiple)");
     test(CLEAR, "FinalAlgebraResults", ENTER,
          "'5+tan(A-B)+(3-sin(C+D-A))' { 'X-Y' '-Y+X' }",
-         RSHIFT, KEY7, F5, F1)
+         RSHIFT, KEY7, F6, F1)
         .expect("3")
         .test(BSP)
         .expect("'5+tan(-B+A)+(-sin(-A+(C+D))+3)'");
     step("Deep substitution with multiple changes (up multiple)");
     test(CLEAR, "FinalAlgebraResults", ENTER,
          "'5+tan(A-B)+(3-sin(C+D-A))' { 'X-Y' '-Y+X' }",
-         RSHIFT, KEY7, F5, F2)
+         RSHIFT, KEY7, F6, F2)
         .expect("3")
         .test(BSP)
         .expect("'5+tan(-B+A)+(-sin(-A+(C+D))+3)'");
 
     step("Matching integers");
-    test(CLEAR, "'(A+B)^3' { 'X^K' 'X*X^(K-1)' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'(A+B)^3' { 'X^K' 'X*X^(K-1)' }", RSHIFT, KEY7, F6, F1)
         .expect("3")
         .test(BSP)
-        .expect("'(A+B)·((A+B)·((A+B)·(A+B)↑0))'");
+        .expect("'(A+B)·((A+B)·((A+B)·(A+B)↑(1-1)))'");
 
     step("Matching sorted integers (success)");
-    test(CLEAR, "'3+5' { 'i+j' '21*(j-i)' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'3+5' { 'i+j' '21*(j-i)' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'42'");
     step("Matching sorted integers (failing)");
-    test(CLEAR, "'5+3' { 'i+j' '21*(j-i)' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'5+3' { 'i+j' '21*(j-i)' }", RSHIFT, KEY7, F6, F1)
         .expect("0")
         .test(BSP)
         .expect("'5+3'");
 
     step("Matching unique terms");
-    test(CLEAR, "'(A+B+A)' { 'X+U+X' '2*X+U' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'(A+B+A)' { 'X+U+X' '2*X+U' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP)
         .expect("'2·A+B'");
-    test(CLEAR, "'(A+A+A)' { 'X+U+X' '2*X+U' }", RSHIFT, KEY7, F5, F1)
+    test(CLEAR, "'(A+A+A)' { 'X+U+X' '2*X+U' }", RSHIFT, KEY7, F6, F1)
         .expect("0")
         .test(BSP)
         .expect("'A+A+A'");
@@ -6335,11 +6323,11 @@ void tests::rewrite_engine()
     step("Clearing flag -100")
         .test(CLEAR, "-100 CF", ENTER);
     step("Matching down")
-        .test(CLEAR, "'A+B+C' { 'X+Y' 'Y-(-X)' }", RSHIFT, KEY7, F5, F1)
+        .test(CLEAR, "'A+B+C' { 'X+Y' 'Y-(-X)' }", RSHIFT, KEY7, F6, F1)
         .expect("1")
         .test(BSP).expect("'C-(-(A+B))'");
     step("Matching up")
-        .test(CLEAR, "'A+B+C' { 'X+Y' 'Y-(-X)' }", RSHIFT, KEY7, F5, F2)
+        .test(CLEAR, "'A+B+C' { 'X+Y' 'Y-(-X)' }", RSHIFT, KEY7, F6, F2)
         .expect("1")
         .test(BSP)
         .expect("'B-(-A)+C'");
@@ -6352,7 +6340,7 @@ void tests::rewrite_engine()
               "{ 'K*Y' '(K-1)*Y+Y' 'K>2' } "
               "↓match", ENTER)
         .expect("3")
-        .test(BSP).expect("'cos(2·A)+cos(2·B+B)+sin(2·C+C+C)'");
+        .test(BSP).expect("'cos(2·A)+cos((3-1)·B+B)+sin((3-1)·C+C+C)'");
 
     step("Setting ExplicitWildcards to match with &Wildcard")
         .test(CLEAR,
@@ -6368,18 +6356,62 @@ void tests::rewrite_engine()
               "{ '&K*&Y' '(&K-1)*&Y+&Y' } "
               "↓match", ENTER)
         .expect("9")
-        .test(BSP).expect("'cos(0·A+A+A)+cos(0·B+B+B+B)+sin(0·C+C+C+C+C)'");
+        .test(BSP).expect("'cos((1-1)·A+A+A)+cos((1-1)·B+B+B+B)+sin((1-1)·C+C+C+C+C)'");
     step("Restoring default for wildcards")
         .test(CLEAR, "'ExplicitWildcards' Purge", ENTER).noerror();
 }
 
 
-void tests::expand_collect_simplify()
+void tests::symbolic_operations()
 // ----------------------------------------------------------------------------
 //   Equation rewrite engine
 // ----------------------------------------------------------------------------
 {
-    BEGIN(expand);
+    BEGIN(symbolic);
+
+    step("Simple arithmetic - Symbol and constant")
+        .test(CLEAR, "'A' 3 +", ENTER).expect("'A+3'")
+        .test(CLEAR, "'A' 3 -", ENTER).expect("'A-3'")
+        .test(CLEAR, "'A' 3 *", ENTER).expect("'3·A'")
+        .test(CLEAR, "'A' 3 /", ENTER).expect("'A÷3'")
+        .test(CLEAR, "'A' 3 ↑", ENTER).expect("'A³'");
+    step("Simple arithmetic - Constant and symbol")
+        .test(CLEAR, "3 'A' +", ENTER).expect("'A+3'")
+        .test(CLEAR, "3 'A' -", ENTER).expect("'3-A'")
+        .test(CLEAR, "3 'A' *", ENTER).expect("'3·A'")
+        .test(CLEAR, "3 'A' /", ENTER).expect("'3÷A'")
+        .test(CLEAR, "3 'A' ↑", ENTER).expect("'3↑A'");
+    step("Simple arithmetic - Symbol and symbol")
+        .test(CLEAR, "'A' 'B' +", ENTER).expect("'A+B'")
+        .test(CLEAR, "'A' 'B' -", ENTER).expect("'A-B'")
+        .test(CLEAR, "'A' 'B' *", ENTER).expect("'A·B'")
+        .test(CLEAR, "'A' 'B' /", ENTER).expect("'A÷B'")
+        .test(CLEAR, "'A' 'B' ↑", ENTER).expect("'A↑B'");
+   step("Simple functions")
+       .test(CLEAR, "'A'", ENTER, J).expect("'sin A'")
+       .test(K, L).expect("'tan (cos (sin A))'");
+
+    step("Simple arithmetic on equations")
+        .test(CLEAR, "'A=B' 3 +", ENTER).expect("'A+3=B+3'")
+        .test(CLEAR, "'A=B' 3 -", ENTER).expect("'A-3=B-3'")
+        .test(CLEAR, "'A=B' 3 *", ENTER).expect("'3·A=3·B'")
+        .test(CLEAR, "'A=B' 3 /", ENTER).expect("'A÷3=B÷3'")
+        .test(CLEAR, "'A=B' 3 ↑", ENTER).expect("'A³=B³'");
+    step("Simple arithmetic - Constant and symbol")
+        .test(CLEAR, "3 'A=B' +", ENTER).expect("'A+3=B+3'")
+        .test(CLEAR, "3 'A=B' -", ENTER).expect("'3-A=3-B'")
+        .test(CLEAR, "3 'A=B' *", ENTER).expect("'3·A=3·B'")
+        .test(CLEAR, "3 'A=B' /", ENTER).expect("'3÷A=3÷B'")
+        .test(CLEAR, "3 'A=B' ↑", ENTER).expect("'3↑A=3↑B'");
+    step("Simple arithmetic - Symbol and symbol")
+        .test(CLEAR, "'A=B' 'C=D' +", ENTER).expect("'A+C=B+D'")
+        .test(CLEAR, "'A=B' 'C=D' -", ENTER).expect("'A-C=B-D'")
+        .test(CLEAR, "'A=B' 'C=D' *", ENTER).expect("'A·C=B·D'")
+        .test(CLEAR, "'A=B' 'C=D' /", ENTER).expect("'A÷C=B÷D'")
+        .test(CLEAR, "'A=B' 'C=D' ↑", ENTER).expect("'A↑C=B↑D'");
+   step("Simple functions")
+       .test(CLEAR, "'A=B'", ENTER, J).expect("'sin A=sin B'")
+       .test(K, L).expect("'tan (cos (sin A))=tan (cos (sin B))'");
 
     step("Single add, right");
     test(CLEAR, "'(A+B)*C' expand ", ENTER)
@@ -6422,15 +6454,15 @@ void tests::expand_collect_simplify()
         .test(CLEAR, "{ 'x+y' } 'sin' APPLY", ENTER)
         .expect("'sin x+y'");
 
-    step("Apply function call for algebraic function with incorrect arg count")
+    step("Apply function call: incorrect arg count")
         .test(CLEAR, "{ x y } 'sin' APPLY", ENTER)
         .error("Wrong argument count");
 
-    step("Apply function call for algebraic function with incorrect type")
+    step("Apply function call: incorrect type")
         .test(CLEAR, "{ x y } 'drop' APPLY", ENTER)
         .error("Bad argument type");
 
-    step("Apply function call for algebraic function with incorrect type")
+    step("Apply function call: incorrect type")
         .test(CLEAR, "2 'F' APPLY", ENTER)
         .error("Bad argument type");
 
@@ -6478,6 +6510,300 @@ void tests::expand_collect_simplify()
         .expect("'X↑2+3·X+7|X=Z+1|Z=sin(A+B)|A=42'")
         .test(RUNSTOP)
         .expect("'(sin(42+B)+1)²+3·(sin(42+B)+1)+7'");
+
+    step("Isolate a single variable, simple case")
+        .test(CLEAR, "'A+1=sin(X+B)+C' 'X' ISOL", ENTER)
+        .expect("'X=sin⁻¹(A-C+1)+2·i1·π-B'")
+        .test(RSHIFT, KEY7, F6);
+    step("Isolate an expression with implicit =0")
+        .test(CLEAR, "'A+X*B-C' 'X'", NOSHIFT, F3)
+        .expect("'X=(C-A)÷B'");
+    step("Isolate an expression that is already isolated")
+        .test(CLEAR, "'X=B+C' 'X'", NOSHIFT, F3)
+        .expect("'X=B+C'");
+    step("Isolated variable grouping")
+        .test(CLEAR, "'X=B-X' 'X'", NOSHIFT, F3)
+        .expect("'X=B÷2'");
+    step("Isolation failure")
+        .test(CLEAR, "'X=sin X+1' 'X'", NOSHIFT, F3)
+        .expect("'X-sin X=1'")
+        .test("X", NOSHIFT, F3)
+        .error("Unable to isolate");
+    step("Isolate a single variable, addition")
+        .test(CLEAR, "'A=X+B' X", NOSHIFT, F3).expect("'X=A-B'")
+        .test(CLEAR, "'A=B+X' X", NOSHIFT, F3).expect("'X=A-B'");
+    step("Isolate a single variable, subtraction")
+        .test(CLEAR, "'A=X-B' X", NOSHIFT, F3).expect("'X=A+B'")
+        .test(CLEAR, "'A=B-X' X", NOSHIFT, F3).expect("'X=B-A'");
+    step("Isolate a single variable, multiplication")
+        .test(CLEAR, "'A=X*B' X", NOSHIFT, F3).expect("'X=A÷B'")
+        .test(CLEAR, "'A=B*X' X", NOSHIFT, F3).expect("'X=A÷B'");
+    step("Isolate a single variable, division")
+        .test(CLEAR, "'A=X/B' X", NOSHIFT, F3).expect("'X=A·B'")
+        .test(CLEAR, "'A=B/X' X", NOSHIFT, F3).expect("'X=B÷A'");
+    step("Isolate a single variable, power")
+        .test(CLEAR, "'A=X^B' X", NOSHIFT, F3).expect("'X=A↑B⁻¹+exp(i1·π·ⅈ÷B)'")
+        .test(CLEAR, "'A=B^X' X", NOSHIFT, F3).expect("'X=ln A÷ln B'");
+    step("Isolate sin")
+        .test(CLEAR, "'sin X=A' X", NOSHIFT, F3)
+        .expect("'X=sin⁻¹ A+2·i1·π'");
+    step("Isolate cos")
+        .test(CLEAR, "'cos X=A' X", NOSHIFT, F3)
+        .expect("'X=cos⁻¹ A+2·i1·π'");
+    step("Isolate tan")
+        .test(CLEAR, "'tan X=A' X", NOSHIFT, F3)
+        .expect("'X=tan⁻¹ A+i1·π'");
+    step("Isolate asin")
+        .test(CLEAR, "'A=asin X' X", NOSHIFT, F3)
+        .expect("'X=sin A'");
+    step("Isolate acos")
+        .test(CLEAR, "'A=acos X' X", NOSHIFT, F3)
+        .expect("'X=cos A'");
+    step("Isolate atan")
+        .test(CLEAR, "'A=atan X' X", NOSHIFT, F3)
+        .expect("'X=tan A'");
+    step("Isolate sinh")
+        .test(CLEAR, "'sinh X=A' X", NOSHIFT, F3)
+        .expect("'X=sinh⁻¹ A+2·i1·π·ⅈ'");
+    step("Isolate cosh")
+        .test(CLEAR, "'cosh X=A' X", NOSHIFT, F3)
+        .expect("'X=cosh⁻¹ A+2·i1·π·ⅈ'");
+    step("Isolate tanh")
+        .test(CLEAR, "'tanh X=A' X", NOSHIFT, F3)
+        .expect("'X=tanh⁻¹ A+i1·π·ⅈ'");
+    step("Isolate asinh")
+        .test(CLEAR, "'A=asinh X' X", NOSHIFT, F3)
+        .expect("'X=sinh A'");
+    step("Isolate acosh")
+        .test(CLEAR, "'A=acosh X' X", NOSHIFT, F3)
+        .expect("'X=cosh A'");
+    step("Isolate atanh")
+        .test(CLEAR, "'A=atanh X' X", NOSHIFT, F3)
+        .expect("'X=tanh A'");
+    step("Isolate log")
+        .test(CLEAR, "'A=log X' X", NOSHIFT, F3)
+        .expect("'X=exp X'");
+    step("Isolate exp")
+        .test(CLEAR, "'A=exp X' X", NOSHIFT, F3)
+        .expect("'X-ln X=2·i1·π·ⅈ'");
+    step("Isolate log2")
+        .test(CLEAR, "'A=log2 X' X", NOSHIFT, F3)
+        .expect("'X=exp2 X'");
+    step("Isolate exp2")
+        .test(CLEAR, "'A=exp2 X' X", NOSHIFT, F3)
+        .expect("'X-log2 X=2·i1·π·ⅈ÷ln 2'");
+    step("Isolate log10")
+        .test(CLEAR, "'A=log10 X' X", NOSHIFT, F3)
+        .expect("'X=exp10 X'");
+    step("Isolate exp10")
+        .test(CLEAR, "'A=exp10 X' X", NOSHIFT, F3)
+        .expect("'X-log10 X=2·i1·π·ⅈ÷ln 10'");
+    step("Isolate log1p")
+        .test(CLEAR, "'A=log1p X' X", NOSHIFT, F3)
+        .expect("'X=expm1 X'");
+    step("Isolate expm1")
+        .test(CLEAR, "'A=expm1 X' X", NOSHIFT, F3)
+        .expect("'X-log1p X=2·i1·π·ⅈ'");
+    step("Isolate sq")
+        .test(CLEAR, "'A=sq X' X", NOSHIFT, F3)
+        .expect("'X=s1·√ A'");
+    step("Isolate sqrt")
+        .test(CLEAR, "'A=sqrt X' X", NOSHIFT, F3)
+        .expect("'X=A²'");
+    step("Isolate cubed")
+        .test(CLEAR, "'A=cubed X' X", NOSHIFT, F3)
+        .expect("'X=∛ A+exp(i1·π·ⅈ÷3)'");
+    step("Isolate cbrt")
+        .test(CLEAR, "'A=cbrt X' X", NOSHIFT, F3)
+        .expect("'X=A³'");
+}
+
+
+void tests::symbolic_differentiation()
+// ----------------------------------------------------------------------------
+//   Symbolic differentiation
+// ----------------------------------------------------------------------------
+{
+    BEGIN(derivative);
+
+    step("Derivative of constant")
+        .test(CLEAR, RSHIFT, KEY8, "42 'X'", F1).expect("'0'");
+    step("Derivative of a variable")
+        .test(CLEAR, "'X' 'X'", F1).expect("'1'");
+    step("Derivative of a different variable")
+        .test(CLEAR, "'A' 'X'", F1).expect("'0'");
+    step("Derivative of a product by a constant")
+        .test(CLEAR, "'A*X' 'X'", F1).expect("'A'");
+    step("Derivative of a polynomial")
+        .test(CLEAR, "'A*X+B*X^2-C*sq(X)+D*X^5+42' 'X'", F1)
+        .expect("'A+2·B·X+5·D·X↑4-2·C·X'");
+    step("Derivative of ratio")
+        .test(CLEAR, "'A*X/(B*X+1)' 'X'", F1)
+        .expect("'(A·(B·X+1)-A·X·B)÷(B·X+1)²'");
+    step("Derivative of power by a numerical constant")
+        .test(CLEAR, "'X^(2.5+3.2)' 'X'", F1)
+        .expect("'5.7·X↑4.7'");
+    step("Derivative of power by a non-numerical constant")
+        .test(CLEAR, "'X^(A+2)' 'X'", F1)
+        .expect("'X↑(A+2)·(A+2)÷X'");
+    step("Derivative of power of a numerical constant")
+        .test(CLEAR, "'2^X' 'X'", F1)
+        .expect("'0.69314 71805 6·2↑X'");
+    step("Derivative of power of a non-numerical constant")
+        .test(CLEAR, "'A^X' 'X'", F1)
+        .expect("'A↑X·(ln A+0÷A)'")
+        .test(RUNSTOP)
+        .expect("'A↑X·ln A'");
+    step("Derivative of power")
+        .test(CLEAR, "'(A*X+B)^(C*X+D)' 'X'", F1)
+        .expect("'(A·X+B)↑(C·X+D)·(C·ln(A·X+B)+A·(C·X+D)÷(A·X+B))'");
+    step("Derivative of negation, inverse, abs and sign")
+        .test(CLEAR, "'-(inv(X) + abs(X) - sign(X^2))' 'X'", F1)
+        .expect("'-((-1)÷X²+sign X)'");
+    step("Derivative of sine, cosine, tangent")
+        .test(CLEAR, "'sin(A*X^2)+cos(X*B)+tan(C*X^6)' 'X'", F1)
+        .expect("'2·A·X·cos(A·X²)+(-B)·sin(X·B)+6·C·X↑5÷(cos(C·X↑6))²'");
+    step("Derivative of hyperbolic sine, cosine, tangent")
+        .test(CLEAR, "'sinh(A*X^3)+cosh(B*X^5)+tanh(C*X^3)' 'X'", F1)
+        .expect("'3·A·X²·cosh(A·X³)+5·B·X↑4·sinh(B·X↑5)+3·C·X²÷(cosh(C·X³))²'");
+    step("Derivative of arcsine, arccosine, arctangent")
+        .test(CLEAR, "'asin(A*X^2)+acos(X*B)+atan(C*X^6)' 'X'", F1)
+        .expect("'2·A·X÷√(1-(A·X²)²)+(-B)÷√(1-(X·B)²)+6·C·X↑5÷((C·X↑6)²+1)'");
+    step("Derivative of inverse hyperbolic sine, cosine, tangent")
+        .test(CLEAR, "'asinh(A*X)+acosh(X*B)+atanh(C+X)' 'X'", F1)
+        .expect("'A÷√((A·X)²+1)+B÷√((X·B)²-1)+(1-(C+X)²)⁻¹'");
+
+    step("Derivative of log and exp")
+        .test(CLEAR, "'log(A*X+B)+exp(X*C-D)' 'X'", F1)
+        .expect("'A÷(A·X+B)+C·exp(X·C-D)'");
+    step("Derivative of log2 and exp2")
+        .test(CLEAR, "'log2(A*X+B)+exp2(X*C-D)' 'X'", F1)
+        .expect("'A÷(ln 2·(A·X+B))+ln 2·C·exp2(X·C-D)'");
+    step("Derivative of log10 and exp10")
+        .test(CLEAR, "'log10(A*X+B)+exp10(X*C-D)' 'X'", F1)
+        .expect("'A÷(ln 10·(A·X+B))+ln 10·C·exp10(X·C-D)'");
+
+    step("Derivative of lnp1 and expm1")
+        .test(CLEAR, "'log1p(A*X+B)+expm1(X*C-D)' 'X'", F1)
+        .expect("'A÷(A·X+B+1)+C·exp(X·C-D)'");
+
+    step("Derivative of square and cube")
+        .test(CLEAR, "'sq(A*X+B)+cubed(X*C-D)' 'X'", F1)
+        .expect("'2·(A·X+B)·A+3·(X·C-D)²·C'");
+    step("Derivative of square root and cube root")
+        .test(CLEAR, "'sqrt(A*X+B)+cbrt(X*C-D)' 'X'", F1)
+        .expect("'A÷(2·√(A·X+B))+C÷(3·(∛(X·C-D))²)'");
+
+    step("Derivative of single-variable user-defined function")
+        .test(CLEAR, "'F(A*X+B)' 'X'", F1)
+        .expect("'A·F′(A·X+B)'");
+    step("Derivative of nested single-variable user-defined function")
+        .test(CLEAR, "'F(G(A*X+B))' 'X'", F1)
+        .expect("'A·G′(A·X+B)·F′(G(A·X+B))'");
+
+    step("Derivative of multi-variable user-defined function")
+        .test(CLEAR, "'F(A*X+B;C*X+D;E*X-G)' 'X'", F1)
+        .expect("'A·F′₁(A·X+B;C·X+D;E·X-G)"
+                "+C·F′₂(A·X+B;C·X+D;E·X-G)"
+                "+E·F′₃(A·X+B;C·X+D;E·X-G)'");
+
+    step("Derivative of unknown form")
+        .test(CLEAR, "'IP(X)' 'X'", F1)
+        .error("Unknown derivative");
+}
+
+
+void tests::symbolic_integration()
+// ----------------------------------------------------------------------------
+//   Symbolic integration
+// ----------------------------------------------------------------------------
+{
+    BEGIN(primitive);
+
+    step("Primitive of constant")
+        .test(CLEAR, LSHIFT, KEY8, "42 'X'", F1).expect("'42·X'");
+    step("Primitive of a variable")
+        .test(CLEAR, "1 'X'", F1).expect("'X'");
+    step("Primitive of a different variable")
+        .test(CLEAR, "'A' 'X'", F1).expect("'A·X'");
+    step("Primitive of a product by a constant")
+        .test(CLEAR, "'A*X' 'X'", F1).expect("'A÷2·X²'");
+    step("Primitive of a polynomial")
+        .test(CLEAR, "'A*X+B*X^2-C*sq(X)+D*X^5+42' 'X'", F1)
+        .expect("'A÷2·X²+B÷3·X³+D÷6·X↑6+42·X-C÷3·X³'");
+    step("Primitive of ratio")
+        .test(CLEAR, "'A*X/(B*X+1)' 'X'", F1)
+        .expect("'A÷B²·(B·X-ln (abs(B·X+1))+1)'");
+    step("Primitive of ratio of linear functions")
+        .test(CLEAR, "'(A*X+B)/(C*X+D)' 'X'", F1)
+        .expect("'B÷C·ln (abs(C·X+D))+A÷C²·(C·X+D-D·ln (abs(C·X+D)))'");
+    step("Primitive of power by a numerical constant")
+        .test(CLEAR, "'X^(2.5+3.2)' 'X'", F1)
+        .expect("'X↑6.7÷6.7'");
+    step("Primitive of power by a non-numerical constant")
+        .test(CLEAR, "'X^(A+2)' 'X'", F1)
+        .expect("'X↑(A+3)÷(A+3)'");
+    step("Primitive of power of a numerical constant")
+        .test(CLEAR, "'2^X' 'X'", F1)
+        .expect("'2↑X÷0.69314 71805 6'");
+    step("Primitive of power of a non-numerical constant")
+        .test(CLEAR, "'A^X' 'X'", F1)
+        .expect("'A↑X÷ln A'")
+        .test(RUNSTOP)
+        .expect("'A↑X÷ln A'");
+    step("Primitive of power")
+        .test(CLEAR, "'(A*X+B)^(C*X+D)' 'X'", F1)
+        .error("Unknown primitive");
+    step("Primitive of negation, inverse and sign")
+        .test(CLEAR, "'-(inv(A*X+B) - sign(3-2*X))' 'X'", F1)
+        .expect("'-(ln (abs(A·X+B))÷A-abs(3-2·X)÷2)'");
+    step("Primitive of sine, cosine, tangent")
+        .test(CLEAR, "'sin(A*X+3)+cos(X*B-5)+tan(Z-C*X)' 'X'", F1)
+        .expect("'(-cos(A·X+3))÷A+sin(X·B-5)÷B+(-ln (cos(Z-C·X)))÷C'");
+    step("Primitive of hyperbolic sine, cosine, tangent")
+        .test(CLEAR, "'sinh(A*X-3)+cosh(B*X+5*A)+tanh(C*(X-A))' 'X'", F1)
+        .expect("'cosh(A·X-3)÷A+sinh(B·X+5·A)÷B+ln (cosh(C·(X-A)))÷C'");
+    step("Primitive of arcsine, arccosine, arctangent")
+        .test(CLEAR, "'asin(A*X+B)+acos(X*B+A*(X+1))+atan(C*(X-6))' 'X'", F1)
+        .expect("'((A·X+B)·sin⁻¹(A·X+B)+√(1-(A·X+B)²))÷A+((X·B+A·(X+1))·cos⁻¹(X·B+A·(X+1))-√(1-(X·B+A·(X+1))²))÷(B+A)+(C·(X-6)·tan⁻¹(C·(X-6))-ln((C·(X-6))²+1)÷2)÷C'");
+    step("Primitive of inverse hyperbolic sine, cosine, tangent")
+        .test(CLEAR, "'asinh(1-2*X)+acosh(1+3*X)+atanh(4*X-1)' 'X'", F1)
+        .expect("'((1-2·X)·sinh⁻¹(1-2·X)-√((1-2·X)²+1))÷2+((3·X+1)·cosh⁻¹(3·X+1)-√((3·X+1)²-1))÷3+((4·X-1)·tan⁻¹(4·X-1)-ln(1-(4·X-1)²)÷2)÷4'");
+
+    step("Primitive of log and exp")
+        .test(CLEAR, "'log(A*X+B)+exp(X*C-D)' 'X'", F1)
+        .expect("'((A·X+B)·ln(A·X+B)-(A·X+B))÷A+exp(X·C-D)÷C'");
+    step("Primitive of log2 and exp2")
+        .test(CLEAR, "'log2(A*X+B)+exp2(X*C-D)' 'X'", F1)
+        .expect("'((A·X+B)·log2(A·X+B)-(A·X+B)÷ln 2)÷A+exp2(X·C-D)÷(0.69314 71805 6·C)'");
+    step("Primitive of log10 and exp10")
+        .test(CLEAR, "'log10(A*X+B)+exp10(X*C-D)' 'X'", F1)
+        .expect("'((A·X+B)·log10(A·X+B)-(A·X+B)÷ln 10)÷A+exp10(X·C-D)÷(2.30258 50929 9·C)'");
+
+    step("Primitive of lnp1 and expm1")
+        .test(CLEAR, "'log1p(A*X+B)+expm1(X*C-D)' 'X'", F1)
+        .expect("'((A·X+B-1)·log1p(A·X+B)-(A·X+B-1))÷A+(expm1(X·C-D)-(X·C-D)+1)÷C'");
+
+    step("Primitive of square and cube")
+        .test(CLEAR, "'sq(A*X+B)+cubed(X*C-D)' 'X'", F1)
+        .expect("'(A·X+B)³÷(3·A)+(X·C-D)↑4÷(4·C)'");
+    step("Primitive of square root and cube root")
+        .test(CLEAR, "'sqrt(A*X+B)+cbrt(X*C-D)' 'X'", F1)
+        .expect("'²/₃·A⁻¹·(√(A·X+B))³+³/₄·C⁻¹·∛(X·C-D)↑4'");
+
+    step("Primitive of 1/(cos(x)*sin(x))")
+        .test(CLEAR, "'inv(cos(3*X+2)*sin(3*X+2))' 'X'", F1)
+        .expect("'ln (tan(3·X+2))÷3'");
+    step("Primitive of 1/(cosh(x)*sinh(x))")
+        .test(CLEAR, "'inv(cosh(3*X+2)*sinh(3*X+2))' 'X'", F1)
+        .expect("'ln (tan(3·X+2))÷3'");
+    step("Primitive of 1/(cosh(x)*sinh(x))")
+        .test(CLEAR, "'inv(cosh(3*X+2)*sinh(3*X+2))' 'X'", F1)
+        .expect("'ln (tan(3·X+2))÷3'");
+
+    step("Primitive of unknown form")
+        .test(CLEAR, "'IP(X)' 'X'", F1)
+        .error("Unknown primitive");
 }
 
 
@@ -8185,13 +8511,14 @@ void tests::insertion_of_variables_constants_and_units()
     step("Select secrets menu")
         .test(F1).noerror();
     step("Insert Dedicace")
-        .test(CLEAR, F1).expect("Dedicace");
+        .test(CLEAR, LSHIFT, RUNSTOP, F1, ENTER).want("« Dedicace »");
+    cstring ded = "\"À tous ceux qui se souviennent de Maubert électronique\"";
     step("Evaluate stack Dedicace")
-        .test(RUNSTOP).expect("\"À tous ceux qui se souviennent de "
-                              "Maubert électronique\"");
+        .test(RUNSTOP).expect(ded);
+    step("Evaluate Dedicace")
+        .test(CLEAR, F1).expect(ded);
     step("Evaluate Dedicace directly")
-        .test(LSHIFT, F1).expect("\"À tous ceux qui se souviennent de "
-                                 "Maubert électronique\"");
+        .test(LSHIFT, F1).expect(ded);
 
     step("Begin program")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»");
@@ -8453,70 +8780,83 @@ void tests::constants_menu()
     step("Electron mass")
         .test(CLEAR, NOSHIFT, F5).expect("me")
         .test(LSHIFT, F5).expect("9.10938 37139⁳⁻³¹ kg");
+    step("Neutron mass")
+        .test(NOSHIFT, F6)
+        .test(CLEAR, NOSHIFT, F1).expect("mn")
+        .test(LSHIFT, F1).expect("1.67492 7471⁳⁻²⁷ kg");
+    step("Proton mass")
+        .test(CLEAR, NOSHIFT, F2).expect("mp")
+        .test(LSHIFT, F2).expect("1.67262 19259 5⁳⁻²⁷ kg");
+    step("Hydrogen mass")
+        .test(CLEAR, NOSHIFT, F3).expect("mH")
+        .test(LSHIFT, F3).expect("1.00782 5 u");
+    step("Unified mass unit")
+        .test(CLEAR, NOSHIFT, F4).expect("u")
+        .test(LSHIFT, F4).expect("1.66053 90689 2⁳⁻²⁷ kg");
+    step("Dalton (1/12th C12 mass)")
+        .test(CLEAR, NOSHIFT, F5).expect("Da")
+        .test(LSHIFT, F5).expect("1.66053 90689 2⁳⁻²⁷ kg");
     step("Electron mass/charge ratio")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("qme")
         .test(LSHIFT, F1).expect("175 881 962 000 C/kg");
-    step("Proton mass")
-        .test(CLEAR, NOSHIFT, F2).expect("mp")
-        .test(LSHIFT, F2).expect("1.67262 31⁳⁻²⁷ kg");
     step("Proton/electron mass ratio")
-        .test(CLEAR, NOSHIFT, F3).expect("mpme")
-        .test(LSHIFT, F3).expect("1 836.15270 1");
+        .test(CLEAR, NOSHIFT, F2).expect("mpme")
+        .test(LSHIFT, F2).expect("1 836.15270 1");
     step("Fine structure constant")
-        .test(CLEAR, NOSHIFT, F4).expect("α")
-        .test(LSHIFT, F4).expect("0.00729 73530 8");
+        .test(CLEAR, NOSHIFT, F3).expect("α")
+        .test(LSHIFT, F3).expect("0.00729 73530 8");
     step("Magnetic flux quantum")
-        .test(CLEAR, NOSHIFT, F5).expect("ø")
-        .test(LSHIFT, F5).expect("2.06783 461⁳⁻¹⁵ Wb");
+        .test(CLEAR, NOSHIFT, F4).expect("ø")
+        .test(LSHIFT, F4).expect("2.06783 461⁳⁻¹⁵ Wb");
     step("Faraday constant")
-        .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("F")
-        .test(LSHIFT, F1).expect("96 485.309 C/mol");
+        .test(CLEAR, NOSHIFT, F5).expect("F")
+        .test(LSHIFT, F5).expect("96 485.309 C/mol");
     step("Rydberg constant")
-        .test(CLEAR, NOSHIFT, F2).expect("R∞")
-        .test(LSHIFT, F2).expect("10 973 731.534 m⁻¹");
+        .test(NOSHIFT, F6)
+        .test(CLEAR, NOSHIFT, F1).expect("R∞")
+        .test(LSHIFT, F1).expect("10 973 731.534 m⁻¹");
     step("Bohr radius")
-        .test(CLEAR, NOSHIFT, F3).expect("a0")
-        .test(LSHIFT, F3).expect("0.05291 77249 nm");
+        .test(CLEAR, NOSHIFT, F2).expect("a0")
+        .test(LSHIFT, F2).expect("0.05291 77249 nm");
     step("Bohr magneton")
-        .test(CLEAR, NOSHIFT, F4).expect("μB")
-        .test(LSHIFT, F4).expect("9.27401 54⁳⁻²⁴ J/T");
+        .test(CLEAR, NOSHIFT, F3).expect("μB")
+        .test(LSHIFT, F3).expect("9.27401 54⁳⁻²⁴ J/T");
     step("Nuclear magneton")
-        .test(CLEAR, NOSHIFT, F5).expect("μN")
-        .test(LSHIFT, F5).expect("5.05078 37393⁳⁻²⁷ J/T");
+        .test(CLEAR, NOSHIFT, F4).expect("μN")
+        .test(LSHIFT, F4).expect("5.05078 37393⁳⁻²⁷ J/T");
     step("Photon wavelength")
-        .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("λ0")
-        .test(LSHIFT, F1).expect("1 239.8425 nm");
+        .test(CLEAR, NOSHIFT, F5).expect("λ0")
+        .test(LSHIFT, F5).expect("1 239.8425 nm");
     step("Photon frequency")
-        .test(CLEAR, NOSHIFT, F2).expect("f0")
-        .test(LSHIFT, F2).expect("2.41798 83⁳¹⁴ Hz");
-    step("Compton wavelength")
-        .test(CLEAR, NOSHIFT, F3).expect("λc")
-        .test(LSHIFT, F3).expect("0.00242 63105 8 nm");
-    step("Wien's constant")
-        .test(CLEAR, NOSHIFT, F4).expect("c3")
-        .test(LSHIFT, F4).expect("0.00289 7756 m·K");
-    step("Boltzman / elementary charge ratio")
-        .test(CLEAR, NOSHIFT, F5).expect("kq")
-        .test(LSHIFT, F5).expect("0.00008 61738 6 J/(K·C)");
-    step("Permitivity / elementary charge ratio")
         .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("ε0q")
-        .test(LSHIFT, F1).expect("55 263 469.6 F/(m·C)");
+        .test(CLEAR, NOSHIFT, F1).expect("f0")
+        .test(LSHIFT, F1).expect("2.41798 83⁳¹⁴ Hz");
+    step("Compton wavelength")
+        .test(CLEAR, NOSHIFT, F2).expect("λc")
+        .test(LSHIFT, F2).expect("0.00242 63105 8 nm");
+    step("Wien's constant")
+        .test(CLEAR, NOSHIFT, F3).expect("c3")
+        .test(LSHIFT, F3).expect("0.00289 7756 m·K");
+    step("Boltzman / elementary charge ratio")
+        .test(CLEAR, NOSHIFT, F4).expect("kq")
+        .test(LSHIFT, F4).expect("0.00008 61738 6 J/(K·C)");
+    step("Permitivity / elementary charge ratio")
+        .test(CLEAR, NOSHIFT, F5).expect("ε0q")
+        .test(LSHIFT, F5).expect("55 263 469.6 F/(m·C)");
     step("Permittivity - elementary charge product")
-        .test(CLEAR, NOSHIFT, F2).expect("qε0")
-        .test(LSHIFT, F2).expect("1.41859 78⁳⁻³⁰ F·C/m");
+        .test(NOSHIFT, F6)
+        .test(CLEAR, NOSHIFT, F1).expect("qε0")
+        .test(LSHIFT, F1).expect("1.41859 78⁳⁻³⁰ F·C/m");
     step("Dielectric constant of silicon")
-        .test(CLEAR, NOSHIFT, F3).expect("εsi")
-        .test(LSHIFT, F3).expect("11.9");
+        .test(CLEAR, NOSHIFT, F2).expect("εsi")
+        .test(LSHIFT, F2).expect("11.9");
     step("SiO2 dielectric constant")
-        .test(CLEAR, NOSHIFT, F4).expect("εox")
-        .test(LSHIFT, F4).expect("3.9");
+        .test(CLEAR, NOSHIFT, F3).expect("εox")
+        .test(LSHIFT, F3).expect("3.9");
     step("Reference sound intensity")
-        .test(CLEAR, NOSHIFT, F5).expect("I0")
-        .test(LSHIFT, F5).expect("1.⁳⁻¹² W/m↑2");
+        .test(CLEAR, NOSHIFT, F4).expect("I0")
+        .test(LSHIFT, F4).expect("1.⁳⁻¹² W/m↑2");
 }
 
 
@@ -9089,6 +9429,89 @@ void tests::random_number_generation()
               "{} 0 399 random R→B + 0 239 random R→B + pixon "
               "next", LENGTHY(2500), ENTER)
         .image("random-graph");
+}
+
+
+void tests::object_structure()
+// ----------------------------------------------------------------------------
+//   Extracting structure from an object
+// ----------------------------------------------------------------------------
+{
+    BEGIN(explode);
+
+    step("Obj→ on rectangular complex value")
+        .test(CLEAR, "1ⅈ2", ENTER, RSHIFT, N, F4).got("2", "1");
+    step("Obj→ on polar complex value")
+        .test(CLEAR, "1∡90", ENTER, RSHIFT, N, F4).got("¹/₂", "1");
+    step("Obj→ on unit objects")
+        .test(CLEAR, "123_km/h", ENTER, RSHIFT, N, F4).got("'km÷h'", "123");
+    step("Obj→ on program")
+        .test(CLEAR, LSHIFT, RUNSTOP, "A B + 5 *", ENTER, RSHIFT, N, F4)
+        .got("5", "×", "5", "+", "B", "A");
+    step("Obj→ on expression")
+       .test(CLEAR, LSHIFT, "'5*(A+B)'", ENTER, RSHIFT, N, F4)
+        .got("5", "×", "+", "B", "A", "5");
+    step("Obj→ on list")
+        .test(CLEAR, LSHIFT, "{ A B + 5 * }", ENTER, RSHIFT, N, F4)
+        .got("5", "×", "5", "+", "B", "A");
+    step("Obj→ on user-defined function call")
+        .test(CLEAR, LSHIFT, "'F(A+B;C*D;E-F)'", ENTER, RSHIFT, N, F4)
+        .expect("1").test(BSP).expect("'F(A+B;C·D;E-F)'")
+        .test(F4).got("[ F 'A+B' 'C·D' 'E-F' ]");
+    step("Obj→ on vector")
+        .test(CLEAR, LSHIFT, "[a b c d]", ENTER, RSHIFT, N, F4)
+        .got("{ 4 }", "d", "c", "b", "a");
+    step("Obj→ on matrix")
+        .test(CLEAR, LSHIFT, "[[a b][c d]]", ENTER, RSHIFT, N, F4)
+        .got("{ 2 2 }", "d", "c", "b", "a");
+    step("Obj→ on polynomial")
+        .test(CLEAR, LSHIFT, "'X-Y+3*(X+Y^2)' →Poly", ENTER)
+        .expect("4·X-Y+3·Y↑2")
+        .test(RSHIFT, N, F4).expect("'4·X+-1·Y+3·Y²'")
+        .test(F4).got("12","+","×","x²","Y","3","+","×","Y","-1","×","X","4");
+    step("Obj→ on text")
+        .test(CLEAR, "\"1 2 + 3 *\"", ENTER, RSHIFT, N, F4).got("9");
+    step("Obj→ on fractions")
+        .test(CLEAR, "1/2", ENTER, RSHIFT, N, F4).got("2", "1");
+    step("Obj→ on tags")
+        .test(CLEAR, ":abc:1.5", ENTER, RSHIFT, N, F4)
+        .got("\"abc \"", "1.5");
+
+}
+
+
+void tests::library()
+// ----------------------------------------------------------------------------
+//   Check the content of the content library.
+// ----------------------------------------------------------------------------
+{
+    BEGIN(library);
+
+    step("Secrets: Dedicace")
+        .test(CLEAR, RSHIFT, H, F1, F1)
+        .expect("\"À tous ceux qui se souviennent de Maubert électronique\"");
+    step("Secrets: Library help")
+        .test(CLEAR, F2)
+        .expect("\"To modify the library, edit the config/library.csv file\"");
+
+    step("Physics: Relativistic and classical kinetic energy")
+        .test(CLEAR, RSHIFT, H, F2, F1)
+        .image("lib-kinetic", 2000);
+
+    step("Math: Collatz conjecture benchmark")
+        .test(CLEAR, RSHIFT, H, F3, LENGTHY(5000), F1, ENTER, SWAP)
+        .expect("1")
+        .test(BSP)
+        .match("duration:[1-9].*ms");
+    step("Math: Collatz conjecture")
+        .test(CLEAR, "15", LENGTHY(500), F2, ENTER, ENTER)
+        .expect("1");
+    step("Math: Count primes")
+        .test(CLEAR, "227", F3)
+        .expect("49");
+    step("Math: Triangle equations")
+        .test(CLEAR, F4)
+        .image_noheader("lib-triangle");
 }
 
 
@@ -9775,7 +10198,7 @@ tests &tests::istep(cstring name)
     cstring blk = "                                                        ";
     size_t  off = utf8_length(utf8(sname));
     cstring pad = blk + (off < 56 ? off : 56);
-    fprintf(stderr, "%3u: %03u %3u.%u:  %s%s",
+    fprintf(stderr, "|%3u: %03u %3u.%u: %s%s",
             tindex, sindex, spent / 1000, spent / 100 % 10, sname, pad);
     cindex = 0;
     count++;
@@ -10358,6 +10781,7 @@ tests &tests::itest(cstring txt)
         case L'Σ': k = A;           alpha = true;  shift = true; break;
         case L'∏': k = A;           alpha = true; xshift = true; break;
         case L'∆': k = B;           alpha = true; xshift = true; break;
+        case L'∂': k = D;           alpha = true;  shift = true; break;
         case L'≤': k = J;           alpha = true; xshift = true; break;
         case L'≠': k = K;           alpha = true; xshift = true; break;
         case L'≥': k = L;           alpha = true; xshift = true; break;

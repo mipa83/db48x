@@ -784,15 +784,16 @@ MENU(SymbolicMenu,
      ID_Expand,
      ID_Simplify,
      "→Poly",           ID_ToPolynomial,
-
+     "→Prog",           ID_ToProgram,
      "Algbra",          ID_AlgebraMenu,
+
      "Arith",           ID_ArithmeticMenu,
      "Calc",            ID_CalculationMenu,
      "Trig",            ID_TrigIdentitiesMenu,
      "Exp/Ln",          ID_ExpLogIdentitiesMenu,
      "Poly",            ID_PolynomialsMenu,
-
      "Graph",           ID_PlotMenu,
+
      "Integ",           ID_IntegrationMenu,
      "Deriv",           ID_DifferentiationMenu,
      "DSolve",          ID_DifferentialSolverMenu,
@@ -805,13 +806,13 @@ MENU(AlgebraMenu,
 // ----------------------------------------------------------------------------
      "↓Match",          ID_MatchDown,
      "↑Match",          ID_MatchUp,
-     "Isolate",         ID_Unimplemented,
+     "Isolate",         ID_Isolate,
      "Apply",           ID_Apply,
      "Subst",           ID_Subst,
      "|",               ID_Where,
 
-     "∂",               ID_Unimplemented,
-     "∫",               ID_Integrate,
+     "∂",               ID_Derivative,
+     "∫",               ID_Primitive,
      "∑",               ID_Sum,
      "∏",               ID_Product,
      "∆",               ID_Unimplemented,
@@ -828,8 +829,8 @@ MENU(ArithmeticMenu,
 // ----------------------------------------------------------------------------
 //   Arithmetic menu
 // ----------------------------------------------------------------------------
-     "∂",               ID_Unimplemented,
-     "∫",               ID_Integrate,
+     "∂",               ID_Derivative,
+     "∫",               ID_Primitive,
      "∑",               ID_Sum,
      "∏",               ID_Product,
      "∆",               ID_Unimplemented,
@@ -837,7 +838,7 @@ MENU(ArithmeticMenu,
 
      "Show",            ID_Unimplemented,
      "Quote",           ID_Unimplemented,
-     "|",               ID_Unimplemented,
+     "|",               ID_Where,
      "Rules",           ID_Unimplemented,
      "Symb",            ID_SymbolicMenu);
 
@@ -898,7 +899,7 @@ MENU(ProgramMenu,
      "Stack",   ID_StackMenu,
 
      "Debug",   ID_DebugMenu,
-     "Obj",     ID_ObjectMenu,
+     "Objects", ID_ObjectMenu,
      "List",    ID_ListMenu,
      "Flag",    ID_FlagsMenu,
                 ID_Version);
@@ -1075,8 +1076,8 @@ MENU(ObjectMenu,
      "→Text",   ID_ToText,
      "→Tag",    ID_ToTag,
      "→Graph",  ID_ToGrob,
-     "→Prog",   ID_Unimplemented,
-     "→Array",  ID_Unimplemented,
+     "→Prog",   ID_ToProgram,
+     "→Array",  ID_ToArray,
 
      "Clone",   ID_Clone,
      "DTag",    ID_dtag,
@@ -1191,10 +1192,10 @@ MENU(IntegrationMenu,
 // ----------------------------------------------------------------------------
 //   Symbolic and numerical integration
 // ----------------------------------------------------------------------------
-     "∫",       ID_Integrate,
+     "∫",       ID_Primitive,
      "Num ∫",   ID_Integrate,
-     "Symb ∫",  ID_Unimplemented,
-     "Prim",    ID_Unimplemented,
+     "Symb ∫",  ID_Primitive,
+     "Prim",    ID_Primitive,
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
 
@@ -1205,6 +1206,7 @@ MENU(DifferentiationMenu,
 // ----------------------------------------------------------------------------
 //   Symbolic and numerical differentiation
 // ----------------------------------------------------------------------------
+     "∂",       ID_Derivative,
      "Num",     ID_Unimplemented,
      "Symb",    ID_Unimplemented,
      "Diff",    ID_Unimplemented,
@@ -1265,6 +1267,7 @@ MENU(SymbolicSolverMenu,
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
      "Root",    ID_Unimplemented,
+     "Isolate", ID_Isolate,
 
      ID_SolverMenu);
 

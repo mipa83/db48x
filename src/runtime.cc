@@ -32,6 +32,7 @@
 #include "arithmetic.h"
 #include "compare.h"
 #include "constants.h"
+#include "expression.h"
 #include "integer.h"
 #include "object.h"
 #include "program.h"
@@ -79,6 +80,7 @@ runtime::runtime(byte *mem, size_t size)
       Undo(),
       Locals(),
       Directories(),
+      XLibs(),
       CallStack(),
       Returns(),
       HighMem(),
@@ -100,7 +102,8 @@ void runtime::memory(byte *memory, size_t size)
     // Stuff at top of memory
     Returns = HighMem;                          // No return stack
     CallStack = Returns;                        // Reserve space for call stack
-    Directories = CallStack - 1;                // Make room for one path
+    XLibs = CallStack;                          // No XLibs loaded
+    Directories = XLibs - 1;                    // Make room for one path
     Locals = Directories;                       // No locals
     Args = Locals;                              // No args
     Undo = Locals;                              // No undo stack
@@ -210,7 +213,7 @@ bool runtime::integrity_test()
 //   Check all the objects in a given range
 // ----------------------------------------------------------------------------
 {
-    return integrity_test(rt.Globals,rt.Temporaries,rt.Stack,rt.CallStack);
+    return integrity_test(rt.Globals,rt.Temporaries,rt.Stack,rt.XLibs);
 }
 
 
@@ -320,18 +323,18 @@ size_t runtime::gc()
     record(gc, "Garbage collection, available %u, range %p-%p",
            available(), first, last);
 #ifdef SIMULATOR
-    if (!integrity_test(first, last, Stack, CallStack))
+    if (!integrity_test(first, last, Stack, XLibs))
     {
         record(gc_errors, "Integrity test failed pre-collection");
         RECORDER_TRACE(gc) = 1;
         dump_object_list("Pre-collection failure",
-                         first, last, Stack, CallStack);
-        integrity_test(first, last, Stack, CallStack);
+                         first, last, Stack, XLibs);
+        integrity_test(first, last, Stack, XLibs);
         recorder_dump();
     }
     if (RECORDER_TRACE(gc) > 1)
         dump_object_list("Pre-collection",
-                         first, last, Stack, CallStack);
+                         first, last, Stack, XLibs);
 #endif // SIMULATOR
 
     object_p *firstobjptr = Stack;
@@ -404,18 +407,18 @@ size_t runtime::gc()
 
 
 #ifdef SIMULATOR
-    if (!integrity_test(Globals, Temporaries, Stack, CallStack))
+    if (!integrity_test(Globals, Temporaries, Stack, XLibs))
     {
         record(gc_errors, "Integrity test failed post-collection");
         RECORDER_TRACE(gc) = 2;
         dump_object_list("Post-collection failure",
-                         first, last, Stack, CallStack);
+                         first, last, Stack, XLibs);
         recorder_dump();
     }
     if (RECORDER_TRACE(gc) > 1)
         dump_object_list("Post-collection",
                          (object_p) Globals, Temporaries,
-                         Stack, CallStack);
+                         Stack, XLibs);
 #endif // SIMULATOR
 
     record(gc, "Garbage collection done, purged %u, available %u",
@@ -692,10 +695,44 @@ byte *runtime::append(size_t sz, gcbytes bytes)
 //   Append some bytes at end of scratch pad
 // ----------------------------------------------------------------------------
 {
+    if (!+bytes)
+        return nullptr;
     byte *ptr = allocate(sz);
     if (ptr)
-        memcpy(ptr, +bytes, sz);
+        memmove(ptr, +bytes, sz);
     return ptr;
+}
+
+
+byte *runtime::append(object_p obj)
+// ----------------------------------------------------------------------------
+//   Append an object at end of scratch pad
+// ----------------------------------------------------------------------------
+{
+    return append(obj, obj->size());
+}
+
+
+byte *runtime::append(object_p obj, size_t sz)
+// ----------------------------------------------------------------------------
+//   Append an object at end of scratch pad with a specific size
+// ----------------------------------------------------------------------------
+{
+    return append(sz, byte_p(obj));
+}
+
+
+byte *runtime::append_expression(object_p obj)
+// ----------------------------------------------------------------------------
+//   Append an object at end of scratch pad, strip expressions
+// ----------------------------------------------------------------------------
+{
+    if (!obj)
+        return nullptr;
+    size_t sz = obj->size();
+    if (expression_p eq = obj->as<expression>())
+        obj = eq->objects(&sz);
+    return append(obj, sz);
 }
 
 
@@ -1214,7 +1251,7 @@ bool runtime::is_active_directory(object_p obj) const
 //    Check if a global variable is referenced by the directories
 // ----------------------------------------------------------------------------
 {
-    size_t depth = (object_p *) CallStack - Directories;
+    size_t depth = (object_p *) XLibs - Directories;
     for (size_t i = 0; i < depth; i++)
         if (obj == Directories[i])
             return true;
@@ -1254,7 +1291,7 @@ bool runtime::updir(size_t count)
 //   Move one directory up
 // ----------------------------------------------------------------------------
 {
-    size_t depth = CallStack - Directories;
+    size_t depth = XLibs - Directories;
     if (count >= depth - 1)
         count = depth - 1;
     if (!count)
@@ -1275,6 +1312,47 @@ bool runtime::updir(size_t count)
 
     return true;
 }
+
+
+// ============================================================================
+//
+//   XLibs
+//
+// ============================================================================
+
+bool runtime::attach(size_t nentries)
+// ----------------------------------------------------------------------------
+//   Change the number of xlibs to the given number, then zero them
+// ----------------------------------------------------------------------------
+{
+    size_t existing = xlibs();
+    size_t count    = nentries - existing;
+    if (nentries > existing)
+    {
+        size_t needed = (nentries - existing) * sizeof(object_p);
+        if (available(needed) < needed)
+            return false;
+        for (object_p *ptr = Stack; ptr < CallStack; ptr++)
+            ptr[-count] = ptr[0];
+    }
+    else if (nentries < existing)
+    {
+        for (object_p *ptr = CallStack-1; ptr >= Stack; ptr--)
+            ptr[0] = ptr[count];
+    }
+    Stack       -= count;
+    Args        -= count;
+    Undo        -= count;
+    Locals      -= count;
+    Directories -= count;
+    XLibs       -= count;
+
+    for (object_p *ptr = XLibs; ptr < CallStack; ptr++)
+        *ptr = nullptr;
+
+    return true;
+}
+
 
 
 // ============================================================================
@@ -1385,6 +1463,7 @@ bool runtime::run_select_start_step(bool for_loop, bool has_step)
 
     bool down = false;
     algebraic_g step;
+    object::id  ty = for_loop ? object::ID_ForStep : object::ID_StartStep;
     if (has_step)
     {
         object_p obj = rt.pop();
@@ -1393,7 +1472,6 @@ bool runtime::run_select_start_step(bool for_loop, bool has_step)
         step = obj->as_algebraic();
         if (!step)
         {
-            object::id ty = for_loop?object::ID_ForStep:object::ID_StartStep;
             object_p cmd = command::static_object(ty);
             rt.command(cmd).type_error();
             return false;
@@ -1408,25 +1486,25 @@ bool runtime::run_select_start_step(bool for_loop, bool has_step)
     }
 
     // Increment and compare with last iteration
-    algebraic_g cur  = Returns[0]->as_algebraic();
-    algebraic_g last = Returns[1]->as_algebraic();
+    algebraic_g cur  = Returns[0] ? Returns[0]->as_algebraic() : nullptr;
+    algebraic_g last = Returns[1] ? Returns[1]->as_algebraic() : nullptr;
     if (!cur || !last)
     {
-        object::id ty = for_loop?object::ID_ForStep:object::ID_StartStep;
         object_p cmd = command::static_object(ty);
         rt.command(cmd);
         return false;
     }
     cur = cur + step;
     last = down ? (cur < last) : (cur > last);
-    Returns[0] = cur;
+    if (cur)
+        Returns[0] = cur;
 
     // Write the current value in the variable if it's a for loop
     if (for_loop)
         rt.local(0, cur);
 
     // Check the truth value
-    int finished = last->as_truth(true);
+    int finished = last ? last->as_truth(true) : -1;
     if (finished < 0)
         return false;
 
@@ -1553,6 +1631,7 @@ bool runtime::call_stack_grow(object_p &next, object_p &end)
     Undo -= CALLS_BLOCK;
     Locals -= CALLS_BLOCK;
     Directories -= CALLS_BLOCK;
+    XLibs -= CALLS_BLOCK;
     CallStack -= CALLS_BLOCK;
     next = nextg;
     end = endg;
@@ -1570,6 +1649,7 @@ void runtime::call_stack_drop()
     Undo += CALLS_BLOCK;
     Locals += CALLS_BLOCK;
     Directories += CALLS_BLOCK;
+    XLibs += CALLS_BLOCK;
     CallStack += CALLS_BLOCK;
     for (object_p *s = CallStack-1; s >= Stack; s--)
         s[0] = s[-CALLS_BLOCK];

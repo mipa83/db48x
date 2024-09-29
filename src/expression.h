@@ -36,6 +36,7 @@
 #include "symbol.h"
 
 GCP(expression);
+GCP(funcall);
 GCP(grob);
 struct grapher;
 
@@ -99,19 +100,12 @@ struct expression : program
         return rt.make<expression>(type, op, args, arity);
     }
 
-
-    static expression_p as_expression(object_p obj)
-    {
-        if (!obj)
-            return nullptr;
-        if (expression_p ex = obj->as<expression>())
-            return ex;
-        if (algebraic_g alg = obj->as_algebraic())
-            return make(alg);
-        return nullptr;
-    }
-
+    static expression_p as_expression(object_p obj);
     static expression_p current_equation(bool error);
+
+    typedef expression_p (expression::*command_fn)(symbol_r name) const;
+    static result variable_command(command_fn callback);
+
 
 
     // ========================================================================
@@ -195,10 +189,12 @@ struct expression : program
     //   Apply a series of rewrites
     // ------------------------------------------------------------------------
     {
-        uint         rwcount = rep ? Settings.MaxRewrites() : 10;
+        uint         rwcount = rep ? Settings.MaxRewrites() : 1;
         expression_g eq      = this;
         expression_g last    = nullptr;
         bool         intr    = false;
+        settings::SaveExplicitWildcards ewc(false);
+        settings::SaveAutoSimplify as(false);
         do
         {
             last = eq;
@@ -228,8 +224,6 @@ struct expression : program
               typename ...args>
     expression_p rewrites(args... rest) const
     {
-        settings::SaveExplicitWildcards ewc(false);
-        settings::SaveAutoSimplify as(false);
         static constexpr byte_p rwdata[] = { rest.as_bytes()... };
         return do_rewrites<down,conds,rep>(sizeof...(rest), rwdata, nullptr);
     }
@@ -248,9 +242,11 @@ struct expression : program
     expression_p reorder_terms() const;
     expression_p simplify() const;
     expression_p as_difference_for_solve() const; // Transform A=B into A-B
-    expression_p left_of_equation() const;        // Transform A=B into A
-    expression_p right_of_equation() const;       // Transform A=B into B
+    bool         split_equation(expression_g &left, expression_g &right) const;
+    bool         split(id ty, expression_g &left, expression_g &right) const;
     object_p     outermost_operator() const;
+    bool         is_linear(symbol_r sym, algebraic_g &a, algebraic_g &b) const;
+    bool         depends_on(symbol_r sym) const;
     size_t       render(renderer &r, bool quoted = false) const
     {
         return render(this, r, quoted);
@@ -260,6 +256,9 @@ struct expression : program
                                   algebraic_g  factor,
                                   algebraic_g &scale,
                                   algebraic_g &exponent);
+    expression_p isolate(symbol_r sym) const;
+    expression_p derivative(symbol_r sym) const;
+    expression_p primitive(symbol_r sym) const;
 
 
     // ========================================================================
@@ -337,6 +336,13 @@ public:
     static symbol_g    *dependent;
     static object_g    *dependent_value;
     static bool         in_algebraic;
+    static bool         contains_independent_variable;
+    static uint         constant_index;
+
+    typedef size_t (*funcall_match_fn)(funcall_p pat, funcall_p repl);
+    typedef algebraic_p (*funcall_build_fn)(funcall_p src, funcall_p repl);
+    static funcall_match_fn funcall_match;
+    static funcall_build_fn funcall_build;
 };
 
 
@@ -353,15 +359,14 @@ struct funcall : expression
     funcall(id type, id op, algebraic_g args[], uint arity)
         : expression(type, op, args, arity) {}
 
-    static grob_p   graph(grapher &g, uint depth, int &precedence);
-    static symbol_p render(uint depth, int &precedence, bool edit);
+    object_p arg(uint depth) const;
+    array_p  args() const;
 
 public:
     OBJECT_DECL(funcall);
     PARSE_DECL(funcall);
     EVAL_DECL(funcall);
 };
-
 
 
 
@@ -503,6 +508,42 @@ struct eq
     eq<args..., y..., leb(object::ID_pow)>
     pow(eq<y...>) { return eq<args..., y..., leb(object::ID_pow)>(); }
 
+    template<byte ...y>
+    eq<args..., y..., lb(object::ID_Derivative), hb(object::ID_Derivative)>
+    deriv(eq<y...>) { return eq<args..., y...,
+                                lb(object::ID_Derivative),
+                                hb(object::ID_Derivative)>(); }
+    template<byte ...y>
+    eq<args..., y..., lb(object::ID_Derivative), hb(object::ID_Derivative)>
+    operator>>(eq<y...>) { return eq<args..., y...,
+                                     lb(object::ID_Derivative),
+                                     hb(object::ID_Derivative)>(); }
+    template<byte ...y>
+    eq<args..., y..., lb(object::ID_Primitive), hb(object::ID_Primitive)>
+    prim(eq<y...>) { return eq<args..., y...,
+                               lb(object::ID_Primitive),
+                               hb(object::ID_Primitive)>(); }
+    template<byte ...y>
+    eq<args..., y..., lb(object::ID_Primitive), hb(object::ID_Primitive)>
+    operator<<(eq<y...>) { return eq<args..., y...,
+                                     lb(object::ID_Primitive),
+                                     hb(object::ID_Primitive)>(); }
+
+    template<byte ...y>
+    eq<leb(object::ID_funcall),
+       leb(sizeof...(args) + sizeof...(y)),
+       y..., args...>
+    call(eq<y...>) { return eq<leb(object::ID_funcall),
+                               leb(sizeof...(args)+sizeof...(y)),
+                               y..., args...>(); }
+    template<byte ...y>
+    eq<leb(object::ID_funcall),
+       leb(sizeof...(args) + sizeof...(y)),
+       y..., args...>
+    operator()(eq<y...>) { return eq<leb(object::ID_funcall),
+                                     leb(sizeof...(args)+sizeof...(y)),
+                                     y..., args...>(); }
+
     // Comparisons
     template<byte ...y>
     eq<args..., y..., leb(object::ID_TestLT)>
@@ -580,6 +621,7 @@ EQ_FUNCTION(im);
 EQ_FUNCTION(arg);
 EQ_FUNCTION(conj);
 
+
 #undef EQ_FUNCTION
 
 // Pi constant
@@ -603,7 +645,8 @@ struct eq_always : eq<object::ID_True>
     }
 };
 
-//
+
+
 // ============================================================================
 //
 //   User commands
@@ -620,6 +663,15 @@ FUNCTION(ReorderTerms);
 FUNCTION(Simplify);
 
 COMMAND_DECLARE(Apply, 2);
+COMMAND_DECLARE(Isolate, 2);
+COMMAND_DECLARE_SPECIAL(Derivative, algebraic, 2,
+                        PREC_DECL(SYMBOL);
+                        INSERT_DECL(Derivative);
+                        PARSE_DECL(Derivative););
+COMMAND_DECLARE_SPECIAL(Primitive, algebraic, 2,
+                        PREC_DECL(MULTIPLICATIVE);
+                        INSERT_DECL(Primitive);
+                        PARSE_DECL(Primitive););
 COMMAND_DECLARE_SPECIAL(Where, arithmetic, 2, PREC_DECL(WHERE); );
 NFUNCTION(Subst, 2, static bool can_be_symbolic(uint) { return true; } );
 

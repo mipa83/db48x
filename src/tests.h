@@ -100,7 +100,9 @@ struct tests
     void text_functions();
     void auto_simplification();
     void rewrite_engine();
-    void expand_collect_simplify();
+    void symbolic_operations();
+    void symbolic_differentiation();
+    void symbolic_integration();
     void tagged_objects();
     void catalog_test();
     void cycle_test();
@@ -127,6 +129,8 @@ struct tests
     void quotient_and_remainder();
     void expression_operations();
     void random_number_generation();
+    void object_structure();
+    void library();
     void regression_checks();
     void demo_setup();
     void demo_ui();
@@ -352,6 +356,17 @@ public:
     tests &expect(unsigned long output, uint extrawait = 0);
     tests &expect(long long output, uint extrawait = 0);
     tests &expect(unsigned long long output, uint extrawait = 0);
+    tests &igot()
+    {
+        return itest(NOSHIFT, BSP).error("Too few arguments");
+    }
+
+    template<typename T, typename ...Rest>
+    tests &igot(T t, Rest... rest)
+    {
+        return expect(t).itest(NOSHIFT, BSP).igot(rest...);
+    }
+
     tests &match(cstring regexp, uint extrawait = 0);
     tests &image(cstring name, int x=0, int y=0, int w=LCD_W, int h=LCD_H,
                  uint extrawait = 0);
@@ -444,6 +459,7 @@ public:
 #define here()          position(__FILE__, __LINE__)
 #define step(...)       position(__FILE__, __LINE__).istep(__VA_ARGS__)
 #define test(...)       position(__FILE__, __LINE__).itest(__VA_ARGS__)
+#define got(...)        position(__FILE__, __LINE__).igot(__VA_ARGS__)
 #endif // SIMULATOR
 
 

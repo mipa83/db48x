@@ -63,6 +63,18 @@ algebraic_p function::symbolic(id op, algebraic_r x)
 {
     if (!x)
         return nullptr;
+    if (expression_p expr = x->as<expression>())
+    {
+        expression_g left, right;
+        if (expr->split_equation(left, right))
+        {
+            algebraic_g l = +left;
+            algebraic_g r = +right;
+            l = expression::make(op, l);
+            r = expression::make(op, r);
+            return expression::make(ID_TestEQ, l, r);
+        }
+    }
     expression_p result = expression::make(op, x);
     if (result && !unit::factoring && Settings.AutoSimplify())
         result = result->simplify();
@@ -986,9 +998,7 @@ static algebraic_p rnd_or_trnc(algebraic_r value, int digits,
             if (!a)
                 return nullptr;
             obj = +a;
-            size_t objsz = obj->size();
-            byte_p objp = byte_p(obj);
-            if (!rt.append(objsz, objp))
+            if (!rt.append(obj))
                 return nullptr;
         }
         return list::make(ty, scr.scratch(), scr.growth());

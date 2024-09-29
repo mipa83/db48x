@@ -34,6 +34,7 @@
 #include "compare.h"
 #include "expression.h"
 #include "file.h"
+#include "files.h"
 #include "functions.h"
 #include "grob.h"
 #include "parser.h"
@@ -333,8 +334,12 @@ static const cstring basic_constants[] =
     "ℏ",        "1.05457266E-34_J*s",   // Dirac
     "qe",       "1.602176634E-19_C",    // Electronic charge
     "me",       "9.1093837139E-31_kg",  // Electron mass
+    "mn",       "1.674927471E-27_kg",   // Neutron mass
+    "mp",       "1.67262192595E-27_kg", // Proton mass
+    "mH",       "1.007825_u",           // Hydrogen mass
+    "u",        "1.66053906892E-27_kg", // Mass unit
+    "Da",       "1.66053906892E-27_kg", // Mass unit (Dalton)
     "qme",      "175881962000_C/kg",    // q/me ratio
-    "mp",       "1.6726231E-27_kg",     // proton mass
     "mpme",     "1836.152701",          // mp/me ratio
     "α",        "0.00729735308",        // fine structure
     "ø",        "2.06783461E-15_Wb",    // Magnetic flux quantum
@@ -378,6 +383,15 @@ static runtime &invalid_constant_error()
 }
 
 
+static bool show_builtin_constants()
+// ----------------------------------------------------------------------------
+//   Check if we show the builtin constants
+// ----------------------------------------------------------------------------
+{
+    return Settings.ShowBuiltinConstants();
+}
+
+
 const constant::config constant::constants =
 // ----------------------------------------------------------------------------
 //  Define the configuration for the constants
@@ -393,12 +407,13 @@ const constant::config constant::constants =
     .value          = ID_ConstantValue,
     .command        = ID_object,
     .file           = "config/constants.csv",
+    .library        = "library",
     .builtins       = basic_constants,
     .nbuiltins      = sizeof(basic_constants) / sizeof(*basic_constants),
     .error          = invalid_constant_error,
-    .label          = nullptr
+    .label          = nullptr,
+    .show_builtins  = show_builtin_constants
 };
-
 
 
 object::result constant::do_parsing(config_r cfg, parser &p)
@@ -608,9 +623,19 @@ object_p constant::do_value(config_r cfg) const
             return decimal::e();
 
         utf8 cdef = csym->value(&clen);
-        error_save esave;
-        if (object_p obj = object::parse(cdef, clen))
-            return obj;
+        if (*cdef == '=')
+        {
+            if (text_g filename = clen>1 ? text::make(cdef+1, clen-1) : cname)
+                if (files_g disk = files::make(cfg.library))
+                    if (object_p obj = disk->recall(filename))
+                        return obj;
+        }
+        else
+        {
+            error_save esave;
+            if (object_p obj = object::parse(cdef, clen))
+                return obj;
+        }
     }
     cfg.error();
     return nullptr;
@@ -654,7 +679,7 @@ utf8 constant_menu::do_name(constant::config_r cfg, id type, size_t &len)
                 if (!count--)
                     return mname->value(&len);
 
-    if (Settings.ShowBuiltinConstants())
+    if (cfg.show_builtins())
     {
         size_t maxb     = cfg.nbuiltins;
         auto   builtins = cfg.builtins;
@@ -711,8 +736,8 @@ bool constant_menu::do_submenu(constant::config_r cfg, menu_info &mi) const
         }
     }
 
-     // Disable built-in constants if we loaded a file
-    if (!matching || Settings.ShowBuiltinConstants())
+    // Disable built-in constants if we loaded a file
+    if (!matching || cfg.show_builtins())
     {
         bool   found    = false;
         auto   builtins = cfg.builtins;
@@ -839,7 +864,7 @@ bool constant::do_collection_menu(constant::config_r cfg, menu_info &mi)
                     break;
 
     // Count built-in constant menu titles
-    if (!infile || Settings.ShowBuiltinConstants())
+    if (!infile || cfg.show_builtins())
     {
         for (size_t b = 0; b < maxb; b += 2)
             if (!builtins[b+1] || !*builtins[b+1])
@@ -862,7 +887,7 @@ bool constant::do_collection_menu(constant::config_r cfg, menu_info &mi)
             menu::items(mi, mname, id(cfg.first_menu + infile++));
         }
     }
-    if (!infile || Settings.ShowBuiltinConstants())
+    if (!infile || cfg.show_builtins())
     {
         for (size_t b = 0; b < maxb; b += 2)
         {
@@ -915,7 +940,7 @@ constant_p constant::do_key(config_r cfg, int key)
 
 object::result constant::lookup_command(config_r cfg, bool numerical)
 // ----------------------------------------------------------------------------
-//   Process a command looking up in the given config
+//   Process a command that looks up in the given config (e.g. CONST)
 // ----------------------------------------------------------------------------
 {
     object_p name = rt.top();

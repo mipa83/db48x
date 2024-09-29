@@ -33,6 +33,7 @@
 #include "bignum.h"
 #include "decimal.h"
 #include "dmcp.h"
+#include "equations.h"
 #include "fraction.h"
 #include "integer.h"
 #include "main.h"
@@ -222,7 +223,7 @@ COMMAND_BODY(Compile)
     {
         if (text_p tobj = obj->as<text>())
         {
-            if (tobj->compile_and_run())
+            if (rt.drop() && tobj->compile_and_run())
                 return OK;
         }
         else
@@ -260,6 +261,13 @@ COMMAND_BODY(Explode)
             if (list_p(obj)->expand())
                 return OK;
             rt.push(obj);
+        }
+        break;
+    case ID_funcall:
+        if (list_p lst = funcall_p(obj)->args())
+        {
+            rt.top(lst);
+            return OK;
         }
         break;
     case ID_array:
@@ -789,6 +797,34 @@ COMMAND_BODY(Cycle)
             return command::static_object(cmd)->evaluate();
 
         return OK;
+    }
+    return ERROR;
+}
+
+
+COMMAND_BODY(ToProgram)
+// ----------------------------------------------------------------------------
+//  Convert top level object to program
+// ----------------------------------------------------------------------------
+{
+    if (object_p top = rt.top())
+    {
+        if (expression_p expr = expression::as_expression(top))
+        {
+            if (object_p clone = rt.clone(expr))
+            {
+                byte *p = (byte *) clone;
+                leb128(p, ID_program);
+                top = clone;
+            }
+        }
+        else
+        {
+            object_g arg = top;
+            top = list::make(ID_program, arg);
+        }
+        if (top && rt.top(top))
+            return OK;
     }
     return ERROR;
 }

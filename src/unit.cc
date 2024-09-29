@@ -509,7 +509,7 @@ static const cstring basic_units[] =
     "kHz",      "=",                    // Kilohertz
     "MHz",      "=",                    // Megahertz
     "GHz",      "=",                    // Gigahertz
-    "rpm",      "1/60_Hz",              // Rotations per minute
+    "rpm",      "1_turn/min",           // Rotations per minute
 
     // Alias names for common time units
     "year",     "1_yr",                 // Year
@@ -578,7 +578,8 @@ static const cstring basic_units[] =
     // Alternate spellings
     "mole",     "1_mol",                // Mole (quantity of matter)
     "carat",    "1_ct",                 // Carat
-    "u",        "1.6605402E-27_kg",     // Unified atomic mass
+    "u",        "1.66053906892E-27_kg", // Unified atomic mass
+    "Da",       "1.66053906892E-27_kg", // Dalton (Alternative spelling for u)
     "Avogadro", "6.02214076E23",        // Avogadro constant (# units in 1_mol)
 
     // ------------------------------------------------------------------------
@@ -721,7 +722,7 @@ static const cstring basic_units[] =
     "rad",      "1/100_m^2/s^2",        // rad
     "rem",      "1_rad",                // rem
     "Sv",       "1_Gy",                 // Sievert
-    "Bq",       "1_Hz",                 // Becquerel
+    "Bq",       "1_Hz",                 // Becquerel (disintegrations/s)
 
     "Ci",       "37_GBq",               // Curie
     "R",        "258_µC/kg",            // Roentgen
@@ -1350,6 +1351,7 @@ symbol_g unit_file::next(bool menu)
     uint     column   = 0;
     bool     quoted   = false;
     symbol_g sym      = nullptr;
+    uint     pos      = position();
     scribble scr;
 
     while (valid())
@@ -1375,10 +1377,14 @@ symbol_g unit_file::next(bool menu)
                     break;
                 }
                 if (column == 1 && !menu)
+                {
+                    seek(pos);
                     break;
+                }
             }
             scr.clear();
             column = 0;
+            pos = position();
         }
         else if (quoted)
         {
@@ -1641,11 +1647,9 @@ COMMAND_BODY(UBase)
                 algebraic_g r = u;
                 save<bool> ueval(unit::mode, true);
                 r = r->evaluate();
-                if (!r)
-                    return ERROR;
                 lobj = r;
             }
-            if (!rt.append(lobj->size(), byte_p(lobj)))
+            if (!rt.append(lobj))
                 return ERROR;
 
         }

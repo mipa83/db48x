@@ -72,6 +72,15 @@ static runtime &invalid_xlib_error()
 }
 
 
+static bool show_builtin_library()
+// ----------------------------------------------------------------------------
+//   Show the builtin equations
+// ----------------------------------------------------------------------------
+{
+    return Settings.ShowBuiltinLibrary();
+}
+
+
 const xlib::config xlib::library =
 // ----------------------------------------------------------------------------
 //  Define the configuration for the library
@@ -87,10 +96,12 @@ const xlib::config xlib::library =
     .value          = ID_XlibValue,
     .command        = ID_object,
     .file           = "config/library.csv",
+    .library        = "library",
     .builtins       = basic_library,
     .nbuiltins      = sizeof(basic_library) / sizeof(*basic_library),
     .error          = invalid_xlib_error,
-    .label          = nullptr
+    .label          = nullptr,
+    .show_builtins  = show_builtin_library
 };
 
 
@@ -115,14 +126,24 @@ EVAL_BODY(xlib)
 //   Library entries evaluate like a program entry
 // ----------------------------------------------------------------------------
 {
-    object_p value = o->value();
+    uint index = o->index();
+
+    object_p value = rt.xlib(index);
     if (!value)
     {
-        rt.invalid_xlib_error();
-        return ERROR;
+        // Resize the cache if needed
+        if (index >= rt.xlibs())
+            if (!rt.attach(index+1))
+                return ERROR;
+
+        value = o->value();
+        if (!value)
+        {
+            rt.invalid_xlib_error();
+            return ERROR;
+        }
+        rt.xlib(index, value);
     }
-    if (program::running)
-        return rt.push(value) ? OK : ERROR;
     return program::run_program(value);
 }
 
@@ -198,8 +219,7 @@ COMMAND_BODY(XlibName)
     int key = ui.evaluating;
     if (object_p cstobj = xlib::do_key(xlib::library, key))
         if (xlib_p cst = cstobj->as<xlib>())
-            if (rt.push(cst))
-                return OK;
+            return xlib::do_evaluate(cst);
     if (!rt.error())
         rt.type_error();
     return ERROR;
@@ -222,6 +242,7 @@ HELP_BODY(XlibName)
 // ----------------------------------------------------------------------------
 {
     int key = ui.evaluating;
+    rt.command(o);
     if (object_p cstobj = xlib::do_key(xlib::library, key))
         if (xlib_p cst = cstobj->as<xlib>())
             return cst->help();

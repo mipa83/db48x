@@ -1,5 +1,5 @@
 // ****************************************************************************
-//  expression.cc                                                   DB48X project
+//  expression.cc                                                DB48X project
 // ****************************************************************************
 //
 //   File Description:
@@ -35,6 +35,7 @@
 #include "grob.h"
 #include "integer.h"
 #include "parser.h"
+#include "polynomial.h"
 #include "precedence.h"
 #include "renderer.h"
 #include "settings.h"
@@ -42,23 +43,30 @@
 #include "utf8.h"
 #include "variables.h"
 
-RECORDER(equation,      16, "Processing of equations and algebraic objects");
-RECORDER(equation_error,16, "Errors with equations");
-RECORDER(rewrites,      16, "Expression rewrites");
-RECORDER(rewrites_done, 16, "Successful expression rewrites");
+RECORDER(expression,            16, "Expressions and algebraic objects");
+RECORDER(expression_error,      16, "Errors with expressions");
+RECORDER(rewrites,              16, "Expression rewrites");
+RECORDER(rewrites_done,         16, "Successful expression rewrites");
 
 
-symbol_g *expression::independent       = nullptr;
-object_g *expression::independent_value = nullptr;
-symbol_g *expression::dependent         = nullptr;
-object_g *expression::dependent_value   = nullptr;
-bool      expression::in_algebraic      = false;
+symbol_g *expression::independent                   = nullptr;
+object_g *expression::independent_value             = nullptr;
+symbol_g *expression::dependent                     = nullptr;
+object_g *expression::dependent_value               = nullptr;
+bool      expression::in_algebraic                  = false;
+bool      expression::contains_independent_variable = false;
+uint      expression::constant_index                = 0;
+
+
+// Used to match and build user-defined function calls for deriv/integ
+expression::funcall_match_fn expression::funcall_match = nullptr;
+expression::funcall_build_fn expression::funcall_build = nullptr;
 
 
 
 // ============================================================================
 //
-//    Equation
+//    Expression
 //
 // ============================================================================
 
@@ -76,10 +84,10 @@ EVAL_BODY(expression)
 
 PARSE_BODY(expression)
 // ----------------------------------------------------------------------------
-//    Try to parse this as an equation
+//    Try to parse this as an expression
 // ----------------------------------------------------------------------------
 {
-    // If already parsing an equation, let upper parser deal with quote
+    // If already parsing an expression, let upper parser deal with quote
     if (p.precedence)
         return SKIP;
 
@@ -94,10 +102,10 @@ PARSE_BODY(expression)
 
 HELP_BODY(expression)
 // ----------------------------------------------------------------------------
-//   Help topic for equations
+//   Help topic for expressions
 // ----------------------------------------------------------------------------
 {
-    return utf8("Equations");
+    return utf8("Expressions");
 }
 
 
@@ -128,7 +136,7 @@ symbol_p expression::render(uint depth, int &precedence, bool editing)
 {
     if (rt.depth() <= depth)
     {
-        record(equation_error, "Rendering at depth %u with stack depth %u",
+        record(expression_error, "Rendering at depth %u with stack depth %u",
                depth, rt.depth());
         return nullptr;
     }
@@ -140,7 +148,7 @@ symbol_p expression::render(uint depth, int &precedence, bool editing)
         {
             if (rt.depth() != depth)
             {
-                record(equation_error,
+                record(expression_error,
                        "Rendering %s arity %u at depth %u with stack depth %u",
                        name(obj->type()), arity, depth, rt.depth());
                 return nullptr;
@@ -203,7 +211,16 @@ symbol_p expression::render(uint depth, int &precedence, bool editing)
             symbol_g rtxt = render(depth, rprec, editing);
             symbol_g ltxt = render(depth, lprec, editing);
             int      prec = obj->precedence();
-            if (prec != precedence::FUNCTION)
+            id       oid  = obj->type();
+            if (oid == ID_Derivative || oid == ID_Primitive)
+            {
+                symbol_g arg = parentheses(ltxt);
+                precedence   = precedence::FUNCTION;
+                if (oid == ID_Primitive)
+                    op = symbol::make("∫");
+                return op + rtxt + arg;
+            }
+            else if (prec != precedence::FUNCTION)
             {
                 if (op->is_alpha())
                 {
@@ -219,7 +236,7 @@ symbol_p expression::render(uint depth, int &precedence, bool editing)
             }
             else
             {
-                if (obj->type() == ID_xroot)
+                if (oid == ID_xroot)
                     std::swap(ltxt, rtxt);
                 symbol_g arg = ltxt + symbol::make(';') + rtxt;
                 arg = parentheses(arg);
@@ -268,25 +285,11 @@ size_t expression::render(const expression *o, renderer &r, bool quoted)
 //   1 2 3 5 * + - 2 3 * +
 {
     size_t depth   = rt.depth();
-    bool   ok      = true;
     bool   funcall = o->type() == ID_funcall;
 
     // First push all things so that we have the outermost operators first
-    for (object_p obj : *o)
-    {
-        ASSERT(obj);
-        ok = rt.push(obj);
-        if (!ok)
-            break;
-    }
-
-    if (!ok)
-    {
-        // We ran out of memory pushing things
-        if (size_t remove = rt.depth() - depth)
-            rt.drop(remove);
+    if (!o->expand_without_size())
         return 0;
-    }
 
     int      prec   = 0;
     symbol_g result = render(depth, prec, r.editing());
@@ -326,7 +329,7 @@ size_t expression::render(const expression *o, renderer &r, bool quoted)
         else
         {
             size_t remove = rt.depth() - depth;
-            record(equation_error, "Malformed equation, %u removed", remove);
+            record(expression_error, "Malformed equation, %u removed", remove);
             rt.drop(remove);
         }
     }
@@ -594,16 +597,22 @@ size_t expression::required_memory(id type, id op,
 //
 //   Names of wildcards have a special role based on the initial letter:
 //   - a, b, c: Constant values (numbers), i.e. is_real returns true
+//              c must not be zero when matching, is numbered when generating
 //   - d, e, f: Expressions (non-constant), i.e. is_real returns false
 //   - i, j   : Positive integer values,i.e. type is ID_integer
-//   - k, l, m: Non-zero positive integer values,i.e. type is ID_integer
-//   - s, t   : Symbols, i.e. is_symbol returns true
+//   - k      : Non-zero positive integer values,i.e. type is ID_integer
+//   - l      : Linear function of independent variable,
+//              sets 'a' and 'b'in output for a*x+b
+//   - n, o   : An expression containing the independent variable
+//   - p, q, r: An expression not containing the independent variable
+//              r must not be zero
+//   - s, t   : Symbols, i.e. is_symbol returns true, primed in derivative
 //   - u, v, w: Unique sub-expressions, i.e. u!=v, v!=w, u!=w
 //   - x, y, z: Arbitrary expression, can be identical to one another
 //
 //   Lowercase names must be sorted, i.e. x<=y and u<v.
 
-static expression_p grab_arguments(size_t &eq, size_t &eqsz)
+static object_p grab_arguments(size_t &eq, size_t &eqsz)
 // ----------------------------------------------------------------------------
 //   Fetch an argument using the arity to know how many things to use
 // ----------------------------------------------------------------------------
@@ -620,97 +629,197 @@ static expression_p grab_arguments(size_t &eq, size_t &eqsz)
     }
     if (arity)
     {
-        record(equation, "Argument gets %u beyond size %u", arity, eqsz);
+        record(expression, "Argument gets %u beyond size %u", arity, eqsz);
         return nullptr;
     }
 
     size_t sz = len;
-    while (len--)
+    symbol_p sym = nullptr;
+    if (symbol_g *ref = expression::independent)
+        if (!expression::contains_independent_variable)
+            sym = *ref;
+
+    if (sz == 1)
     {
-        object_p obj = rt.stack(eq + len);
-        if (!rt.append(obj->size(), byte_p(obj)))
-            return nullptr;
+        object_p obj = rt.stack(eq);
+        if (sym && sym->found_in(obj))
+            expression::contains_independent_variable = true;
+        eq += sz;
+        eqsz -= sz;
+        return obj;
+    }
+
+    if (sym)
+    {
+        while (len--)
+        {
+            object_p obj = rt.stack(eq + len);
+            if (sym->found_in(obj))
+                expression::contains_independent_variable = true;
+            if (!rt.append(obj))
+                return nullptr;
+        }
+    }
+    else
+    {
+        while (len--)
+        {
+            object_p obj = rt.stack(eq + len);
+            if (!rt.append(obj))
+                return nullptr;
+        }
     }
     eq += sz;
     eqsz -= sz;
-    list_p list = list::make(object::ID_expression,
-                             scr.scratch(), scr.growth());
-    return expression_p(list);
+    list_p a = list::make(object::ID_expression, scr.scratch(), scr.growth());
+    return a;
 }
 
 
-static bool must_be(symbol_p symbol, char low, char high)
-// ------------------------------------------------------------------------
-//   Check a convention about a symbol
+static inline char wildcard_category(symbol_p symbol)
 // ----------------------------------------------------------------------------
-{
-    uint idx   = 1 + Settings.ExplicitWildcards();
-    char first = tolower(object::payload(symbol)[idx]);
-    return first >= low && first <= high;
-}
-
-
-static inline bool must_be_constant(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for naming numerical constants in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 'a', 'c');
-}
-
-
-static inline bool must_be_non_constant(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for naming non-numerical constants in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 'd', 'f');
-}
-
-
-static inline bool must_be_integer(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for naming integers in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 'i', 'm');
-}
-
-
-static inline bool must_be_nonzero(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for naming non-zero integers in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 'k', 'm');
-}
-
-
-static inline bool must_be_symbol(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for identifying symbols in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 's', 't');
-}
-
-
-static inline bool must_be_unique(symbol_p symbol)
-// ------------------------------------------------------------------------
-//   Convention for naming unique terms in rewrite rules
-// ----------------------------------------------------------------------------
-{
-    return must_be(symbol, 'u', 'w');
-}
-
-
-static bool must_be_sorted(symbol_p symbol)
-// ----------------------------------------------------------------------------
-//   Convention for naming terms in rewrite rules that need to be sorted
+//  The wildcard category is defined by the first letter in the name
 // ----------------------------------------------------------------------------
 {
     uint idx   = 1 + Settings.ExplicitWildcards();
     char first = object::payload(symbol)[idx];
+    return first;
+}
+
+
+static inline bool must_be(char first, char low, char high)
+// ----------------------------------------------------------------------------
+//   Check a convention about a symbol
+// ----------------------------------------------------------------------------
+{
+    return first >= low && first <= high;
+}
+
+
+static inline bool must_be(char first, cstring list)
+// ----------------------------------------------------------------------------
+//   Check a convention about a symbol
+// ----------------------------------------------------------------------------
+{
+    return strchr(list, first);
+}
+
+
+static inline bool must_be_constant(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming numerical constants in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'a', 'c');
+}
+
+
+static inline bool must_be_non_constant(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming non-numerical constants in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'd', 'f');
+}
+
+
+static inline bool must_be_integer(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming integers in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'i', 'k');
+}
+
+
+static inline bool must_be_nonzero(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming non-zero integers in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, "kcr");
+}
+
+
+static inline bool must_be_symbol(char first)
+// ----------------------------------------------------------------------------
+//   Convention for identifying symbols in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 's', 't');
+}
+
+
+static inline bool must_be_unique(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming unique terms in rewrite rules
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'u', 'w');
+}
+
+
+static inline bool must_contain_the_independent_variable(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming an expression that contains independent variable
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'n', 'o');
+}
+
+
+static inline bool must_be_the_independent_variable(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming an expression that contains independent variable
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, '=', '=');
+}
+
+
+static inline bool must_not_contain_the_independent_variable(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming an expression that does not contain independent var
+// ----------------------------------------------------------------------------
+{
+    return must_be(first, 'p', 'r');
+}
+
+
+static inline bool must_be_linear_function_of_independent_variable(char first)
+// ----------------------------------------------------------------------------
+//   Matches a linear function of the independent variable
+// ----------------------------------------------------------------------------
+{
+    return first == 'l';
+}
+
+
+static inline char some_index(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming a constant when generating non-principal solutions
+// ----------------------------------------------------------------------------
+{
+    switch(first)
+    {
+        // See definitions of intk, natk and signk below
+    case '#':   return 'i';
+    case '+':   return 'n';
+    case '-':   return 's';
+    case 'c':   return 'C';
+    case '@':   return '@';     // Pi
+    case '!':   return '!';     // i
+    case '=':   return '=';     // Current independent variable
+    default: return 0;
+    }
+}
+
+
+static bool must_be_sorted(char first)
+// ----------------------------------------------------------------------------
+//   Convention for naming terms in rewrite rules that need to be sorted
+// ----------------------------------------------------------------------------
+{
     return first >= 'a' && first <= 'z';
 }
 
@@ -723,6 +832,7 @@ static size_t check_match(size_t eq, size_t eqsz,
 {
     size_t eqs = eq;
     size_t locals = rt.locals();
+
     while (fromsz && eqsz && !program::interrupted())
     {
         // Check what we match against
@@ -749,6 +859,7 @@ static size_t check_match(size_t eq, size_t eqsz,
             }
 
             // Get the value matching the symbol
+            expression::contains_independent_variable = false;
             ftop = grab_arguments(eq, eqsz);
             if (!ftop)
                 return 0;
@@ -756,9 +867,11 @@ static size_t check_match(size_t eq, size_t eqsz,
             if (!found)
             {
                 // Check if we expect an integer value
-                bool want_cst = must_be_constant(name);
-                bool want_int = must_be_integer(name);
-                bool want_var = must_be_non_constant(name);
+                char wcat     = wildcard_category(name);
+                char cat      = tolower(wcat);
+                bool want_cst = must_be_constant(cat);
+                bool want_int = must_be_integer(cat);
+                bool want_var = must_be_non_constant(cat);
                 if (want_cst || want_int || want_var)
                 {
                     // At this point, if we have a numerical value, it was
@@ -779,12 +892,12 @@ static size_t check_match(size_t eq, size_t eqsz,
                     if ((want_int && fty != object::ID_integer)         ||
                         (want_cst && !object::is_real(fty))             ||
                         (want_var && object::is_real(fty))              ||
-                        (must_be_nonzero(name) && ftop->is_zero()))
+                        (must_be_nonzero(cat) && ftop->is_zero(false)))
                         return 0;
                 }
 
                 // Check if the name must be unique in the locals
-                else if (must_be_unique(name))
+                else if (must_be_unique(cat))
                 {
                     for (size_t l = 0; l < symbols; l += 2)
                     {
@@ -793,19 +906,76 @@ static size_t check_match(size_t eq, size_t eqsz,
                             return 0;
                     }
                 }
-                else if (must_be_symbol(name))
+                else if (must_be_symbol(cat))
                 {
                     if (!ftop->as_quoted<symbol>())
                         return 0;
                 }
+                else if (must_be_the_independent_variable(cat))
+                {
+                    bool isvar = false;
+                    if (expression::independent)
+                        if (symbol_p ivar = *expression::independent)
+                            if (symbol_p sym = ftop->as_quoted<symbol>())
+                                isvar = sym->is_same_as(ivar);
+                    if (!isvar)
+                        return 0;
+                }
+                else if (must_contain_the_independent_variable(cat))
+                {
+                    if (!expression::contains_independent_variable)
+                        return 0;
+                }
+                else if (must_not_contain_the_independent_variable(cat))
+                {
+                    if (expression::contains_independent_variable)
+                        return 0;
+                    if (must_be_nonzero(cat) && ftop->is_zero(false))
+                        return 0;
+                }
+                else if (must_be_linear_function_of_independent_variable(cat))
+                {
+                    if (!expression::contains_independent_variable)
+                        return 0;
+                    bool isok = false;
+                    algebraic_g a, b;
+                    if (expression::independent)
+                    {
+                        if (symbol_g ivar = *expression::independent)
+                        {
+                            if (symbol_p s = ftop->as_quoted<symbol>())
+                            {
+                                isok = s->is_same_as(ivar);
+                                if (isok)
+                                {
+                                    a = integer::make(1);
+                                    b = integer::make(0);
+                                }
+                            }
+                            expression_p x = expression::as_expression(ftop);
+                            if (x && x->is_linear(ivar, a, b))
+                                isok = true;
+                        }
+                    }
+                    if (!isok)
+                        return 0;
+                    symbol_g an = symbol::make("A");
+                    symbol_g bn = symbol::make("B");
+                    if (!an || !bn ||
+                        !rt.push(+an) || !rt.push(+a) ||
+                        !rt.push(+bn) || !rt.push(+b) ||
+                        !rt.locals(4))
+                        return 0;
+                }
 
                 // Check if things must be sorted
-                if (must_be_sorted(name))
+                if (must_be_sorted(wcat))
                 {
                     for (size_t l = 0; l < symbols; l += 2)
                     {
                         symbol_p ename = symbol_p(rt.local(l));
-                        if (must_be_sorted(ename))
+                        char ecat = wildcard_category(ename);
+                        if (must_be_sorted(ecat))
                         {
                             object_p existing = rt.local(l+1);
                             if (!existing)
@@ -833,10 +1003,29 @@ static size_t check_match(size_t eq, size_t eqsz,
         }
         else
         {
-            // If not a symbol, we need an exact match
+            // Not a symbol. Check if this exists at all
             object_p top = rt.stack(eq);
-            if (!top || !top->is_same_as(ftop))
+            if (!top)
                 return 0;
+
+            // If it's a function call, need to match its arguemnts
+            if (fty == object::ID_funcall)
+            {
+                if (top->type() != object::ID_funcall)
+                    return 0;
+                if (!expression::funcall_match)
+                    return 0;
+                funcall_p fcftop = funcall_p(+ftop);
+                funcall_p fctop = funcall_p(+top);
+                size_t fcmatch = expression::funcall_match(fcftop, fctop);
+                if (!fcmatch)
+                    return 0;
+            }
+            // If not a symbol, we need an exact match
+            else if (!top->is_same_as(ftop))
+            {
+                return 0;
+            }
             eq++;
             eqsz--;
         }
@@ -854,13 +1043,13 @@ static size_t check_match(size_t eq, size_t eqsz,
 }
 
 
-static inline algebraic_p build_expr(expression_p eqin,
-                                     uint         eqst,
-                                     expression_r to,
-                                     uint         matchsz,
-                                     uint         locals,
-                                     uint        &rwcount,
-                                     bool        &replaced)
+static algebraic_p build_expr(expression_p eqin,
+                              uint         eqst,
+                              expression_r to,
+                              uint         matchsz,
+                              uint         locals,
+                              uint        &rwcount,
+                              bool        &replaced)
 // ----------------------------------------------------------------------------
 //   Build an expression by rewriting
 // ----------------------------------------------------------------------------
@@ -868,7 +1057,7 @@ static inline algebraic_p build_expr(expression_p eqin,
     scribble     scr;
     expression_g eq       = eqin;
     size_t       where    = 0;
-    bool         compute  = +eq == +to;
+    object::id   eqty     = to->type();
 
     // Copy from the original
     for (expression::iterator it = eq->begin(); it != eq->end(); ++it)
@@ -878,41 +1067,121 @@ static inline algebraic_p build_expr(expression_p eqin,
         {
             // Copy from source equation directly
             object_p obj = *it;
-            if (!rt.append(obj->size(), byte_p(obj)))
+            if (!rt.append(obj))
                 return nullptr;
         }
         else if (!replaced)
         {
             // Insert a version of 'to' where symbols are replaced
+            uint     nvars      = 0;
+            uint     nconstants = 0;
+            size_t   begin      = scr.growth();
             for (object_p tobj : *to)
             {
                 if (tobj->type() == object::ID_symbol)
                 {
                     // Check if we find the matching pattern in local
-                    symbol_p name    = symbol_p(tobj);
-                    object_p found   = nullptr;
-                    size_t   symbols = rt.locals() - locals;
-                    for (size_t l = 0; !found && l < symbols; l += 2)
+                    symbol_p name  = symbol_p(tobj);
+                    char     cat   = tolower(wildcard_category(name));
+                    object_p found = nullptr;
+
+                    if (char c = some_index(cat))
                     {
-                        symbol_p existing = symbol_p(rt.local(l));
-                        if (!existing)
-                            continue;
-                        if (existing->is_same_as(name))
-                            found = rt.local(l+1);
+                        if (c == '@')
+                        {
+                            found = constant::lookup("π");
+                            nvars++;
+                            nconstants++;
+                        }
+                        else if (c == '!')
+                        {
+                            found = constant::lookup("ⅈ");
+                            nvars++;
+                            nconstants++;
+                        }
+                        else if (c == '=')
+                        {
+                            found = expression::independent
+                                ? *expression::independent
+                                : nullptr;
+                            nvars++;
+                        }
+                        else
+                        {
+                            char buf[24];
+                            snprintf(buf, sizeof(buf),
+                                     "%c%u", c, ++expression::constant_index);
+                            found = symbol::make(buf);
+                            nvars++;
+                        }
                     }
+                    else
+                    {
+                        size_t   symbols = rt.locals() - locals;
+                        for (size_t l = 0; !found && l < symbols; l += 2)
+                        {
+                            symbol_p existing = symbol_p(rt.local(l));
+                            if (!existing)
+                                continue;
+                            if (existing->is_same_as(name))
+                                found = rt.local(l+1);
+                        }
+                        nvars++;
+                    }
+
                     if (found)
                     {
+                        if (must_be_integer(cat)|| must_be_constant(cat))
+                            nconstants++;
                         tobj = found;
-                        if (must_be_integer(name)|| must_be_constant(name))
-                            compute = true;
+
                     }
                 }
 
                 // Only copy the payload of equations
                 size_t tobjsize = tobj->size();
-                if (expression_p teq = tobj->as<expression>())
-                    tobj = teq->objects(&tobjsize);
+                object::id tty = tobj->type();
+                if (tty == object::ID_funcall)
+                {
+                    object_p srcobj = *it;
+                    if (srcobj->type() != tty || !expression::funcall_build)
+                        return nullptr;
+
+                    funcall_p src = funcall_p(srcobj);
+                    funcall_p repl = funcall_p(tobj);
+                    algebraic_p a = expression::funcall_build(src, repl);
+                    if (!a)
+                        return nullptr;
+                    tobj = +a;
+                    tobjsize = tobj->size();
+                    tty = tobj->type();
+                }
+                if (tty == object::ID_expression)
+                {
+                    tobj = expression_p(tobj)->objects(&tobjsize);
+                }
+                if (object::is_real(tty))
+                {
+                    nvars++;
+                    nconstants++;
+                }
                 if (!rt.append(tobjsize, byte_p(tobj)))
+                    return nullptr;
+            }
+
+            // Check if we need to compute a sub-expression, e.g 3-1 = 2
+            if (nvars >= 2 && nvars == nconstants)
+            {
+                byte_p start = scr.scratch() + begin;
+                size_t len = scr.growth() - begin;
+                expression_g sub = expression_p(list::make(eqty, start, len));
+                if (!sub)
+                    return nullptr;
+                algebraic_g value = sub->evaluate();
+                if (!value)
+                    return nullptr;
+                rt.free(len);
+                if (!rt.append(value))
                     return nullptr;
             }
 
@@ -923,31 +1192,7 @@ static inline algebraic_p build_expr(expression_p eqin,
     }
 
     // Restart anew with replaced equation
-    eq = expression_p(list::make(object::ID_expression,
-                                 scr.scratch(), scr.growth()));
-
-    if (eq)
-    {
-        // If we had an integer matched and replaced, execute equation
-        if (compute)
-        {
-            // Need to evaluate e.g. 3-1 to get 2
-            size_t depth = rt.depth();
-            if (eq->run() == object::OK)
-            {
-                if (rt.depth() == depth+1)
-                {
-                    if (object_p computed = rt.pop())
-                    {
-                        if (algebraic_g eqa = computed->as_algebraic())
-                            return eqa;
-                    }
-                }
-            }
-            eq = nullptr;
-        }
-    }
-
+    eq = expression_p(list::make(eqty, scr.scratch(), scr.growth()));
     return +eq;
 }
 
@@ -967,6 +1212,9 @@ static size_t check_match(size_t eq, size_t eqsz,
     bool condrepl = false;
     algebraic_g cval = build_expr(cond, 0, cond, ~0U,
                                   locals, condrw, condrepl);
+    if (!cval)
+        return 0;
+    cval = cval->evaluate();
     if (!cval)
         return 0;
     int rc = cval->as_truth(false);
@@ -1017,15 +1265,13 @@ expression_p expression::rewrite(expression_r from,
         replaced = false;
 
         // Expand 'from' on the stack and remember where it starts
-        for (object_p obj : *from)
-            if (!rt.push(obj))
-                goto err;
+        if (!from->expand_without_size())
+            goto err;
         fromsz = rt.depth() - depth;
 
         // Expand this equation on the stack, and remember where it starts
-        for (object_p obj : *eq)
-            if (!rt.push(obj))
-                goto err;
+        if (!eq->expand_without_size())
+            goto err;
         eqsz = rt.depth() - depth - fromsz;
 
         // Keep checking sub-expressions until we find a match
@@ -1384,7 +1630,7 @@ grob_p expression::parentheses(grapher &g, grob_g what, uint padding)
     pixsize hh     = rh / 2;
     pixsize hh2    = hh * hh;
 
-    grob_g result = g.grob(rw, rh);
+    grob_g  result = g.grob(rw, rh);
     if (!result)
         return nullptr;
 
@@ -1427,9 +1673,9 @@ grob_p expression::abs_norm(grapher &g, grob_g what, uint padding)
     pixsize inw    = what->width();
     pixsize inh    = what->height();
     pixsize asz    = 2;
-    pixsize rw     = inw + 2 * (asz + padding);
+    pixsize rw     = inw + 2 * (asz + 2*padding);
     pixsize rh     = inh;
-    pixsize rx     = rw - asz;
+    pixsize rx     = rw - asz - padding;
 
     grob_g result = g.grob(rw, rh);
     if (!result)
@@ -1439,8 +1685,8 @@ grob_p expression::abs_norm(grapher &g, grob_g what, uint padding)
     grob::surface ws = what->pixels();
     grob::surface rs = result->pixels();
     rs.fill(0, 0, rw, rh, g.background);
-    rs.copy(ws, asz + padding, 0);
-    rs.fill(0, 0, asz-1, rh-3, g.foreground);
+    rs.copy(ws, asz + 2*padding, 0);
+    rs.fill(padding, 0, padding + asz-1, rh-3, g.foreground);
     rs.fill(rx, 0, rx+asz-1, rh-3, g.foreground);
 
     return result;
@@ -1574,9 +1820,9 @@ grob_p expression::infix(grapher &g,
     coord   xt = -vx - xh / 2;
     coord   yt = -vy - yh / 2;
     coord   st = -vs - sh / 2;
-    coord   xb = -vx + xh / 2 - 1;
-    coord   yb = -vy + yh / 2 - 1;
-    coord   sb = -vs + sh / 2 - 1;
+    coord   xb = xt + xh - 1;
+    coord   yb = yt + yh - 1;
+    coord   sb = st + sh - 1;
 
     coord t = xt;
     if (t > yt)
@@ -1634,9 +1880,9 @@ grob_p expression::suscript(grapher &g,
     pixsize yh     = y->height();
     pixsize gw     = xw + yw;
 
-    coord   voff   = (1 - dir) * xh / 2;
+    coord   voff   = (1 - dir) * xh / 2 + vx;
     coord   xt     = -vx - xh / 2;
-    coord   yt     = -vy + xt + voff - yh / 2;
+    coord   yt     = -vy - yh / 2 + xt + voff;
     coord   xb     = xt + xh - 1;
     coord   yb     = yt + yh - 1;
     coord   t      = xt < yt ? xt : yt;
@@ -1657,8 +1903,7 @@ grob_p expression::suscript(grapher &g,
     if (alignleft)
         g.voffset = xt - t + coord(xh)/2 - coord(gh)/2;
     else
-        g.voffset = yt - t + coord(yh)/2 - coord(gh)/2 + vy;
-
+        g.voffset = yt - t + coord(yh)/2 - coord(gh)/2;
 
     return result;
 }
@@ -1901,7 +2146,7 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
 {
     if (rt.depth() <= depth)
     {
-        record(equation_error, "Graphing at depth %u with stack depth %u",
+        record(expression_error, "Graphing at depth %u with stack depth %u",
                depth, rt.depth());
         return nullptr;
     }
@@ -1913,7 +2158,7 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
         {
             if (rt.depth() != depth)
             {
-                record(equation_error,
+                record(expression_error,
                        "Graphing %s arity %u at depth %u with stack depth %u",
                        name(obj->type()), arity, depth, rt.depth());
                 return nullptr;
@@ -1939,8 +2184,9 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
                 g.reduce_font();
             grob_g   arg  = graph(g, depth, argp);
             coord    va   = g.voffset;
-            int      maxp = oid == ID_neg ? precedence::MULTIPLICATIVE
-                : precedence::SYMBOL;
+            int      maxp = (oid == ID_neg
+                             ? precedence::MULTIPLICATIVE
+                             : precedence::SYMBOL);
             bool paren = (argp < maxp &&
                           oid != ID_sqrt && oid != ID_inv && oid != ID_abs &&
                           oid != ID_exp && oid != ID_exp10 && oid != ID_exp2 &&
@@ -1960,7 +2206,7 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
                 precedence = precedence::FUNCTION_POWER;
                 return suscript(g, va, arg, 0, "3");
             case ID_abs:
-                precedence = precedence::FUNCTION_POWER;
+                precedence = precedence::SYMBOL;
                 return abs_norm(g, arg);
             case ID_exp:
                 precedence = precedence::FUNCTION_POWER;
@@ -1996,6 +2242,7 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
             default:
                 break;
             }
+
             g.voffset = 0;
             grob_g fn = obj->graph(g);
             coord  vf = g.voffset;
@@ -2037,10 +2284,10 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
             {
                 if (lprec < prec)
                     lg = parentheses(g, lg);
-                if (oid != ID_pow)
-                    if (rprec < prec ||
-                        (rprec == prec && (oid == ID_sub || oid == ID_div)))
-                        rg = parentheses(g, rg);
+                if (oid != ID_pow &&
+                    (rprec < prec ||
+                     (rprec == prec && (oid == ID_sub || oid == ID_div))))
+                    rg = parentheses(g, rg);
             }
             precedence = prec;
             switch (oid)
@@ -2062,6 +2309,23 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
                 rv = g.voffset;
                 lg = suscript(g, 0, oid == ID_comb ? "C" : "P", rv, rg, -1);
                 return lg;
+            case ID_Derivative:
+                rg = prefix(g, 0, "∂", rv, rg);
+                rg = ratio(g, "∂", rg);
+                rv = g.voffset;
+                lg = prefix(g, rv, rg, lv, lg);
+                return lg;
+            case ID_Primitive:
+                rg = prefix(g, 0, "d", rv, rg);
+                rv = g.voffset;
+                rg = prefix(g, lv, lg, rv, rg);
+                rv = g.voffset;
+                if (rg)
+                {
+                    lg = integral(g, rg->height());
+                    rg = suscript(g, 0, lg, rv, rg, false);
+                }
+                return rg;
 
             default: break;
             }
@@ -2143,26 +2407,12 @@ GRAPH_BODY(expression)
 {
     expression_g expr  = o;
     size_t       depth = rt.depth();
-    bool         ok    = true;
     bool         funcall = o->type() == ID_funcall;
     save<bool>   sexpr(g.expression, true);
 
     // First push all things so that we have the outermost operators first
-    for (object_p obj : *expr)
-    {
-        ASSERT(obj);
-        ok = rt.push(obj);
-        if (!ok)
-            break;
-    }
-
-    if (!ok)
-    {
-        // We ran out of memory pushing things
-        if (size_t remove = rt.depth() - depth)
-            rt.drop(remove);
+    if (!expr->expand_without_size())
         return nullptr;
-    }
 
     int    prec   = 0;
     grob_g result = graph(g, depth, prec);
@@ -2198,17 +2448,35 @@ GRAPH_BODY(expression)
             args = parentheses(g, args);
             if (!args)
                 return nullptr;
-            voffs = g.voffset;
             result = prefix(g, vr, result, voffs, args);
         }
         else
         {
             size_t remove = rt.depth() - depth;
-            record(equation_error, "Malformed equation, %u removed", remove);
+            record(expression_error, "Malformed equation, %u removed", remove);
             rt.drop(remove);
         }
     }
     return result;
+}
+
+
+expression_p expression::as_expression(object_p obj)
+// ----------------------------------------------------------------------------
+//   Convert an object to an expression, including polynomials and equations
+// ----------------------------------------------------------------------------
+{
+    if (!obj)
+        return nullptr;
+    if (expression_p expr = obj->as<expression>())
+        return expr;
+    if (equation_p eqn = obj->as<equation>())
+        return as_expression(eqn->value());
+    if (polynomial_p poly = obj->as<polynomial>())
+        return as_expression(poly->as_expression());
+    if (algebraic_g alg = obj->as_algebraic())
+        return make(alg);
+    return nullptr;
 }
 
 
@@ -2247,6 +2515,129 @@ expression_p expression::current_equation(bool error)
     }
     expression_p eq = expression_p(obj);
     return eq;
+}
+
+
+object::result expression::variable_command(command_fn callback)
+// ----------------------------------------------------------------------------
+//   Process a command that applies to a variable name
+// ----------------------------------------------------------------------------
+{
+    if (object_p exprobj = rt.stack(1))
+        if (expression_g expr = expression::as_expression(exprobj))
+            if (object_p varobj = rt.stack(0))
+                if (symbol_g var = varobj->as_quoted<symbol>())
+                    if (expression_p res = (expr->*callback)(var))
+                        if (rt.drop() && rt.top(res))
+                            return OK;
+
+    if (!rt.error())
+        rt.type_error();
+    return ERROR;
+}
+
+
+bool expression::is_linear(symbol_r sym, algebraic_g &a, algebraic_g &b) const
+// ----------------------------------------------------------------------------
+//   Check if the expression is linear in the current independent variable
+// ----------------------------------------------------------------------------
+//   Note that this returns false if we only have constants
+{
+    if (!depends_on(sym))
+        return false;
+
+    object_p op = outermost_operator();
+    if (!op)
+        return false;
+
+    id type = op->type();
+
+    if (type == ID_symbol)
+    {
+        bool ok = symbol_p(op)->is_same_as(sym);
+        if (ok)
+        {
+            a = integer::make(1);
+            b = integer::make(0);
+        }
+        return ok;
+
+    }
+
+    if (type == ID_add || type == ID_sub || type == ID_mul || type == ID_div)
+    {
+        expression_g l, r;
+        if (split(type, l, r))
+        {
+            bool lcst = !l->depends_on(sym);
+            bool rcst = !r->depends_on(sym);
+            if (lcst)
+            {
+                if (rcst)
+                    return false;
+                if (r->is_linear(sym, a, b))
+                {
+                    algebraic_g t = l->evaluate();
+                    switch(type)
+                    {
+                    case ID_add: b = t + b; break;
+                    case ID_sub: b = t - b; break;
+                    case ID_mul: b = t * b; a = t * a; break;
+                    default:
+                    case ID_div: return false;
+                    }
+                    return a && b;
+                }
+                return false;
+            }
+            if (rcst)
+            {
+                if (l->is_linear(sym, a, b))
+                {
+                    algebraic_g t = r->evaluate();
+                    switch(type)
+                    {
+                    case ID_add: b = b + t; break;
+                    case ID_sub: b = b - t; break;
+                    case ID_mul: b = b * t; a = a * t; break;
+                    case ID_div: b = b / t; a = a / t; break;
+                    default:     return false;
+                    }
+                    return a && b;
+                }
+                return false;
+            }
+
+            if (l->is_linear(sym, a, b))
+            {
+                algebraic_g ra, rb;
+                if (r->is_linear(sym, ra, rb))
+                {
+                    switch(type)
+                    {
+                    case ID_add: a = a + ra; b = b + rb; break;
+                    case ID_sub: a = a - ra; b = b - rb; break;
+                    case ID_mul:
+                    case ID_div:
+                    default:     return false;
+                    }
+                    return a && b;
+                }
+            }
+        }
+        return false;
+    }
+
+    return false;
+}
+
+
+bool expression::depends_on(symbol_r sym) const
+// ----------------------------------------------------------------------------
+//   Return true if the symbol is referenced in expression
+// ----------------------------------------------------------------------------
+{
+    return sym->found_in(this);
 }
 
 
@@ -2310,14 +2701,8 @@ PARSE_BODY(funcall)
             return ERROR;
         parsed += child.length;
 
-        size_t objsize = obj->size();
-        if (expression_p eq = obj->as<expression>())
-            obj = eq->objects(&objsize);
-
-        byte *objcopy = rt.allocate(objsize);
-        if (!objcopy)
+        if (!rt.append_expression(obj))
             return ERROR;
-        memmove(objcopy, (byte *) obj, objsize);
 
         source = p.source;      // In case of GC
         cp = utf8_codepoint(source + parsed);
@@ -2336,11 +2721,8 @@ PARSE_BODY(funcall)
     }
 
     // Copy the name last
-    size_t calleesize = callee->size();
-    byte *calleecopy = rt.allocate(calleesize);
-    if (!calleecopy)
+    if (!rt.append(callee))
         return ERROR;
-    memmove(calleecopy, (byte *) callee, calleesize);
 
     // Create the function call object
     gcbytes scratch = scr.scratch();
@@ -2357,6 +2739,58 @@ EVAL_BODY(funcall)
 // ----------------------------------------------------------------------------
 {
     return o->run(true);
+}
+
+
+array_p funcall::args() const
+// ----------------------------------------------------------------------------
+//   Return an array with the arguments to the funcall
+// ----------------------------------------------------------------------------
+{
+    stack_depth_restore sdr;
+
+    // Build list of arguments
+    if (!expand_without_size())
+        return nullptr;
+    scribble scr;
+    while (object_p obj = arg(sdr.depth))
+        if (!rt.append(obj))
+            return nullptr;
+    if (rt.depth() > sdr.depth)
+        return nullptr;
+
+    array_g a = array_p(list::make(ID_array, scr.scratch(), scr.growth()));
+
+    // Put arguments back in correct order
+    if (!a->expand_without_size())
+        return nullptr;
+    size_t nitems = rt.depth() - sdr.depth - 1;
+    size_t nhalf = nitems / 2;
+    for (size_t i = 0; i < nhalf; i++)
+    {
+        object_p lo = rt.stack(i);
+        object_p hi = rt.stack(nitems + ~i);
+        rt.stack(i, hi);
+        rt.stack(nitems + ~i, lo);
+    }
+
+    a = array::from_stack(nitems + 1, 0);
+    return a;
+}
+
+
+object_p funcall::arg(uint depth) const
+// ----------------------------------------------------------------------------
+//   Return the outermost argument found in a function call
+// ----------------------------------------------------------------------------
+{
+    if (rt.depth() <= depth)
+        return nullptr;
+    size_t sz = rt.depth() - depth;
+    size_t eq = 0;
+    object_p result = grab_arguments(eq, sz);
+    rt.drop(eq);
+    return result;
 }
 
 
@@ -2398,14 +2832,10 @@ COMMAND_BODY(Apply)
                 scribble scr;
                 size_t argsize = 0;
                 object_p argsrc = lst->objects(&argsize);
-                if (byte *argcopy = rt.allocate(argsize))
+                if (rt.append(argsrc, argsize))
                 {
-                    memmove(argcopy, byte_p(argsrc), argsize);
-                    size_t calleesize = callee->size();
-                    if (byte *calleecopy = rt.allocate(calleesize))
+                    if (rt.append(callee))
                     {
-                        memmove(calleecopy, byte_p(callee), calleesize);
-
                         gcbytes scratch = scr.scratch();
                         size_t  alloc   = scr.growth();
                         callee = rt.make<funcall>(ID_funcall, scratch, alloc);
@@ -2510,8 +2940,13 @@ static eq_symbol<'j'>     j;
 static eq_symbol<'k'>     k;    // Positive non-zero integers
 static eq_symbol<'l'>     l;
 static eq_symbol<'m'>     m;
-static eq_symbol<'n'>     s;    // Symbols
-static eq_symbol<'o'>     t;
+static eq_symbol<'n'>     n;    // Contains independent variable
+static eq_symbol<'o'>     o;
+static eq_symbol<'p'>     p;    // Other, does not contain independent variable
+static eq_symbol<'q'>     q;
+static eq_symbol<'r'>     r;
+static eq_symbol<'s'>     s;    // Symbols
+static eq_symbol<'t'>     t;
 static eq_symbol<'u'>     u;    // Unique subexpressions
 static eq_symbol<'v'>     v;
 static eq_symbol<'w'>     w;
@@ -2519,7 +2954,7 @@ static eq_symbol<'x'>     x;    // Any subexpression
 static eq_symbol<'y'>     y;
 static eq_symbol<'z'>     z;
 
-// Wildcards that must be sorted
+// Wildcards that need not be sorted (e.g. matches if A<B or A>B)
 static eq_symbol<'A'>     A;    // Numerical constants
 static eq_symbol<'B'>     B;
 static eq_symbol<'C'>     C;
@@ -2531,8 +2966,13 @@ static eq_symbol<'J'>     J;
 static eq_symbol<'K'>     K;    // Positive non-zero integers
 static eq_symbol<'L'>     L;
 static eq_symbol<'M'>     M;
-static eq_symbol<'N'>     S;    // Symbols
-static eq_symbol<'O'>     T;
+static eq_symbol<'N'>     N;    // Contains independent variable
+static eq_symbol<'O'>     O;
+static eq_symbol<'P'>     P;    // Other, does not contain independent variable
+static eq_symbol<'Q'>     Q;
+static eq_symbol<'R'>     R;
+static eq_symbol<'S'>     S;    // Symbols
+static eq_symbol<'T'>     T;
 static eq_symbol<'U'>     U;    // Unique subexpressions
 static eq_symbol<'V'>     V;
 static eq_symbol<'W'>     W;
@@ -2547,7 +2987,67 @@ static eq_integer<1>      one;
 static eq_integer<2>      two;
 static eq_integer<3>      three;
 static eq_integer<4>      four;
+static eq_integer<10>     ten;
 static eq_always          always;
+
+// Sign and integer value for non-princpal solutions, see some_index() function
+static eq_symbol<'#'>     intk;
+static eq_symbol<'+'>     natk;
+static eq_symbol<'-'>     signk;
+static eq_symbol<'@'>     kpi;
+static eq_symbol<'!'>     ki;
+static eq_symbol<'='>     indep;
+
+
+bool expression::split_equation(expression_g &left, expression_g &right) const
+// ----------------------------------------------------------------------------
+//   Split an expression between left and right parts
+// ----------------------------------------------------------------------------
+{
+    return split(ID_TestEQ, left, right);
+}
+
+
+bool expression::split(id type, expression_g &left, expression_g &right) const
+// ----------------------------------------------------------------------------
+//   Split around a binary operator
+// ----------------------------------------------------------------------------
+{
+    stack_depth_restore sdr;
+    bool                result = false;
+
+    if (!expand_without_size())
+        return false;
+
+    if (rt.depth() > sdr.depth)
+    {
+        if (object_p outer = rt.top())
+        {
+            if (outer->type() == type)
+            {
+                size_t eq = 1;
+                size_t len = rt.depth() - sdr.depth - eq;
+                if (object_g r = grab_arguments(eq, len))
+                {
+                    if (object_g l = grab_arguments(eq, len))
+                    {
+                        expression_g ra = expression::as_expression(r);
+                        expression_g la = expression::as_expression(l);
+                        if (la && ra)
+                        {
+                            right = ra;
+                            left = la;
+                            result = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
 
 expression_p expression::as_difference_for_solve() const
 // ----------------------------------------------------------------------------
@@ -2555,25 +3055,11 @@ expression_p expression::as_difference_for_solve() const
 // ----------------------------------------------------------------------------
 //   Revisit: how to transform A and B, A or B, e.g. A=B and C=D ?
 {
-    return rewrites(X == Y, X - Y);
-}
-
-
-expression_p expression::left_of_equation() const
-// ----------------------------------------------------------------------------
-//   For the solver, transform A=B into A
-// ----------------------------------------------------------------------------
-{
-    return rewrites(X == Y, X);
-}
-
-
-expression_p expression::right_of_equation() const
-// ----------------------------------------------------------------------------
-//   For the solver, transform A=B into A
-// ----------------------------------------------------------------------------
-{
-    return rewrites(X == Y, Y);
+    expression_g left = this;
+    expression_g right;
+    if (split_equation(left, right))
+        return expression::make(ID_sub, +left, +right);
+    return left;
 }
 
 
@@ -2614,10 +3100,8 @@ expression_p expression::expand() const
         // Group terms
         v + u,          u + v,
         X + v + u,      X + u + v,
-        A + X,          X + A,
         v * u,          u * v,
         X * v * u,      X * u * v,
-        X * A,          A * X,
 
         // Sign change simplifications
         X + (-Y),       X - Y,
@@ -2700,10 +3184,8 @@ expression_p expression::collect() const
         X + (-Y),       X - Y,
 
         // Group terms
-        X * A,          A * X,
         X * v * u,      X * u * v,
         v * u,          u * v,
-        A + X,          X + A,
         X + v + u,      X + u + v,
         v + u,          u + v,
 
@@ -2983,18 +3465,13 @@ static expression_p substitute(expression_r pattern,
         symbol_p oname = obj->as<symbol>();
         if (oname && name->is_same_as(oname))
         {
-            byte *objcopy = rt.allocate(replsz);
-            if (!objcopy)
+            if (!rt.append(replobj, replsz))
                 return nullptr;
-            memmove(objcopy, +replobj, replsz);
         }
         else
         {
-            size_t sz = obj->size();
-            byte *objcopy = rt.allocate(sz);
-            if (!objcopy)
+            if (!rt.append(obj))
                 return nullptr;
-            memmove(objcopy, +obj, sz);
         }
     }
     expression_g result = expression_p(list::make(object::ID_expression,
@@ -3009,17 +3486,14 @@ static expression_p substitute(expression_r pattern,
 //   Run a rewrite up or down
 // ----------------------------------------------------------------------------
 {
-    expression_g from = repl->left_of_equation();
-    expression_g to = repl->right_of_equation();
-    if (!from || !to)
-        return nullptr;
-    symbol_g name = from->as_quoted<symbol>();
-    if (+from == +to || !name)
-    {
+    expression_g from, to;
+    if (repl->split_equation(from, to))
+        if (symbol_g name = from->as_quoted<symbol>())
+            return substitute(pattern, name, to);
+
+    if (!rt.error())
         rt.value_error();
-        return nullptr;
-    }
-    return substitute(pattern, name, to);
+    return nullptr;
 }
 
 
@@ -3028,12 +3502,12 @@ NFUNCTION_BODY(Subst)
 //   Perform a substitution without evaluating the resulting expression
 // ----------------------------------------------------------------------------
 {
-    if (expression_g pat = args[1]->as<expression>())
-        if (expression_g repl = args[0]->as<expression>())
-            return substitute(pat, repl);
-
     if (args[1]->is_real() || args[1]->is_complex())
         return args[1];
+
+    if (expression_g pat = expression::as_expression(args[1]))
+        if (expression_g repl = expression::as_expression(args[0]))
+            return substitute(pat, repl);
 
     rt.type_error();
     return nullptr;
@@ -3114,4 +3588,658 @@ COMMAND_BODY(Where)
     if (!rt.error())
         rt.type_error();
     return ERROR;
+}
+
+
+expression_p expression::isolate(symbol_r sym) const
+// ----------------------------------------------------------------------------
+//   Isolate the variable in the expression
+// ----------------------------------------------------------------------------
+{
+    save<symbol_g *> sindep(independent, (symbol_g *) &sym);
+    save<object_g *> sindval(independent_value, nullptr);
+    save<uint>       sconstant(constant_index, 0);
+    expression_g eq = this;
+    if (eq)
+    {
+        expression_g left, right;
+        if (!split_equation(left, right))
+        {
+            algebraic_g l = +eq;
+            algebraic_g r = zero.as_expression();
+            eq = expression::make(ID_TestEQ, l, r);
+        }
+        if (left)
+            if (symbol_p lsym = left->as_quoted<symbol>())
+                if (lsym->is_same_as(sym))
+                    if (eq->rewrites(N==P, one) != eq)
+                        return eq;
+    }
+    if (!eq)
+        return nullptr;
+
+    expression_g result = Settings.PrincipalSolution()
+        ? eq->rewrites(
+            // Move the independent variable to the left
+            P == N,                 N == P,
+            N == O + P,             N - O == P,
+            N == P + O,             N - O == P,
+            N == O - P,             N - O == -P,
+            N == P - O,             N + O == P,
+            N == O * P,             N / O == P,
+            N == P * O,             N / O == P,
+            N == O / P,             N / O == inv(P),
+            N == P / O,             N * O == P,
+
+            // Binary operations
+            N + Q == P,             N == P - Q,
+            Q + N == P,             N == P - Q,
+            N - Q == P,             N == P + Q,
+            Q - N == P,             N == Q - P,
+            N * Q == P,             N == P / Q,
+            Q * N == P,             N == P / Q,
+            N / Q == P,             N == P * Q,
+            Q / N == P,             N == Q / P,
+            (N ^ Q) == P,           N == (P ^ inv(Q)),
+            (Q ^ N) == P,           N == log(P) / log(Q),
+
+            // Basic simplifications
+            N + N == P,             N == P / two,
+            N + Q*N == P,           N == P / (one + Q),
+            Q*N + N == P,           N == P / (one + Q),
+            Q*N + R*N == P,         N == P / (Q+R),
+            N - N == P,             zero == P,
+            N - Q*N == P,           N == P / (one - Q),
+            Q*N - N == P,           N == P / (Q - one),
+            Q*N - R*N == P,         N == P / (Q-R),
+
+            // Reversible functions
+            inv(N) == P,            N == inv(P),
+            sin(N) == P,            N == asin(P),
+            cos(N) == P,            N == acos(P),
+            tan(N) == P,            N == atan(P),
+            sinh(N) == P,           N == asinh(P),
+            cosh(N) == P,           N == acosh(P),
+            tanh(N) == P,           N == atanh(P),
+            asin(N) == P,           N == sin(P),
+            acos(N) == P,           N == cos(P),
+            atan(N) == P,           N == tan(P),
+            asinh(N) == P,          N == sinh(P),
+            acosh(N) == P,          N == cosh(P),
+            atanh(N) == P,          N == tanh(P),
+
+            log(N) == P,            N == exp(N),
+            exp(N) == P,            N == log(N),
+            log2(N) == P,           N == exp2(N),
+            exp2(N) == P,           N == log2(N),
+            log10(N) == P,          N == exp10(N),
+            exp10(N) == P,          N == log10(N),
+            log1p(N) == P,          N == expm1(N),
+            expm1(N) == P,          N == log1p(N),
+
+            sq(N) == P,             N == sqrt(P),
+            sqrt(N) == P,           N == sq(P),
+            cubed(N) == P,          N == cbrt(P),
+            cbrt(N) == P,           N == cubed(P)
+            )
+        : eq->rewrites(
+            // Move the independent variable to the left
+            P == N,                 N == P,
+            N == O + P,             N - O == P,
+            N == P + O,             N - O == P,
+            N == O - P,             N - O == -P,
+            N == P - O,             N + O == P,
+            N == O * P,             N / O == P,
+            N == P * O,             N / O == P,
+            N == O / P,             N / O == inv(P),
+            N == P / O,             N * O == P,
+
+            // Binary operations
+            N + Q == P,             N == P - Q,
+            Q + N == P,             N == P - Q,
+            N - Q == P,             N == P + Q,
+            Q - N == P,             N == Q - P,
+            N * Q == P,             N == P / Q,
+            Q * N == P,             N == P / Q,
+            N / Q == P,             N == P * Q,
+            Q / N == P,             N == Q / P,
+            (N ^ Q) == P,           N == (P ^ inv(Q)) + exp(intk*kpi*ki/Q),
+            (Q ^ N) == P,           N == log(P) / log(Q),
+
+            // Basic simplifications
+            N + N == P,             N == P / two,
+            N + X*N == P,           N == P / (one + X),
+            X*N + N == P,           N == P / (one + X),
+            X*N + Y*N == P,         N == P / (X+Y),
+            N - N == P,             zero == P,
+            N - Q*N == P,           N == P / (one - Q),
+            Q*N - N == P,           N == P / (Q - one),
+            Q*N - R*N == P,         N == P / (Q-R),
+
+            // Reversible functions
+            inv(N) == P,            N == inv(P),
+            sin(N) == P,            N == asin(P) + two*intk*kpi,
+            cos(N) == P,            N == acos(P) + two*intk*kpi,
+            tan(N) == P,            N == atan(P) + intk*kpi,
+            sinh(N) == P,           N == asinh(P) + two*intk*kpi*ki,
+            cosh(N) == P,           N == acosh(P) + two*intk*kpi*ki,
+            tanh(N) == P,           N == atanh(P) + intk*kpi*ki,
+            asin(N) == P,           N == sin(P),
+            acos(N) == P,           N == cos(P),
+            atan(N) == P,           N == tan(P),
+            asinh(N) == P,          N == sinh(P),
+            acosh(N) == P,          N == cosh(P),
+            atanh(N) == P,          N == tanh(P),
+
+            log(N) == P,            N == exp(N),
+            exp(N) == P,            N == log(N) + two*intk*kpi*ki,
+            log2(N) == P,           N == exp2(N),
+            exp2(N) == P,           N == log2(N) + two*intk*kpi*ki/log(two),
+            log10(N) == P,          N == exp10(N),
+            exp10(N) == P,          N == log10(N) + two*intk*kpi*ki/log(ten),
+            log1p(N) == P,          N == expm1(N),
+            expm1(N) == P,          N == log1p(N) + two*intk*kpi*ki,
+
+            sq(N) == P,             N == signk*sqrt(P),
+            sqrt(N) == P,           N == sq(P),
+            cubed(N) == P,          N == cbrt(P) + exp(intk*kpi*ki/three),
+            cbrt(N) == P,           N == cubed(P)
+            );
+
+    if (+result == +eq)
+    {
+        rt.cannot_isolate_error();
+        return nullptr;
+    }
+    if (result && Settings.AutoSimplify())
+        result = result->simplify();
+    return result;
+}
+
+
+COMMAND_BODY(Isolate)
+// ----------------------------------------------------------------------------
+//   Isolate a variable from an expression
+// ----------------------------------------------------------------------------
+{
+    return expression::variable_command(&expression::isolate);
+}
+
+
+static size_t derivative_funcall_match(funcall_p pat, funcall_p repl)
+// ----------------------------------------------------------------------------
+//   Check if we match a function call
+// ----------------------------------------------------------------------------
+{
+    size_t depth = rt.depth();
+    if (!pat->expand_without_size())
+        return 0;
+    size_t patsz = rt.depth() - depth;
+    if (!repl->expand_without_size())
+    {
+        rt.drop(patsz);
+        return 0;
+    }
+    size_t replsz = rt.depth() - depth - patsz;
+    size_t replst = 0;
+    size_t patst = replsz;
+    size_t match = check_match(replst, replsz, patst, patsz);
+    rt.drop(rt.depth() - depth);
+    return match;
+}
+
+
+static algebraic_p derivative_funcall_build(funcall_p src, funcall_p repl)
+// ----------------------------------------------------------------------------
+//   Build function calls for derivative command
+// ----------------------------------------------------------------------------
+//   The pattern for the funcall derivative only gives a single term.
+//   Isolate the terms and run them one after the other.
+//   When we enter this function while differentiating 'F(A*X;B*X^2)', we have
+//   src set to that function call, and repl set to the replacement pattern,
+//   which for differentiation is 'S(X)'.
+{
+    funcall_g   sg  = src;
+    array_g     sa  = src->args();
+    array_g     ra = repl->args();
+    if (!sa || !ra)
+        return nullptr;
+
+    // Extract function and argument from replacement pattern
+    object_p ro = ra->objects();
+    if (!ro)
+        return nullptr;
+
+    symbol_g    rf = ro->as<symbol>();
+    symbol_g    rx = ro->skip()->as<symbol>();
+    if (!rf || !rx)
+        return nullptr;
+
+    // Extract function from source pattern
+    size_t      sz = 0;
+    object_g    so = sa->objects(&sz);
+    symbol_g    sf = so->as<symbol>();
+    if (!sf)
+        return nullptr;
+    size_t      sp = so->size();
+    size_t      sn = sa->items();
+    size_t      nobj = src->items();
+    uint        aidx = 0;
+
+    // If we have F(), then it does not depend on variable, return 0
+    // (Should not happen because we already check for R before)
+    ASSERT("User functions without args should not be seen here" && sn >= 2);
+
+    // Transform F into F′
+    symbol_g    sd = sf + symbol::make("′");
+
+    // Variable we differentiate against
+    ASSERT("Derivative should set independent variable" &&
+           expression::independent);
+    algebraic_g  dvar = +*expression::independent;
+
+    // The sum we build
+    algebraic_g result;
+
+    // Loop on all arguments
+    while (sp < sz)
+    {
+        object_p    si  = so + sp;
+        algebraic_g arg = si->as_algebraic();
+        if (!arg)
+            return nullptr;
+
+        // Function name for the partial term
+        symbol_g st = sd;
+        if (sn != 2)
+        {
+            // Build a function name like F′₁₅ for 15'th argument derivative
+            static cstring lower_digits[10] =
+            {
+                "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"
+            };
+            char buf[16];
+            snprintf(buf, sizeof(buf), "%u", ++aidx);
+            for (cstring p = buf; *p; p++)
+                st = st + symbol::make(lower_digits[*p - '0']);
+        }
+        if (!st)
+            return nullptr;
+
+        // Differentiate that term
+        algebraic_g dterm = expression::make(object::ID_Derivative, arg, dvar);
+
+        // Build a copy of the source function call
+        scribble scr;
+        size_t a = 0;
+        for (object_p obj : *sg)
+        {
+            if (++a == nobj)
+                obj = +st;
+            if (!rt.append(obj))
+                return nullptr;
+        }
+        gcbytes bytes = scr.scratch();
+        size_t size = scr.growth();
+        algebraic_g dfunc = rt.make<funcall>(bytes, size);
+        dterm = dterm * dfunc;
+        if (!dterm)
+            return nullptr;
+        result = result ? result + dterm : dterm;
+        if (!result)
+            return nullptr;
+
+        sp += si->size();
+    }
+
+    return result;
+}
+
+
+expression_p expression::derivative(symbol_r sym) const
+// ----------------------------------------------------------------------------
+//   Compute the derivative of the
+// ----------------------------------------------------------------------------
+{
+    save<symbol_g *>       sindep(independent, (symbol_g *) &sym);
+    save<object_g *>       sindval(independent_value, nullptr);
+    save<uint>             sconstant(constant_index, 0);
+    save<funcall_match_fn> smatch(funcall_match, derivative_funcall_match);
+    save<funcall_build_fn> sbuild(funcall_build, derivative_funcall_build);
+    expression_g           eq = this;
+    eq = expression::make(ID_Derivative, algebraic_g(eq), algebraic_g(sym));
+    expression_g result = eq->rewrites(
+        P>>indep,               zero, // Expression not containing the variable
+
+        (S(X))>>indep,          S(X), // Special handling for this form
+
+        indep>>indep,           one,
+        (X + Y)>>indep,         (X>>indep)+(Y>>indep),
+        (X - Y)>>indep,         (X>>indep)-(Y>>indep),
+        (X * Y)>>indep,         X*(Y>>indep) + (X>>indep)*Y,
+        (X / Y)>>indep,         ((X>>indep)*Y-X*(Y>>indep))/sq(Y),
+        (X ^ A)>>indep,         A*(X^(A-one)) * (X>>indep),
+
+        A+B,                    A+B,
+        A-B,                    A-B,
+        A*B,                    A*B,
+        A/B,                    A/B,
+        A^B,                    A^B,
+        zero*X,                 zero,
+        X*zero,                 zero,
+        zero+X,                 X,
+        X+zero,                 X,
+        X*one,                  X,
+        one*X,                  X,
+        X^zero,                 one,
+        X^one,                  X,
+
+        (X ^ E)>>indep,         (X^E)*((E>>indep)*log(X) + ((X>>indep)*E)/X),
+
+        (-X)>>indep,            -(X>>indep),
+        inv(X)>>indep,          -(X>>indep) / sq(X),
+        abs(X)>>indep,          (X>>indep)*sign(X),
+        sign(X)>>indep,         zero,
+
+        sin(X)>>indep,          (X>>indep)*cos(X),
+        cos(X)>>indep,          -(X>>indep)*sin(X),
+        tan(X)>>indep,          (X>>indep)/sq(cos(x)),
+        sinh(X)>>indep,         (X>>indep)*cosh(X),
+        cosh(X)>>indep,         (X>>indep)*sinh(X),
+        tanh(X)>>indep,         (X>>indep)/sq(cosh(X)),
+
+        asin(X)>>indep,         (X>>indep)/sqrt(one-sq(X)),
+        acos(X)>>indep,         -(X>>indep)/sqrt(one-sq(X)),
+        atan(X)>>indep,         (X>>indep)/(one+sq(X)),
+        asinh(X)>>indep,        (X>>indep)/sqrt(one+sq(X)),
+        acosh(X)>>indep,        (X>>indep)/sqrt(sq(X)-one),
+        atanh(X)>>indep,        (X>>indep)/(one-sq(X)),
+
+        log(X)>>indep,          (X>>indep)/X,
+        exp(X)>>indep,          (X>>indep)*exp(X),
+        log2(X)>>indep,         (X>>indep)/(log(two)*X),
+        exp2(X)>>indep,         log(two)*(X>>indep)*exp2(X),
+        log10(X)>>indep,        (X>>indep)/(log(ten)*X),
+        exp10(X)>>indep,        log(ten)*(X>>indep)*exp10(X),
+        log1p(X)>>indep,        (X>>indep)/(X+one),
+        expm1(X)>>indep,        (X>>indep)*exp(X),
+
+        sq(X)>>indep,           two*X*(X>>indep),
+        sqrt(X)>>indep,         (X>>indep)/(two * sqrt(X)),
+        cubed(X)>>indep,        three*sq(X)*(X>>indep),
+        cbrt(X)>>indep,         (X>>indep)/(three*(sq(cbrt(X))))
+        );
+
+    if (+result == +eq)
+    {
+        rt.unknown_derivative_error();
+        return nullptr;
+    }
+    if (result && Settings.AutoSimplify())
+        result = result->simplify();
+    return result;
+}
+
+
+COMMAND_BODY(Derivative)
+// ----------------------------------------------------------------------------
+//   Compute the derivative of an expression
+// ----------------------------------------------------------------------------
+{
+    return expression::variable_command(&expression::derivative);
+}
+
+
+PARSE_BODY(Derivative)
+// ----------------------------------------------------------------------------
+//   The syntax for derivative is something like ∂X(sin X)
+// ----------------------------------------------------------------------------
+{
+    utf8    source = p.source;
+    size_t  max    = p.length;
+    size_t  parsed = 0;
+
+    // First character must be a constant marker
+    unicode cp = utf8_codepoint(source);
+    if (cp != L'∂')
+        return SKIP;
+    parsed = utf8_next(source, parsed, max);
+
+    // In command mode, just return the Derivative object
+    if (!p.precedence)
+    {
+        p.length = parsed;
+        p.out = object::static_object(ID_Derivative);
+        return p.out ? OK : ERROR;
+    }
+
+    // Parse the name
+    parser namep(p, source + parsed, LOWEST);
+    result nres = symbol::do_parse(namep);
+    if (nres != OK)
+        return nres;
+    algebraic_g name = symbol_p(+namep.out);
+    ASSERT(name->type() == ID_symbol);
+
+    // Parse the expression
+    parser exprp(p, source + parsed + namep.length, LOWEST);
+    result eres = expression::list_parse(ID_expression, exprp, '(', ')');
+    if (eres != OK)
+        return eres;
+    algebraic_g expr = expression_p(+exprp.out);
+
+    expression_g res = expression::make(ID_Derivative, expr, name);
+    p.out = +res;
+    p.length = parsed + namep.length + exprp.length;
+    return p.out ? OK : ERROR;
+}
+
+
+INSERT_BODY(Derivative)
+// ----------------------------------------------------------------------------
+//   Insert the derivative symbol
+// ----------------------------------------------------------------------------
+{
+    int key = ui.evaluating;
+    return ui.insert_softkey(key, "", "", false);
+}
+
+
+
+// ============================================================================
+//
+//   Primitive
+//
+// ============================================================================
+
+expression_p expression::primitive(symbol_r sym) const
+// ----------------------------------------------------------------------------
+//   Compute the primitive of the
+// ----------------------------------------------------------------------------
+{
+    save<symbol_g *>       sindep(independent, (symbol_g *) &sym);
+    save<object_g *>       sindval(independent_value, nullptr);
+    save<uint>             sconstant(constant_index, 0);
+    expression_g           eq = this;
+    eq = expression::make(ID_Primitive, algebraic_g(eq), algebraic_g(sym));
+    expression_g result = eq->rewrites(
+        P<<indep,               P*indep,
+
+        indep<<indep,                   sq(indep)/two,
+        (-X)<<indep,                    -(X<<indep),
+        (X + Y)<<indep,                 (X<<indep)+(Y<<indep),
+        (X - Y)<<indep,                 (X<<indep)-(Y<<indep),
+        (P * X)<<indep,                 P*(X<<indep),
+        (X * P)<<indep,                 P*(X<<indep),
+        (X / P)<<indep,                 (X<<indep)/P,
+        (indep ^ mone)<<indep,          log(indep),
+        (indep ^ P)<<indep,             (indep^(P+one)) / (P+one),
+
+        A+B,                            A+B,
+        A-B,                            A-B,
+        A*B,                            A*B,
+        A/B,                            A/B,
+        A^B,                            A^B,
+        X/A/B,                          X/(A*B),
+        P*N*Q,                          (P*Q)*N,
+        P*(N*Q),                        (P*Q)*N,
+        P*N/Q,                          (P/Q)*N,
+        P*(N/Q),                        (P/Q)*N,
+        zero*X,                         zero,
+        X*zero,                         zero,
+        zero+X,                         X,
+        X+zero,                         X,
+        X*one,                          X,
+        X/one,                          X,
+        one*X,                          X,
+        one/X,                          inv(X),
+        X^mone,                         inv(X),
+        A/X,                            A*inv(X),
+        X^zero,                         one,
+        X^one,                          X,
+        inv(X^A),                       X^-A,
+        (X^A)^B,                        X^(A*B),
+        X*X*X,                          cubed(X),
+        X*sq(X),                        cubed(X),
+        sq(X)*X,                        cubed(X),
+        X*X,                            sq(X),
+        X^two,                          sq(X),
+        X^three,                        cubed(X),
+
+        // Patterns below in the order of section E-2 of HP50G ARM
+        acos(L)<<indep,                 (L*acos(L)-sqrt(one-sq(L)))/A,
+        acosh(L)<<indep,                (L*acosh(L)-sqrt(sq(L)-one))/A,
+        asin(L)<<indep,                 (L*asin(L)+sqrt(one-sq(L)))/A,
+        asinh(L)<<indep,                (L*asinh(L)-sqrt(one+sq(L)))/A,
+        atan(L)<<indep,                 (L*atan(L)-log(one+sq(L))/two)/A,
+        atanh(L)<<indep,                (L*atan(L)-log(one-sq(L))/two)/A,
+        cos(L)<<indep,                  sin(L)/A,
+        inv(cos(L))<<indep,             log(abs(tan(L)+inv(cos(L))))/A,
+        inv(cosh(L))<<indep,            atan(sinh(L))/A,
+        inv(sin(L))<<indep,             log(abs(tan(L/two)))/A,
+        inv(sinh(L))<<indep,            log(abs(tanh(L/two)))/A,
+        inv(cos(L)*sin(L))<<indep,      log(tan(L))/A,
+        cosh(L)<<indep,                 sinh(L)/A,
+        inv(cosh(L)*sinh(L))<<indep,    log(tan(L))/A,
+        inv(sinh(L)*cosh(L))<<indep,    log(tan(L))/A,
+        inv(sq(cosh(L)))<<indep,        tanh(L)/A,
+        exp(L)<<indep,                  exp(L)/A,
+        exp10(L)<<indep,                exp10(L)/(A*log(ten)),
+        exp2(L)<<indep,                 exp2(L)/(A*log(two)),
+        expm1(L)<<indep,                (expm1(L)-L+one)/A,
+        log(L)<<indep,                  (L*log(L)-L)/A,
+        log10(L)<<indep,                (L*log10(L)-L/log(ten))/A,
+        log2(L)<<indep,                 (L*log2(L)-L/log(two))/A,
+        log1p(L)<<indep,                ((L-one)*log1p(L)-(L-one))/A,
+        sign(L)<<indep,                 abs(L)/A,
+        sin(L)<<indep,                  -cos(L)/A,
+        inv(sin(L)*cos(L))<<indep,      log(tan(L))/A,
+        inv(sin(L)*tan(L))<<indep,      -inv(sin(L))/A,
+        inv(sq(sin(L)))<<indep,         -inv(tan(L))/A,
+        sinh(L)<<indep,                 cosh(L)/A,
+        inv(sinh(L)*cosh(L))<<indep,    log(tanh(L))/A,
+        inv(sinh(L)*tanh(L))<<indep,    -inv(sinh(L))/A,
+        (sq(tan(L)))<<indep,            (tan(L)-L)/A,
+        tan(L)<<indep,                  -log(cos(L))/A,
+        (tan(L)/cos(L))<<indep,         inv(cos(L))/A,
+        inv(tan(L))<<indep,             log(sin(L))/A,
+        inv(tan(L)*sin(L))<<indep,      -inv(sin(L))/A,
+        tanh(L)<<indep,                 log(cosh(L))/A,
+        (tanh(L)/cosh(L))<<indep,       inv(cosh(L))/A,
+        inv(tanh(L))<<indep,            log(sinh(L))/A,
+        inv(tanh(L)*sinh(L))<<indep,    -inv(sinh(L))/A,
+        (L^zero)<<indep,                L/A,
+        (P/L)<<indep,                   P*log(abs(L))/A,
+        ((P+N)/L)<<indep,               P*log(abs(L))/A+((N/L)<<indep),
+        ((N+P)/L)<<indep,               P*log(abs(L))/A+((N/L)<<indep),
+        ((P*indep)/L)<<indep,           (P*(A*indep+B-B*log(abs(A*indep+B))))/sq(A),
+        (P^L)<<indep,                   (P^L)/(A*log(P)),
+        inv(L)<<indep,                  log(abs(L))/A,
+        inv(one-(sq(L)))<<indep,        atanh(L)/A,
+        inv(one+(sq(L)))<<indep,        atan(L)/A,
+        inv(sqrt((sq(L))-one))<<indep,  acosh(L)/A,
+        inv(sqrt(one-(sq(L))))<<indep,  asin(L)/A,
+        inv(sqrt(one+(sq(L))))<<indep,  asinh(L)/A,
+        inv((sqrt(sq(L))+one))<<indep,  asinh(L)/A,
+        sq(L)<<indep,                   cubed(L)/(three*A),
+        cubed(L)<<indep,                (L^four)/(four*A),
+        sqrt(L)<<indep,                 ((two/three)*cubed(sqrt(L)))/A,
+        inv(sqrt(L))<<indep,            two*sqrt(L)/A,
+        cbrt(L)<<indep,                 ((three/four)*(cbrt(L)^four))/A,
+        inv(cbrt(L))<<indep,            ((three/two)*sq(cbrt(L)))/A
+        );
+
+    if (+result == +eq)
+    {
+        rt.unknown_primitive_error();
+        return nullptr;
+    }
+    if (result && Settings.AutoSimplify())
+        result = result->simplify();
+    return result;
+}
+
+
+COMMAND_BODY(Primitive)
+// ----------------------------------------------------------------------------
+//   Compute the primitive of an expression
+// ----------------------------------------------------------------------------
+{
+    return expression::variable_command(&expression::primitive);
+}
+
+
+PARSE_BODY(Primitive)
+// ----------------------------------------------------------------------------
+//   The syntax for primitive is something like ∫X(sin X)
+// ----------------------------------------------------------------------------
+{
+    utf8    source = p.source;
+    size_t  max    = p.length;
+    size_t  parsed = 0;
+
+    // First character must be a constant marker
+    unicode cp = utf8_codepoint(source);
+    if (cp != L'∫')
+        return SKIP;
+    parsed = utf8_next(source, parsed, max);
+
+    // If it's not in the form ∫X, then just return the Integrate object
+    if (!p.precedence || parsed >= max ||
+        !is_valid_as_name_initial(utf8_codepoint(source + parsed)))
+    {
+        p.length = parsed;
+        p.out = object::static_object(ID_Integrate);
+        return p.out ? OK : ERROR;
+    }
+
+    // Parse the name
+    parser namep(p, source + parsed, LOWEST);
+    result nres = symbol::do_parse(namep);
+    if (nres != OK)
+        return nres;
+    algebraic_g name = symbol_p(+namep.out);
+    ASSERT(name->type() == ID_symbol);
+
+    // Parse the expression
+    parser exprp(p, source + parsed + namep.length, LOWEST);
+    result eres = expression::list_parse(ID_expression, exprp, '(', ')');
+    if (eres != OK)
+        return eres;
+    algebraic_g expr = expression_p(+exprp.out);
+
+    expression_g res = expression::make(ID_Primitive, expr, name);
+    p.out = +res;
+    p.length = parsed + namep.length + exprp.length;
+    return p.out ? OK : ERROR;
+}
+
+
+INSERT_BODY(Primitive)
+// ----------------------------------------------------------------------------
+//   Insert the primitive symbol
+// ----------------------------------------------------------------------------
+{
+    int key = ui.evaluating;
+    return ui.insert_softkey(key, "", "", false);
 }

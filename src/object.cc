@@ -300,6 +300,12 @@ retry:
     case ':':                   // Tagged objects
         r = tag::do_parse(p);
         break;
+    case L'∂':
+        r = Derivative::do_parse(p);
+        break;
+    case L'∫':
+        r = Primitive::do_parse(p);
+        break;
 
     default:
         // Symbols and commands
@@ -1318,6 +1324,18 @@ int object::as_truth(bool error) const
 }
 
 
+algebraic_p object::as_algebraic() const
+// ----------------------------------------------------------------------------
+//   Return the value as an algebraic if possible
+// ----------------------------------------------------------------------------
+{
+    object_p untagged = tag::strip(this);
+    if (untagged && untagged->is_algebraic())
+        return algebraic_p(untagged);
+    return nullptr;
+}
+
+
 bool object::is_zero(bool error) const
 // ----------------------------------------------------------------------------
 //   Check if an object is zero
@@ -1487,7 +1505,7 @@ int object::compare_to(object_p other) const
     id ty = type();
     id oty = other->type();
     if (ty != oty)
-        return ty < oty ? -1 : 1;
+        return ty > oty ? -1 : 1;
     size_t sz = size();
     size_t osz = other->size();
     size_t ssz = sz < osz ? sz : osz;
