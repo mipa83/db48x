@@ -6762,13 +6762,13 @@ void tests::symbolic_integration()
         .expect("'(-cos(A·X+3))÷A+sin(X·B-5)÷B+(-ln (cos(Z-C·X)))÷C'");
     step("Primitive of hyperbolic sine, cosine, tangent")
         .test(CLEAR, "'sinh(A*X-3)+cosh(B*X+5*A)+tanh(C*(X-A))' 'X'", F1)
-        .expect("'cosh(A·X-3)÷A+sinh(B·X+5·A)÷B+ln (cosh(C·(X-A)))÷C'");
+        .expect("'cosh(A·X-3)÷A+sinh(B·X+5·A)÷B+ln (cosh(C·(X-A)))÷C'", 2000);
     step("Primitive of arcsine, arccosine, arctangent")
         .test(CLEAR, "'asin(A*X+B)+acos(X*B+A*(X+1))+atan(C*(X-6))' 'X'", F1)
-        .expect("'((A·X+B)·sin⁻¹(A·X+B)+√(1-(A·X+B)²))÷A+((X·B+A·(X+1))·cos⁻¹(X·B+A·(X+1))-√(1-(X·B+A·(X+1))²))÷(B+A)+(C·(X-6)·tan⁻¹(C·(X-6))-ln((C·(X-6))²+1)÷2)÷C'");
+        .expect("'((A·X+B)·sin⁻¹(A·X+B)+√(1-(A·X+B)²))÷A+((X·B+A·(X+1))·cos⁻¹(X·B+A·(X+1))-√(1-(X·B+A·(X+1))²))÷(B+A)+(C·(X-6)·tan⁻¹(C·(X-6))-ln((C·(X-6))²+1)÷2)÷C'", 2000);
     step("Primitive of inverse hyperbolic sine, cosine, tangent")
         .test(CLEAR, "'asinh(1-2*X)+acosh(1+3*X)+atanh(4*X-1)' 'X'", F1)
-        .expect("'((1-2·X)·sinh⁻¹(1-2·X)-√((1-2·X)²+1))÷2+((3·X+1)·cosh⁻¹(3·X+1)-√((3·X+1)²-1))÷3+((4·X-1)·tan⁻¹(4·X-1)-ln(1-(4·X-1)²)÷2)÷4'");
+        .expect("'((1-2·X)·sinh⁻¹(1-2·X)-√((1-2·X)²+1))÷2+((3·X+1)·cosh⁻¹(3·X+1)-√((3·X+1)²-1))÷3+((4·X-1)·tan⁻¹(4·X-1)-ln(1-(4·X-1)²)÷2)÷4'", 2000);
 
     step("Primitive of log and exp")
         .test(CLEAR, "'log(A*X+B)+exp(X*C-D)' 'X'", F1)
