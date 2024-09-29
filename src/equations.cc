@@ -317,7 +317,7 @@ static const cstring basic_equations[] =
    // absent of all actual eqns
     "Flow In Full Pipes",  "{ "
     "  '(ρ_(kg/m^3))*((Ⓒπ*(D_m)^2)/4)*(vavg_(m/s))*((ΔP_Pa)/(ρ_(kg/m^3))+Ⓒg*(Δy_m)+(vavg_(m/s))^2*(2*f*((L_m)/(D_m))+ΣK/2))=(W_W)' "
-    "  'f=FANNING((ϵ_m)/(D_m);Reynolds)' "
+    "  'f=FANNING((ε_m)/(D_m);Reynolds)' "
     "  '(ΔP_Pa)=(P2_Pa)-(P1_Pa)' "
     "  '(Δy_m)=(y2_m)-(y1_m)' "
     "  '(M_(kg/s))=(ρ_(kg/m^3))*(Q_(m^3/s))' "
