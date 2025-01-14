@@ -84,7 +84,8 @@ static const byte dmcp_position[] =
     KB_0,       82,
     KB_DOT,     83,
     KB_SPC,     84,
-    KB_ADD,     85
+    KB_ADD,     85,
+    KB_X,       96 //TEST MIKE
 };
 
 

@@ -154,12 +154,12 @@ extern surface Screen;
 #define KB_LF                18         //! left arrow
 #define KB_RT                23         //! right arrow
 
-#define KB_F1                38         //! Function key 1
-#define KB_F2                39         //! Function key 2
-#define KB_F3                40         //! Function key 3
-#define KB_F4                41         //! Function key 4
-#define KB_F5                42         //! Function key 5
-#define KB_F6                43         //! Function key 6
+#define KB_F1                39         //! Function key 1 TEST MIKE
+#define KB_F2                40         //! Function key 2 TEST MIKE
+#define KB_F3                41         //! Function key 3 TEST MIKE
+#define KB_F4                42         //! Function key 4 TEST MIKE
+#define KB_F5                43         //! Function key 5 TEST MIKE
+#define KB_F6                44         //! Function key 6 TEST MIKE
 
 #define KB_0                 34         //! 0
 #define KB_1                 29         //! 1
@@ -195,7 +195,7 @@ extern surface Screen;
 #define KB_U                 25         //! U
 #define KB_V                 26         //! V
 #define KB_W                 27         //! W
-#define KB_X                 29         //! X
+#define KB_X                 38         //! X TEST MIKE
 #define KB_Y                 30         //! Y
 #define KB_Z                 31         //! Z
 
