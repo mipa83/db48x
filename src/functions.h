@@ -259,6 +259,7 @@ FUNCTION(re);
 FUNCTION(im);
 FUNCTION(arg);
 FUNCTION(conj);
+//FUNCTION(ToPolar);
 
 FUNCTION(ToDecimal);
 FUNCTION(ToFraction);
