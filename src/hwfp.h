@@ -416,18 +416,13 @@ struct hwfp : hwfp_base
 
     static hwfp_p sign(hwfp_r x)
     {
-		hw fx = 1;
-		if (x->value()<0) 
-			fx = -1;
-		else if (x->value()==0) 
-			fx = 0;
-		return make(fx);
+        return make(x < 0.0 ? -1.0 : x > 0.0 ? 1.0 : 0.0);
     }
 
     static hwfp_p IntPart(hwfp_r x)
     {
         hw fx = x->value();
-        return make(fx < 0 ? ceil(fx) : floor(fx));
+        return make(x < 0 ? ceil(x) : floor(x));
     }
 
     static hwfp_p FracPart(hwfp_r x)
