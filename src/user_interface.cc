@@ -6277,19 +6277,23 @@ object_p user_interface::object_for_key(int key)
 {
     object_p obj = nullptr;
     uint plane = shift_plane();
-    if (key >= KEY_F1 && key <= KEY_F6)
-    {
-        uint fplane = plane < menu_planes() ? plane : 0;
-        obj = function[fplane][key - KEY_F1];
-        if (obj)
-            return obj;
-    }
-
-    if (keymap && key > 0 && key <= NUM_KEYS)
+    if (keymap)
         if (object_p planeobj = keymap->at(plane + NUM_PLANES * alpha_plane()))
             if (list_p plane = planeobj->as_array_or_list())
                 if (object_p keyobj = plane->at(key-1))
-                    return keyobj;
+                {
+                    // Skip if "" --> use F1 and F6 
+                    if (!(keyobj->type() == object::ID_text && keyobj->size() == 2))
+                    {
+                        return keyobj;
+                    }
+                }
+    
+    //F1 - F6
+    uint fplane = plane < menu_planes() ? plane : 0;
+    obj = function[fplane][key - KEY_F1];
+    if (obj)
+        return obj;
 
     const byte *ptr = defaultCommand[plane] + 2 * (key - 1);
     if (*ptr)
