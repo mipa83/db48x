@@ -103,7 +103,8 @@ bool function::has_symbolic_arguments(id type)
             type == ID_Root                     ||
             type == ID_MultipleEquationsSolver  ||
             type == ID_Derivative               ||
-            type == ID_Primitive);
+            type == ID_Primitive                ||
+            type == ID_Quote);
 }
 
 
@@ -134,6 +135,8 @@ bool function::is_symbolic_argument(id type, uint arg)
         return Derivative::can_be_symbolic(arg);
     case ID_Primitive:
         return Primitive::can_be_symbolic(arg);
+    case ID_Quote:
+        return Quote::can_be_symbolic(arg);
     default:
         break;
     }
@@ -278,7 +281,7 @@ algebraic_p function::evaluate_noclean(algebraic_r xr, id op, ops_t ops)
     algebraic_g x = xr;
 
     // Check if we are computing exact trigonometric values
-    if (op >= ID_sin && op <= ID_tan)
+    if (op >= ID_sin && op <= ID_cot)
     {
         if (id amode = adjust_angle(x))
         {
@@ -290,7 +293,8 @@ algebraic_p function::evaluate_noclean(algebraic_r xr, id op, ops_t ops)
     }
 
     // Check if we need to add units
-    if (op >= ID_asin && op <= ID_atan)
+    if ((op >= ID_asin && op <= ID_atan) ||
+        (op >= ID_asec && op <= ID_acot))
     {
         if (Settings.SetAngleUnits() && x->is_real())
         {

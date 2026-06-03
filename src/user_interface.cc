@@ -532,7 +532,7 @@ text_p user_interface::editor_save(bool rewinding)
 // ----------------------------------------------------------------------------
 {
     if (rt.editing())
-        if (text_g editor = rt.close_editor(false, false))
+        if (text_g editor = rt.close_editor(false))
             return editor_save(editor, rewinding);
     return nullptr;
 }
@@ -1181,7 +1181,7 @@ bool user_interface::replace_character_left_of_cursor(unicode code)
 
 bool user_interface::replace_character_left_of_cursor(symbol_p sym)
 // ----------------------------------------------------------------------------
-//    Replace the character left of cursor with teh symbol
+//    Replace the character left of cursor with the symbol
 // ----------------------------------------------------------------------------
 {
     size_t len = 0;
@@ -1680,7 +1680,7 @@ bool user_interface::draw_menus()
     }
 
     settings::SaveTabWidth stw(0);
-    for (int plane = 0; plane < planes; plane++)
+    for (int plane = 0; plane < visiblePlanes; plane++)
     {
         cstring *labels = menuLabel[plane];
         if (help)
@@ -2285,17 +2285,13 @@ bool user_interface::draw_annunciators()
 
         if (alpha || user)
         {
-            static cstring lbls[] = {
-                "", "ABC", "abc", "abc",
-                "USR", "αUS", "usr", "αus",
-                "", "ABC", "abc", "abc",
-                "1US", "α1U", "1us", "α1u"
-            };
-            utf8 label = utf8(lbls[alpha + 2*lowercase + 4*user + 8*userOnce]);
+            unicode al = alpha ? (lowercase ? 'a' : 'A') : ' ';
+            unicode us = user ? (userOnce ? 'u' : 'U') : ' ';
             pattern apat = lowercase
                 ? Settings.LowerAlphaForeground()
                 : Settings.AlphaForeground();
-            Screen.text(alpha_x + 1, 0, label, hdr_font, apat);
+            Screen.glyph(alpha_x + 1, 0, us, hdr_font, apat);
+            Screen.glyph(alpha_x + 10, 0, al, hdr_font, apat);
         }
         alphaDrawn = alpha;
         lowercDrawn = lowercase;
@@ -5804,15 +5800,16 @@ bool user_interface::handle_digits(int key)
             unicode dm          = Settings.DecimalSeparator();
             unicode ns          = Settings.NumberSeparator();
             unicode hs          = Settings.BasedSeparator();
-            bool    had_complex = false;
+            bool    had_numsep  = false;
             while (p > ed && !found)
             {
                 p = (byte *) utf8_previous(p);
                 c = utf8_codepoint(p);
-                if (c == complex::I_MARK || c == complex::ANGLE_MARK)
+                if (c == complex::I_MARK || c == complex::ANGLE_MARK ||
+                    c == '-' || c == '+')
                 {
-                    had_complex = true;
-                    if (c == complex::ANGLE_MARK)
+                    had_numsep = true;
+                    if (c == complex::ANGLE_MARK || c == '+' || c == '-')
                     {
                         found = utf8_next(p);
                     }
@@ -5834,7 +5831,7 @@ bool user_interface::handle_digits(int key)
             if (c == 'e' || c == 'E' || c == Settings.ExponentSeparator())
                 c  = utf8_codepoint(p);
 
-            if (had_complex)
+            if (had_numsep)
             {
                 if (c == '+' || c == '-')
                     *p = '+' + '-' - c;
@@ -5936,14 +5933,106 @@ bool user_interface::handle_digits(int key)
             }
             else
             {
-                byte   buf[4];
-                size_t sz = utf8_encode(Settings.ExponentSeparator(), buf);
-                insert(cursor, buf, sz);
+                // Special case for EEX
+                byte   *ed          = rt.editor();
+                byte   *p           = ed + cursor;
+                byte    cursor_move = 0;
+                uint    hadN        = 0;
+                uint    hadS        = 0;
+                bool    found       = false;
+                unicode c           = utf8_codepoint(p);
+                unicode dm          = Settings.DecimalSeparator();
+                unicode ns          = Settings.NumberSeparator();
+                unicode hs          = Settings.BasedSeparator();
+                while (p > ed)
+                {
+                    p = (byte *) utf8_previous(p);
+                    c = utf8_codepoint(p);
+                    if (c == '-' || c == '+')
+                    {
+                        if (!hadN)
+                            hadS = 1;
+                        else if (hadN)
+                            hadS = hadN;
+                        cursor_move++;
+                        continue;
+                    }
+                    if ((c >= '0' && c <= '9') || c == dm || c == ns)
+                    {
+                        if (!hadN && !hadS)
+                            hadN = 1;
+                        else if (hadS)
+                            hadN = hadS;
+                        cursor_move++;
+                        continue;
+                    }
+                    if (c == 'e' || c == 'E' ||
+                        c == Settings.ExponentSeparator())
+                    {
+                        // E    --> use old E   criteria: 1=0,2=0,3=0
+                        // E-   --> use old E   criteria: 1=S,2=0,3=0
+                        // E8   --> use old E   criteria: 1=N,2=0,3=0
+                        // E-8  --> use old E   criteria: 1=N,2=S,3=0
+                        // E8-   --> new E      criteria: 1=S,2=N,3=0
+                        // E-8-  --> new E      criteria: 1=S,2=N,3=S
+                        // E8-7  --> new E      criteria: 1=N,2=S,3=N
+                        // E8-7  --> new E      criteria: 1=N,2=S,3=N
+                        if ((hadS < 2 && hadN < 2) ||
+                            (hadN > 0 && hadN < 3 && hadS == 2))
+                        {
+                            found = true;
+                            for (int i = 0; i < cursor_move; i++)
+                                cursor = utf8_previous(ed, cursor);
+                        }
+                        break;
+                    }
+                    break;
+                }
+                // '(c)8.888887-8 cursor at beginning --> jump to end of Number,
+                // new E: 8.888887E(c)-8
+                // '(c)8.888887E-8 cursor at beginning --> jump to end of
+                // Number, use old E: 8.888887E(c)-8
+                if (!found)
+                {
+                    cursor_move = 0;
+                    p           = (byte *) ed + cursor;
+                    byte *ende  = ed + rt.editing();
+                    while (p < ende)
+                    {
+                        c = utf8_codepoint(p);
+                        p = (byte *) utf8_next(p);
+                        if ((c >= '0' && c <= '9') || c == dm || c == ns ||
+                            c == hs)
+                        {
+                            cursor_move++;
+                            cursor = utf8_next(ed, cursor);
+                            continue;
+                        }
+                        if (c == 'e' || c == 'E' ||
+                            c == Settings.ExponentSeparator())
+                        {
+                            found  = true;
+                            cursor = utf8_next(ed, cursor);
+                        }
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    p = (byte *) ed + cursor;
+                    p = (byte *) utf8_previous(p);
+                    c = utf8_codepoint(p);
+                    if (!((c >= '0' && c <= '9') || c == dm || c == ns ||
+                          c == hs))
+                        insert(cursor, utf8("1"), 1);
+                    byte   buf[4];
+                    size_t sz = utf8_encode(Settings.ExponentSeparator(), buf);
+                    insert(cursor, buf, sz);
+                }
             }
-            last = 0;
+            last        = 0;
             dirtyEditor = true;
             return true;
-
         }
     }
     if (key > KEY_CHS && key < KEY_F1)
@@ -6199,7 +6288,7 @@ bool user_interface::load_keymap(cstring name)
     while (kmap.valid())
     {
         unicode c = kmap.get();
-        if (c == '@')
+        if (c == '@' && !quoted)
         {
             do { c = kmap.get(); } while (c && c != '\n');
             continue;
@@ -6606,6 +6695,10 @@ bool user_interface::do_exit()
         rt.clear_error();
         dirtyEditor = true;
         dirtyStack = true;
+    }
+    else if (menuLabel[0][0])
+    {
+        clear_menu();
     }
     else if (validate_input)
     {
@@ -7549,7 +7642,7 @@ void debug_printf(cstring format, ...)
         vsnprintf(buffer + sz, sizeof(buffer) - sz, format, va);
         va_end(va);
         size  h = HelpFont->height();
-        coord y = (debug_printf_row % 8 + 2) * h;
+        coord y = (debug_printf_row % 12) * h;
         coord x = Screen.text(0, y, utf8(buffer), HelpFont,
                               pattern::white, pattern::black);
         Screen.fill(x, y, x+10, y + HelpFont->height(), pattern::gray50);

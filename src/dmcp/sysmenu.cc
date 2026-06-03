@@ -246,7 +246,7 @@ static int state_save_callback(cstring fpath, cstring fname, void *data)
     // Display the name of the file being saved
     if (data != STATE_IO_SILENT)
     {
-      ui.draw_message("Saving state...", fname);
+        ui.draw_message("Saving state...", fname);
     }
 
     // Open save file name
@@ -395,15 +395,18 @@ static int state_load_callback(cstring path, cstring name, void *data)
         file prog(path, file::READING);
         if (!prog.valid())
         {
-            ui.draw_message("State load failed", prog.error(), name);
-            wait_for_key_press();
+            if (!is_silent)
+            {
+                ui.draw_message("State load failed", prog.error(), name);
+                wait_for_key_press();
+            }
             return 1;
         }
 
         // Loop on the input file and process it as if it was being typed
         size_t bytes = 0;
         rt.clear();
-
+        prog.transliterate();
         for (unicode c = prog.get(); c; c = prog.get())
         {
             byte buffer[4];
@@ -417,28 +420,22 @@ static int state_load_callback(cstring path, cstring name, void *data)
     size_t edlen = rt.editing();
     if (edlen)
     {
-        text_g edstr = rt.close_editor(true, false);
+        text_g edstr = rt.close_editor(false);
         if (edstr)
         {
             // Need to re-fetch editor length after text conversion
             gcutf8 editor = edstr->value(&edlen);
-            bool dc = Settings.DecimalComma();
-            Settings.DecimalComma(false);
-            bool store_at_end = Settings.StoreAtEnd();
-            Settings.StoreAtEnd(true);
+            settings::SaveDecimalComma decimal_comma(false);
+            settings::SaveStoreAtEnd   store_at_end(true);
+            ui.clear_menu();
             program_g cmds = program::parse(editor, edlen);
-            Settings.DecimalComma(dc);
             if (cmds)
             {
                 // We successfully parsed the line
                 rt.clear();
                 object::result exec = cmds->run();
-                Settings.StoreAtEnd(store_at_end);
                 if (exec != object::OK)
-                {
-                    ui.draw_error();
-                    return 1;
-                }
+                    goto error;
 
                 // Clone all objects on the stack so that we can purge
                 // the command-line above.
@@ -448,8 +445,6 @@ static int state_load_callback(cstring path, cstring name, void *data)
             {
                 utf8 pos = rt.source();
                 utf8 ed = editor;
-
-                Settings.StoreAtEnd(store_at_end);
                 if (!rt.error())
                     rt.syntax_error();
                 beep(3300, 100);
@@ -457,14 +452,13 @@ static int state_load_callback(cstring path, cstring name, void *data)
                     ui.cursor_position(pos - ed);
                 if (!rt.edit(ed, edlen))
                     ui.cursor_position(0);
-
-                return 1;
+                goto error;
             }
         }
         else
         {
             rt.out_of_memory_error();
-            return 1;
+            goto error;
         }
     }
 
@@ -473,6 +467,12 @@ static int state_load_callback(cstring path, cstring name, void *data)
 
     // Exit with success
     return MRET_EXIT;
+
+error:
+    ui.draw_error();
+    lcd_refresh();
+    wait_for_key_press();
+    return 1;
 }
 
 
@@ -878,7 +878,7 @@ void system_setup()
     SET_ST(STAT_MENU);
     int ret = handle_menu(&application_menu, MENU_RESET, 0);
     CLR_ST(STAT_MENU);
+    redraw_lcd(true);
     if (ret != MRET_EXIT)
         wait_for_key_release(-1);
-    redraw_lcd(true);
 }

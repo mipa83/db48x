@@ -97,9 +97,12 @@ BUILDENV ?= auto
 
 # Mount base on a per-OS basis
 HOST_OS_NAME:=$(shell uname -s)
-MOUNTBASE = $(MOUNTBASE_$(HOST_OS_NAME))
+MOUNTBASE ?= $(MOUNTBASE_$(HOST_OS_NAME))
 MOUNTBASE_Darwin = /Volumes
 MOUNTBASE_Linux = /run/media/$(USER)
+DISK_NAME_dm32  ?= DM32
+DISK_NAME_dm42  ?= DM42
+DISK_NAME_dm42n ?= DM42N
 
 # Host tools (built via recursive make; each tool has its own Makefile)
 TTF2FONT = tools/ttf2font/ttf2font
@@ -107,6 +110,9 @@ DECIMIZE = tools/decimize/decimize
 CRCFIX = tools/forcecrc32/forcecrc32
 CRC32 = tools/crc32/crc32
 BASE_FONT = fonts/FogSans-ddd.ttf
+
+# Enable CHUCK feature (may lead to multiple iterations in FW build)
+# CHUCK=yes
 
 # ------------------------------------------------------------------------------
 # Sources and products
@@ -236,11 +242,13 @@ INCLUDES ?= 	$(KIND)			\
 		sim			\
 		.
 
-DEFINES =							\
-	$(DEFINES_$(MODEL))					\
-	$(DEFINES_$(TARGET))					\
-	$(DEFINES_$(KIND))					\
-	$(DEFINES_$(PLATFORM))
+DEFINES =				\
+	$(DEFINES_$(MODEL))		\
+	$(DEFINES_$(TARGET))		\
+	$(DEFINES_$(KIND))		\
+	$(DEFINES_$(PLATFORM))		\
+	DB48X_VERSION=\"$(VERSION)\"	\
+	$(CHUCK:%=HAS_CHUCK)
 
 DEFINES_debug = DEBUG
 DEFINES_release = NDEBUG OPTIMIZED
@@ -318,7 +326,7 @@ TIME=
 CXXFLAGS_TARGET_$(TARGET) += $(CXXFLAGS_$(KIND))
 CXXFLAGS_sim = -Wno-vla-cxx-extension
 CXXFLAGS_wasm = -Wno-vla-cxx-extension
-
+CXXFLAGS_fw = -Wa,-adhlns=$@.lst
 
 # ------------------------------------------------------------------------------
 # Default and variant targets
@@ -379,7 +387,7 @@ TOOLS_BUILDS=$(dir $(wildcard tools/*/Makefile))
 TOOLS=$(foreach t,$(TOOLS_BUILDS),$t$(notdir $(t:%/=%)))
 tools: $(TOOLS)
 tools/%:
-	$(PRINT_COMMAND) cd tools/$(*D) && $(MAKE) BUILDENV=auto TIME= DO_INSTALL= VARIANT=$(*D)
+	$(PRINT_COMMAND) cd tools/$(*D) && $(MAKE) BUILDENV=auto TIME= DO_INSTALL= VARIANT=$(*D) OUTPUT=./
 
 clangdb: clangdb-color-dm32-sim
 clangdb-%: .ALWAYS
@@ -396,13 +404,11 @@ PRODUCT_NAME = $(shell echo $(NAME) | tr "[:lower:]" "[:upper:]")
 PRODUCT_MACHINE = $(if $(filter dm42n,$(MODEL)),DM42n,$(shell echo $(MODEL) | tr "[:lower:]" "[:upper:]"))
 HELP_MACHINE = $(if $(filter dm42n,$(MODEL)),DM42,$(PRODUCT_MACHINE))
 VERSION := $(shell git describe --dirty=Z --abbrev=4 2>/dev/null | sed -e 's/^v//g' -e 's/-g/-/g' | cut -c 1-16)
-VERSION_H = src/$(PLATFORM)/version.h
-CHUCK_H = src/$(PLATFORM)/chuck-norris.h
+CHUCK_H = $(CHUCK:%=src/$(PLATFORM)/chuck-norris.h)
 FONTS=Editor Help Reduced Stack
 
 .prebuild:	$(FONTS:%=fonts/%Font.cc)			\
 		src/decimal-pi.h src/decimal-e.h		\
-		$(VERSION_H)					\
 		$(CHUCK_H)
 
 fonts/EditorFont.cc: $(BASE_FONT) | $(TTF2FONT)
@@ -419,14 +425,7 @@ src/decimal-pi.h: src/decimal-pi.txt | $(DECIMIZE)
 src/decimal-e.h: src/decimal-e.txt | $(DECIMIZE)
 	$(PRINT_GENERATE) $(DECIMIZE) < $< > $@ decimal_e
 
-VERSION_GIT_H=$(MIQ_OBJDIR)version-$(VERSION).h
-CHUCK_GIT_H=$(MIQ_OBJDIR)chuck-norris-$(VERSION).h
-$(VERSION_H): $(VERSION_GIT_H)
-	@mkdir -p $(@D)
-	$(PRINT_GENERATE) cp $< $@
-$(VERSION_GIT_H):
-	@mkdir -p $(@D)
-	$(PRINT_GENERATE) echo '#define DB48X_VERSION "$(VERSION)"' > $@
+CHUCK_GIT_H=$(CHUCK:%=$(MIQ_OBJDIR)chuck-norris-$(VERSION).h)
 $(CHUCK_H): $(CHUCK_GIT_H)
 	@mkdir -p $(@D)
 	$(PRINT_GENERATE) cp $< $@
@@ -434,32 +433,60 @@ $(CHUCK_GIT_H):
 	@mkdir -p $(@D)
 	$(PRINT_GENERATE) tools/generate-chuck.sh > $@
 
+#------------------------------------------------------------------------------
+#  Image comparison
+#------------------------------------------------------------------------------
+
+IMAGES=$(COLOR:%=color-)images
+cmp-% compare-%:
+	compare $(IMAGES)/$*.png $(IMAGES)/bad/$*.png -compose src $*.png || true
+	open $*.png $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
+	echo mv -f $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
+update-%:
+	mv $(IMAGES)/bad/$*.png $(IMAGES)/$*.png
+	rm -f $*.png
+updates-%:
+	$(MAKE) update-$* color-update-$*
+cmps-% compares-%:
+	$(MAKE) compare-$* color-compare-$*
+
+BAD_IMAGES=$(wildcard $(IMAGES)/bad/*.png)
+compare: $(BAD_IMAGES:$(IMAGES)/bad/%.png=cmp-%)
+update: $(BAD_IMAGES:$(IMAGES)/bad/%.png=update-%)
+updates: update color-update
+compares: compare color-compare
+.PHONY: compare update
+
 # ------------------------------------------------------------------------------
 # Help generation (lifted from Makefile)
 # ------------------------------------------------------------------------------
 
 .prebuild: help/$(NAME).md help/$(NAME).idx
-help/$(NAME).md: $(HELP_SOURCES)
-	@mkdir -p help
-	@cat $^ | sed -e '/<!--- $(HELP_MACHINE) --->/,/<!--- !$(HELP_MACHINE) --->/s/$(HELP_MACHINE)/KEEP_IT/g' \
-	    -e '/<!--- DM.* --->/,/<!--- !DM.* --->/d' \
-	    -e '/<!--- KEEP_IT --->/d' \
-	    -e '/<!--- !KEEP_IT --->/d' \
-	    -e 's/KEEP_IT/$(PRODUCT_MACHINE)/g' \
-	    -e 's/DB48X/$(PRODUCT_NAME)/g' \
-	    -e 's/db48x.md/$(NAME).md/g' \
-	    -e 's/DM42/$(PRODUCT_MACHINE)/g' > $@
-	@cp doc/*.png help/ 2>/dev/null || true
-	@mkdir -p help/img
-	@rsync -a --delete doc/img/*.bmp help/img/ 2>/dev/null || true
 
-doc/8-menus-tree-dm42.md doc/8-menus-tree-dm32.md: src/menu.cc src/ids.tbl tools/gen-menu-doc.py
-	python3 tools/gen-menu-doc.py --model dm42
-	python3 tools/gen-menu-doc.py --model dm32
+GENERATE_HELP_MD=					\
+	cat $^ |					\
+	sed -e '/<!--- $(HELP_MACHINE) --->/,/<!--- !$(HELP_MACHINE) --->/s/$(HELP_MACHINE)/KEEP_IT/g' \
+	    -e '/<!--- DM.* --->/,/<!--- !DM.* --->/d' 	\
+	    -e '/<!--- KEEP_IT --->/d' 			\
+	    -e '/<!--- !KEEP_IT --->/d' 		\
+	    -e 's/KEEP_IT/$(PRODUCT_MACHINE)/g' 	\
+	    -e 's/DB48X/$(PRODUCT_NAME)/g'	 	\
+	    -e 's/db48x.md/$(NAME).md/g' 		\
+	    -e 's/DM42/$(PRODUCT_MACHINE)/g' > $@
+
+help/$(NAME).md: $(HELP_SOURCES)
+	$(PRINT_COMMAND) mkdir -p help
+	$(PRINT_GENERATE) $(GENERATE_HELP_MD)
+	$(PRINT_COMMAND) cp doc/*.png help/ 2>/dev/null || true
+	$(PRINT_COMMAND) mkdir -p help/img
+	$(PRINT_COMMAND) rsync -a --delete doc/img/*.bmp help/img/ 2>/dev/null || true
+
+doc/8-menus-tree-%.md: src/menu.cc src/ids.tbl tools/gen-menu-doc.py
+	$(PRINT_GENERATE) python3 tools/gen-menu-doc.py --model $*
 
 help/$(NAME).idx: help/$(NAME).md
-	@grep -b '^#\|^\* `[^`]*`' $< | sed -e 's/:\(\* `[^`]*`\).*/:\1/g' | sort -k2 -t: > $@
-	@[ "$$(cat $@ | wc -L)" -lt 80 ] || { echo "Some help header exceeds 80 bytes"; exit 2; }
+	$(PRINT_GENERATE) grep -b '^#\|^\* `[^`]*`' $< | sed -e 's/:\(\* `[^`]*`\).*/:\1/g' | sort -k2 -t: > $@
+	$(PRINT_COMMAND) [ "$$(cat $@ | wc -L)" -lt 80 ] || { echo "Some help header exceeds 80 bytes"; exit 2; }
 
 
 # ------------------------------------------------------------------------------
@@ -476,7 +503,7 @@ QMAKEFILE=sim/$(NAME)-$(KIND)-$(TARGET).mak
 QRC_FILES=		sim/config.qrc		\
 			sim/state.qrc		\
 			sim/library.qrc		\
-			sim/help.qrc		\
+			sim/help-$(NAME).qrc	\
 			sim/help/img.qrc
 
 # Build Qt simulator directly with qmake
@@ -485,23 +512,36 @@ qt-$(TARGET): $(QMAKEFILE)
 qt-%: $(QMAKEFILE)
 	$(PRINT_COMMAND) $(MAKE) -C $(<D) -f $(<F) $*
 
-$(QMAKEFILE): sim/$(NAME).pro $(QRC_FILES) $(MIQ_MAKEDEPS)	\
-		$(VERSION_H) $(CHUCK_H) .config
-	$(PRINT_COMMAND) 				\
-		DESTDIR="$(abspath $(or $(OUTPUT),.))";	\
-		cd sim &&				\
-		$(QMAKE_ENV)				\
-		$(QMAKE) $(<F) -o $(@F) 		\
-		$(QMAKE_SPECS:%=-spec %) 		\
-		$(if $V,,CONFIG+=silent) 		\
-		CONFIG+=$(QMAKE_$(TARGET)) 		\
-		DESTDIR="$$DESTDIR"			\
-		OBJECTS_DIR=$(abspath $(MIQ_OBJDIR))	\
-		RCC_DIR=$(abspath $(MIQ_OBJDIR))	\
-		MOC_DIR=$(abspath $(MIQ_OBJDIR))	\
+$(QMAKEFILE): sim/$(NAME).pro $(QRC_FILES) $(MIQ_MAKEDEPS) $(CHUCK_H) .config
+	$(PRINT_COMMAND) 					\
+		DESTDIR="$(abspath $(or $(OUTPUT),.))";		\
+		cd sim &&					\
+		$(QMAKE_ENV)					\
+		$(QMAKE) $(<F) -o $(@F) 			\
+		$(QMAKE_SPECS:%=-spec %) 			\
+		$(if $V,,CONFIG+=silent) 			\
+		CONFIG+=$(QMAKE_$(TARGET)) 			\
+		DEFINES+="DB48X_VERSION=\'\\\"$(VERSION)\\\"\'"	\
+		DESTDIR="$$DESTDIR"				\
+		OBJECTS_DIR=$(abspath $(MIQ_OBJDIR))		\
+		RCC_DIR=$(abspath $(MIQ_OBJDIR))		\
+		MOC_DIR=$(abspath $(MIQ_OBJDIR))		\
 		UI_DIR=$(abspath $(MIQ_OBJDIR))
 
 # Generation of Qt resource files
+sim/help-$(NAME).qrc: help/$(NAME).md help/$(NAME).idx
+sim/help-$(NAME).qrc: $(MIQ_MAKEDEPS)
+	$(PRINT_GENERATE) (echo '<RCC>';				\
+	 echo ' <qresource prefix="/help">';				\
+	 for I in $(NAME).md $(NAME).idx; do				\
+		J=$$(basename $$I);					\
+		echo '  <file alias="'$$J'">../help/'$$J'</file>';	\
+	 done;								\
+	 echo ' </qresource>';						\
+	 echo '</RCC>')							\
+	> $@
+
+
 sim/%.qrc: $(MIQ_MAKEDEPS)
 	@mkdir -p $(@D)
 	$(PRINT_GENERATE) (echo '<RCC>';			\
@@ -514,7 +554,6 @@ sim/%.qrc: $(MIQ_MAKEDEPS)
 	 echo '</RCC>')						\
 	> $@
 
-sim/help.qrc: help/$(NAME).md help/$(NAME).idx
 
 QRC_EXT_config=*.csv *.cfg *.48k
 QRC_EXT_help=$(NAME).md $(NAME).idx
@@ -576,7 +615,10 @@ QMAKE_ENV = 	export ANDROID_SDK_ROOT=$(ANDROID_SDK_ROOT) ;	\
 		export ANDROID_NDK_ROOT=$(ANDROID_NDK_ROOT) ;	\
 		export KEYSTORE_PATH=$(ANDROID_KEYSTORE) ;	\
 		export JAVA_HOME=$(ANDROID_JAVA_HOME);
-AAB_FILE=$(OUTPUT:%=%/)$(NAME).aab
+# make-it-quick defaults OUTPUT to the workspace root; keep Android bundles
+# under android/ unless the caller overrides ANDROID_OUTPUT_DIR explicitly.
+ANDROID_OUTPUT_DIR ?= android
+AAB_FILE=$(ANDROID_OUTPUT_DIR:%=%/)$(NAME).aab
 
 android-$(TARGET): $(AAB_FILE)
 android-%: qt-%
@@ -585,18 +627,27 @@ android-%: qt-%
 $(QMAKEFILE): sim/android/AndroidManifest.xml sim/android/build.gradle
 
 # Deploy (and optionally sign) the AAB via androiddeployqt. androiddeployqt
-# expects the .so at <output>/libs/arm64-v8a/; the qmake build puts it in
-# DESTDIR, so we must run make install INSTALL_ROOT=<output> first.
+# expects a build directory as --output and the .so staged under
+# <output>/libs/arm64-v8a/, so we must run make install INSTALL_ROOT=<output>
+# first. Normalize the final bundle to $(AAB_FILE) so workflows and helper
+# scripts can upload a stable path.
 $(AAB_FILE): $(QMAKEFILE) qt-$(TARGET)
 	$(PRINT_COMMAND) 						\
 		AAB="$(abspath $@)";					\
+		OUTDIR="$(abspath $(dir $@))";				\
+		mkdir -p "$$OUTDIR" &&					\
 		cd sim && 						\
-		$(MAKE) -f $(<F)  install INSTALL_ROOT="$$AAB" &&	\
+		$(MAKE) -f $(<F)  install INSTALL_ROOT="$$OUTDIR" &&	\
 		$(QMAKE_ENV)						\
 		$(ANDROID_DEPLOY_QT)					\
 		  --input android-$(NAME)-deployment-settings.json	\
-		  --output "$$AAB" --gradle --aab			\
-		  $(ANDROID_DEPLOY_SIGN_FLAGS)
+		  --output "$$OUTDIR" --gradle --aab			\
+		  $(ANDROID_DEPLOY_SIGN_FLAGS) &&			\
+		if [ ! -f "$$AAB" ]; then				\
+			BUILT_AAB="$$(find "$$OUTDIR" -type f -name '*.aab' | sort | tail -1)"; \
+			[ -n "$$BUILT_AAB" ] && cp "$$BUILT_AAB" "$$AAB"; \
+		fi &&						\
+		test -f "$$AAB"
 	$(if $(ANDROID_CAN_SIGN),,$(PRINT_COMMAND) $(INFO) "[WARNING]" "Android AAB is UNSIGNED (need $(ANDROID_KEYSTORE) and ANDROID_KEYSTORE_PASS). Not for Play Store.")
 
 endif
@@ -616,20 +667,22 @@ src/dmcp/qspi_check.c: .buildid
 DEFINES_src/dmcp/qspi_check.c = BUILD_ID=$$($(TOP)tools/build_id)
 .goodbye: .show-buildid
 .buildid:
+	$(PRINT_COMMAND) $(INFO) "[BUILD]" "$(shell $(TOP)tools/build_id)"
 	@$(TOP)tools/build_id -u >/dev/null 2>&1 || true
+	@touch src/dmcp/qspi_check.c
 .show-buildid: .product
 	$(PRINT_COMMAND) $(INFO) "[BUILD ID]" "$(shell $(TOP)tools/build_id)"
 
 FLASH_BIN = $(MIQ_OBJDIR)$(NAME)_flash.bin
 FLASH_HEX = $(FLASH_BIN:.bin=.hex)
-QSPI_BIN  = $(OUTPUT:%=%/)$(NAME)_qspi.bin
+QSPI_BIN  = $(OUTPUT)$(NAME)_qspi.bin
 QSPI_HEX  = $(MIQ_OBJDIR)$(NAME)_qspi.hex
-PGM_FILE  = $(OUTPUT:%=%/)$(NAME).$(PGM)
+PGM_FILE  = $(OUTPUT)$(NAME).$(PGM)
 QSPI_CRC  = src/$(MODEL)/qspi_crc.h
 
 .postbuild: $(PGM_FILE) $(QSPI_BIN) $(QSPI_HEX) $(FLASH_BIN) $(FLASH_HEX)
 
-$(PGM_FILE): $(FLASH_BIN)
+$(PGM_FILE): $(FLASH_BIN) | $(LOGS).mkdir
 	$(PRINT_GENERATE)$(INFO_NONL_CMD) "[SHA]" ; $(TOP)tools/add_pgm_chsum $< $@ | tee $(MIQ_BUILDLOG).sha1
 	$(PRINT_COMMAND) $(INFO_NONL_CMD) "[BYTES]"; echo $$(cat $@ | wc -c)
 	$(PRINT_COMMAND) $(INFO) "[SIZE]" "$(shell $(SIZE) $(ELF_FILE) | tail -1 | sed -e 's/^ //g')"
@@ -637,10 +690,10 @@ $(PGM_FILE): $(FLASH_BIN)
 $(FLASH_BIN): $(ELF_FILE)
 	$(PRINT_GENERATE) $(OBJCOPY) --remove-section .qspi -O binary $< $@
 
-$(QSPI_BIN): $(ELF_FILE) | $(CRCFIX) $(CRC32)
+$(QSPI_BIN): $(ELF_FILE) | $(LOGS).mkdir $(CRCFIX) $(CRC32)
 	$(PRINT_GENERATE) $(OBJCOPY) --only-section .qspi -O binary   $< $@
 	$(PRINT_COMMAND) $(INFO) "[PATCH CRC]" "$(QSPI_BIN)"; $(TOP)tools/adjust_crc $(CRCFIX) $(QSPI_BIN) > $(MIQ_BUILDLOG).crc
-	$(PRINT_COMMAND) $(INFO) "[CHECK CRC]" "$(QSPI_CRC)"; $(TOP)tools/check_qspi_crc "$(NAME)" "$@" "$(QSPI_CRC)" || ( echo "QSPI CRC changed, rebuilding" && $(MAKE) )
+	$(PRINT_COMMAND) $(INFO) "[CHECK CRC]" "$(QSPI_CRC)"; $(TOP)tools/check_qspi_crc "$(NAME)" "$@" "$(QSPI_CRC)" || ( echo "QSPI CRC changed, rebuilding" && $(MAKE) .postbuild )
 
 $(FLASH_HEX): $(ELF_FILE)
 	$(PRINT_GENERATE) $(OBJCOPY) --remove-section .qspi -O ihex   $< $@
@@ -653,7 +706,8 @@ $(QSPI_HEX): $(ELF_FILE)
 #  Firmware install on physical calculators
 #------------------------------------------------------------------------------
 
-MOUNTPOINT=$(MOUNTBASE)/$(MODEL)
+MOUNTPOINT ?= $(MOUNTBASE)/$(DISK_NAME)
+DISK_NAME ?= $(DISK_NAME_$(MODEL))
 
 SYNC=sync; sync; sync
 EJECT = $(EJECT_$(HOST_OS_NAME))
@@ -664,6 +718,8 @@ TAR_OPTS = $(TAR_OPTS_$(HOST_OS_NAME))
 TAR_OPTS_Darwin = --no-mac-metadata --no-fflags --no-xattrs --no-acls
 TAR_FILES = $(PGM_FILE)					\
 	    $(QSPI_BIN)					\
+	    $(TAR_EXTRA_FILES)
+TAR_EXTRA_FILES=	   				\
 	    keymap.bin					\
 	    help/$(NAME).md help/$(NAME).idx		\
 	    help/*.bmp help/*/*.bmp			\

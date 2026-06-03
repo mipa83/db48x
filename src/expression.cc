@@ -194,7 +194,7 @@ symbol_p expression::render(uint depth, int &precedence, bool editing)
             symbol_g arg  = render(depth, argp, editing);
             int      maxp =
                 oid == ID_neg ? precedence::FUNCTION : precedence::SYMBOL;
-            if (argp < maxp)
+            if (argp < maxp || oid == ID_tgamma || oid == ID_lgamma)
                 arg = parentheses(arg);
             precedence = precedence::FUNCTION;
             switch(oid)
@@ -2258,10 +2258,11 @@ grob_p expression::graph(grapher &g, uint depth, int &precedence)
             int      maxp = (oid == ID_neg
                              ? precedence::MULTIPLICATIVE
                              : precedence::SYMBOL);
-            bool paren = (argp < maxp &&
-                          oid != ID_sqrt && oid != ID_inv && oid != ID_abs &&
-                          oid != ID_exp && oid != ID_exp10 && oid != ID_exp2 &&
-                          oid != ID_cbrt);
+            bool paren = ((argp < maxp &&
+                           oid != ID_sqrt && oid != ID_inv && oid != ID_abs &&
+                           oid != ID_exp && oid != ID_exp10 && oid != ID_exp2 &&
+                           oid != ID_cbrt) ||
+                          oid == ID_tgamma || oid == ID_lgamma);
             if (paren)
                 arg = parentheses(g, arg, 3);
             precedence = precedence::FUNCTION;
@@ -2864,7 +2865,7 @@ PARSE_BODY(funcall)
 
         source = p.source;      // In case of GC
         cp = utf8_codepoint(source + parsed);
-        if (cp != ')' && cp != ';')
+        if (cp != ')' && cp != ';' && cp != ',')
         {
             rt.syntax_error().source(source + parsed);
             return ERROR;
@@ -2914,6 +2915,20 @@ EVAL_BODY(funcall)
                             if (rt.push(value))
                                 return OK;
                     return ERROR;
+                }
+                if (program_p prog = callee->as<program>())
+                {
+                    if (object_p inner = prog->at(0))
+                    {
+                        if (locals_p locs = inner->as<locals>())
+                        {
+                            if (locs->variables() + 1 != fcall->items())
+                            {
+                                rt.argument_count_error();
+                                return ERROR;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -3028,6 +3043,31 @@ COMMAND_BODY(Apply)
                 rt.type_error();
             }
         }
+    }
+    return ERROR;
+}
+
+
+COMMAND_BODY(Quote)
+// ----------------------------------------------------------------------------
+//   Return the argument unevaluated
+// ----------------------------------------------------------------------------
+{
+    if (object_p obj = object::strip(rt.top()))
+    {
+        // Leave quoted expressions as is
+        if (expression_p expr = expression::get(obj))
+            if (object_p inner = expr->quoted(ID_object))
+                if (inner->type() != ID_expression)
+                    if (rt.top(expr))
+                        return OK;
+
+        if (algebraic_p alg = obj->as_extended_algebraic())
+            if (expression_p expr = expression::make(alg))
+                if (rt.top(expr))
+                    return OK;
+
+        rt.type_error();
     }
     return ERROR;
 }
@@ -3552,6 +3592,9 @@ expression_p expression::simplify() const
         sin(asin(X)),   X,
         cos(acos(X)),   X,
         tan(atan(X)),   X,
+        sec(asec(X)),   X,
+        csc(acsc(X)),   X,
+        cot(acot(X)),   X,
         sinh(asinh(X)), X,
         cosh(acosh(X)), X,
         tanh(atanh(X)), X,
@@ -3767,12 +3810,18 @@ expression_p expression::isolate(symbol_r sym) const
             sin(N) == P,            N == asin(P),
             cos(N) == P,            N == acos(P),
             tan(N) == P,            N == atan(P),
+            sec(N) == P,            N == asec(P),
+            csc(N) == P,            N == acsc(P),
+            cot(N) == P,            N == acot(P),
             sinh(N) == P,           N == asinh(P),
             cosh(N) == P,           N == acosh(P),
             tanh(N) == P,           N == atanh(P),
             asin(N) == P,           N == sin(P),
             acos(N) == P,           N == cos(P),
             atan(N) == P,           N == tan(P),
+            asec(N) == P,           N == sec(P),
+            acsc(N) == P,           N == csc(P),
+            acot(N) == P,           N == cot(P),
             asinh(N) == P,          N == sinh(P),
             acosh(N) == P,          N == cosh(P),
             atanh(N) == P,          N == tanh(P),
@@ -3830,12 +3879,18 @@ expression_p expression::isolate(symbol_r sym) const
             sin(N) == P,            N == asin(P) + k2*intk*kpi,
             cos(N) == P,            N == acos(P) + k2*intk*kpi,
             tan(N) == P,            N == atan(P) + intk*kpi,
+            sec(N) == P,            N == asec(P) + k2*intk*kpi,
+            csc(N) == P,            N == acsc(P) + k2*intk*kpi,
+            cot(N) == P,            N == acot(P) + intk*kpi,
             sinh(N) == P,           N == asinh(P) + k2*intk*kpi*ki,
             cosh(N) == P,           N == acosh(P) + k2*intk*kpi*ki,
             tanh(N) == P,           N == atanh(P) + intk*kpi*ki,
             asin(N) == P,           N == sin(P),
             acos(N) == P,           N == cos(P),
             atan(N) == P,           N == tan(P),
+            asec(N) == P,           N == sec(P),
+            acsc(N) == P,           N == csc(P),
+            acot(N) == P,           N == cot(P),
             asinh(N) == P,          N == sinh(P),
             acosh(N) == P,          N == cosh(P),
             atanh(N) == P,          N == tanh(P),
@@ -4007,7 +4062,7 @@ static algebraic_p derivative_funcall_build(funcall_p src, funcall_p repl)
 
 expression_p expression::derivative(symbol_r sym) const
 // ----------------------------------------------------------------------------
-//   Compute the derivative of the
+//   Compute the derivative of the expression
 // ----------------------------------------------------------------------------
 {
     save<symbol_g *>       sindep(independent, (symbol_g *) &sym);
@@ -4061,6 +4116,9 @@ expression_p expression::derivative(symbol_r sym) const
         sin(X)>>indep,          (X>>indep)*cos(X),
         cos(X)>>indep,          -(X>>indep)*sin(X),
         tan(X)>>indep,          (X>>indep)/sq(cos(x)),
+        sec(X)>>indep,          (X>>indep)*sec(X)*tan(X),
+        csc(X)>>indep,          -(X>>indep)*csc(X)*cot(X),
+        cot(X)>>indep,          -(X>>indep)*sq(csc(X)),
         sinh(X)>>indep,         (X>>indep)*cosh(X),
         cosh(X)>>indep,         (X>>indep)*sinh(X),
         tanh(X)>>indep,         (X>>indep)/sq(cosh(X)),
@@ -4068,6 +4126,9 @@ expression_p expression::derivative(symbol_r sym) const
         asin(X)>>indep,         (X>>indep)/sqrt(k1-sq(X)),
         acos(X)>>indep,         -(X>>indep)/sqrt(k1-sq(X)),
         atan(X)>>indep,         (X>>indep)/(k1+sq(X)),
+        asec(X)>>indep,         (X>>indep)/(X*sqrt(sq(X)-k1)),
+        acsc(X)>>indep,         -(X>>indep)/(X*sqrt(sq(X)-k1)),
+        acot(X)>>indep,         -(X>>indep)/(k1+sq(X)),
         asinh(X)>>indep,        (X>>indep)/sqrt(k1+sq(X)),
         acosh(X)>>indep,        (X>>indep)/sqrt(sq(X)-k1),
         atanh(X)>>indep,        (X>>indep)/(k1-sq(X)),
@@ -4245,6 +4306,12 @@ expression_p expression::primitive(symbol_r sym) const
         asinh(L)<<indep,                (L*asinh(L)-sqrt(k1+sq(L)))/A,
         atan(L)<<indep,                 (L*atan(L)-ln(k1+sq(L))/k2)/A,
         atanh(L)<<indep,                (L*atan(L)-ln(k1-sq(L))/k2)/A,
+        asec(L)<<indep,                 (L*asec(L)-sqrt(sq(L)-k1))/A,
+        acsc(L)<<indep,                 (L*acsc(L)+sqrt(sq(L)-k1))/A,
+        acot(L)<<indep,                 (L*acot(L)+ln(k1+sq(L))/k2)/A,
+        sec(L)<<indep,                  ln(abs(sec(L)+tan(L)))/A,
+        csc(L)<<indep,                  ln(abs(tan(L/k2)))/A,
+        cot(L)<<indep,                  ln(abs(sin(L)))/A,
         cos(L)<<indep,                  sin(L)/A,
         inv(cos(L))<<indep,             ln(abs(tan(L)+inv(cos(L))))/A,
         inv(cosh(L))<<indep,            atan(sinh(L))/A,

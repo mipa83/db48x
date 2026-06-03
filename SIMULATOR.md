@@ -27,21 +27,29 @@ The simulator can be started with the command-line options listed in the table b
 
 | Option | Description |
 | --- | --- |
+| -C[[`<whitespace>`]`<filename>`] | Save a snapshot of the string to a given file after executing preceding commands if any. |
+| -D[[`<whitespace>`]`<argument>`] | Set the pattern of recorder traces to show when a test fails. |
+| -E[[`<whitespace>`]`<argument>`] | Evaluate an RPL command line at startup, as if typed on the command line and executed with Enter, and print out each stack level after evaluation (see `-l` option for stack level numbering). The option may be repeated to run several commands in order. In headless mode (`-H` option), output is to standard output, otherwise it is to standard error. |
+| -F[[`<whitespace>`]`<argument>`] | Similar to `-E`, but evaluates from a file. Using `-` as a file name reads from standard input. |
+| -H | Headless mode: do not show a window, and exit when startup commands finish. Use with `-E` for batch scripting. |
+| -I | Initialize the user's environment. WARNING: This may overwrite user configuration with defaults. |
+| -K | Simulate typing of individual keys during tests. |
+| -N | Disable beeps. Use this if you get error messages about audio drivers. |
+| -O[`<test>` \| all] | Only configure test-suite recorder traces (`est_<test>` or `est_.*` for `all`) without enabling automatic test execution. |
+| -T[`<test>` \| all] | Run tests. Without a suffix, run the full test suite. With a suffix, select individual test suites. For example `-Tmatrices` will run the `matrices` portion of the test suite. |
 | -d[[`<whitespace>`]`<integer>`] | Set key delay time in milliseconds to slow down tests. Default = 0 ms. |
+| -e[[`<whitespace>`]`<argument>`] | Evaluate an RPL command line at startup, in a way similar to `-E` but without printing out the stack results on the console. The option may be repeated to run several commands in order. |
+| -f[[`<whitespace>`]`<argument>`] | Similar to `-e` but reading RPL source code from a file. If the file name is `-`, then reads RPL code from standard input. |
+| -h | Show command-line usage and exit. |
 | -i[[`<whitespace>`]`<integer>`] | Set the maximum time waiting for an image to match the expected image during testing. Default = 500 ms. |
 | -k[[`<whitespace>`]`<argument>`] | Load a saved keymap to change keyboard layout. |
-| -K | Simulate typing of individual keys during tests. |
-| -m[[`<whitespace>`]`<integer>`] | Set the memory size available to the calculator in megabytes. |
+| -l | With `-E`, prefix each printed stack line with its level number (`1:` is the top of stack). Default is to print values only. |
+| -m[[`<whitespace>`]`<integer>`] | Set the memory size available to the calculator in kilobytes. |
 | -n | Enable beeps while running the test suite (noisy testing). |
 | -r[[`<whitespace>`]`<integer>`] | Set the time to wait for a screen update in milliseconds. Default = 20 ms. |
 | -s[[`<whitespace>`]`<real>`] | Scale the application window by the given floating-point scaling factor. |
 | -t`<trace>` | Enable the named recorder trace. Multiple traces can be enabled by using multiple `-t` options, or by using a regular expression as an argument to `-t`. |
 | -w[[`<whitespace>`]`<integer>`] | Set the default time the test suite waits for a command to complete, in milliseconds. You can increase this to run the test suite on a very slow machine. The default = 1000 ms. |
-| -D[[`<whitespace>`]`<argument>`] | Set the pattern of recorder traces to show when a test fails. |
-| -I | Initialize the user's environment. WARNING: This may overwrite user configuration with defaults. |
-| -N | Disable beeps. Use this if you get error messages about audio drivers. |
-| -T[`<test>` \| all] | Run tests. Without a suffix, run the full test suite. With a suffix, select individual test suites. For example `-Tmatrices` will run the `matrices` portion of the test suite. |
-| -O[`<test>` \| all] | Only configure test-suite recorder traces (`est_<test>` or `est_.*` for `all`) without enabling automatic test execution. |
 
 
 ## Arguments

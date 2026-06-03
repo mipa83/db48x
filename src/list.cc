@@ -117,15 +117,17 @@ object::result list::list_parse(id      type,
             s = +p.source + utf8_next(+p.source, s - +p.source, max);
             break;
         }
-        if (precedence && (cp == '\'' || cp == ')' ||
-                           (!alist && (cp == ';' || cp == '}' || cp == ']'))))
+        bool separator = cp == ';' || (cp == ',' && !Settings.DecimalComma());
+        if (precedence &&
+            (cp == '\'' || cp == ')' ||
+             (!alist && (separator || cp == '}' || cp == ']'))))
         {
             break;
         }
-        if (utf8_whitespace(cp) || (cp == ';' && alist))
+        if (utf8_whitespace(cp) || (alist && separator))
         {
             s = utf8_next(s);
-            if (cp == ';')
+            if (separator)
                 precedence = p.precedence;
             continue;
         }
@@ -253,7 +255,7 @@ object::result list::list_parse(id      type,
                         {
                             iswhere = false;
                         }
-                        else if (cp != ';')
+                        else if (cp != ';' && cp != ',')
                         {
                             rt.unterminated_error().source(start, +s-start);
                             return ERROR;
@@ -488,7 +490,7 @@ object::result list::list_parse(id      type,
     // Check that we have a matching closing character
     if (close && cp != close)
     {
-        if (cp != ';')
+        if (cp != ';' && cp != ',')
             record(list_error,
                    "Missing terminator, got %u (%c) not %u (%c) at %s",
                    cp, cp, close, close, utf8(s));
@@ -1189,16 +1191,18 @@ static object::result get(bool increment)
 // ----------------------------------------------------------------------------
 {
     // Check we have an object at level 2
-    if (object_p items = rt.stack(1))
+    if (object_p items = object::strip(rt.stack(1)))
     {
         if (symbol_p name = items->as_quoted<symbol>())
         {
             items = directory::recall_all(name, true);
             if (!items)
                 return object::ERROR;
+            items = object::strip(items);
         }
 
-        object_p item = items->at(rt.stack(0));
+        object_g index = object::strip(rt.stack(0));
+        object_p item = items->at(+index);
         if (!item)
         {
             if (!rt.error())
@@ -1207,7 +1211,6 @@ static object::result get(bool increment)
         else if (increment)
         {
             rt.push(item);
-            object_g index = rt.stack(1);
             bool wrap = items->next_index(&+index);
             if (index)
             {
@@ -1249,7 +1252,7 @@ static object::result put(bool increment)
 // ----------------------------------------------------------------------------
 {
     // Check that we have an object at level 2
-    if (object_p items = rt.stack(2))
+    if (object_p items = object::strip(rt.stack(2)))
     {
         symbol_p name = items->as_quoted<symbol>();
         if (name)
@@ -1257,13 +1260,14 @@ static object::result put(bool increment)
             items = directory::recall_all(name, true);
             if (!items)
                 return object::ERROR;
+            items = object::strip(items);
         }
 
-        if (object_g result = items->at(rt.stack(1), rt.top()))
+        object_g index = object::strip(rt.stack(1));
+        if (object_g result = items->at(index, rt.top()))
         {
             if (increment)
             {
-                object_g index = rt.stack(1);
                 bool wrap = result->next_index(&+index);
                 if (index)
                 {

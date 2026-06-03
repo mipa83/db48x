@@ -19,7 +19,7 @@
 #  This software is licensed under the terms described in LICENSE.txt
 #******************************************************************************
 
-QT += core gui quick widgets quickcontrols2 quickwidgets multimedia
+QT += core gui widgets multimedia
 TEMPLATE = app
 
 CONFIG += debug warn_off c++17
@@ -27,6 +27,7 @@ CONFIG += debug warn_off c++17
 # Qt support code (RPL engine is in libdb48x.a, built by make-it-quick)
 SOURCES +=                                      \
         sim-main.cpp                            \
+        sim-eval.cpp                            \
         sim-window.cpp                          \
  	sim-screen.cpp                          \
  	sim-rpl.cpp                             \
@@ -109,7 +110,7 @@ RESOURCES +=                    \
         config.qrc              \
         state.qrc 		\
 	library.qrc             \
-	help.qrc		\
+	help-db48x.qrc		\
 	help/img.qrc
 
 

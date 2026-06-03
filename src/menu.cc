@@ -409,41 +409,59 @@ MENU(PartsMenu,
 // ----------------------------------------------------------------------------
 //   Extract parts of a number
 // ----------------------------------------------------------------------------
-     ID_abs,
+     ID_abs,                                    // First page
      ID_sign,
      ID_IntPart,
      ID_FracPart,
      ID_Round,
 
-     "Trunc",   ID_Truncate,
-     "Mant",    ID_mant,
-     "Xpon",    ID_xpon,
-     "Ceil",    ID_ceil,
-     "Floor",   ID_floor,
+     ID_Truncate,
+     ID_mant,
+     ID_xpon,
+     ID_ceil,
+     ID_floor,
 
-     "→Int",    ID_ToInteger,
-     "→Q",      ID_ToFraction,
-     "→Qπ",     ID_ToQuotient,
-     "SigDig",  ID_SigDig,
-     ID_Get,
+     ID_ToInteger,
+     ID_ToFraction,
+     ID_ToQuotient,
+     ID_ToDecimal,
+     ID_SigDig,
 
-     ID_re,
+     ID_re,                                     // Second page
      ID_im,
      ID_arg,
      ID_Size,
-     "Obj→",    ID_Explode,
+     ID_Get,
 
-     "CstName", ID_ConstantName,
+     ID_Explode,
+     ID_FromRange,
+     ID_FromList,
+     ID_FromArray,
+     ID_FromVector,
+
+     ID_To2DVector,
+     ID_To3DVector,
+     ID_ToRectangular,
+     ID_ToCylindrical,
+     ID_ToSpherical,
+
+     "CstName", ID_ConstantName,                // Third page
      "CstValue",ID_ConstantValue,
+     "CstRng",  ID_ConstantRange,
      "StdUnc",  ID_StandardUncertainty,
      "RelUnc",  ID_RelativeUncertainty,
-     "Tag→",    ID_FromTag,
 
      "StdRnd",  ID_StandardRound,
      "RelRnd",  ID_RelativeRound,
      "→StdUnc", ID_ToStandardUncertainty,
      "→RelUnc", ID_ToRelativeUncertainty,
-     "PrcRnd",  ID_PrecisionRound
+     "PrcRnd",  ID_PrecisionRound,
+
+     ID_FromTag,
+     ID_ToTag,
+     ID_DTag,
+     ID_FromPolynomial,
+     ID_ToPolynomial
 );
 
 
@@ -469,7 +487,9 @@ MENU(NumbersMenu,
      "→Int",    ID_ToInteger,
      "IsPrime", ID_IsPrime,
      "NextPr",  ID_NextPrime,
-     "PrevPr",  ID_PreviousPrime);
+     "PrevPr",  ID_PreviousPrime,
+     "GCD",     ID_GCD,
+     "LCM",     ID_LCM);
 
 
 MENU(AnglesMenu,
@@ -623,14 +643,14 @@ MENU(PolynomialsMenu,
      "QuoRem",  ID_Div2,
 
      "FRoots",  ID_Unimplemented,
-     "MRoot",   ID_Unimplemented,
-     "MSolvr",  ID_Unimplemented,
+     "MRoot",   ID_MultipleEquationsSolver,
+     "MSolvr",  ID_SolverMenu,
      "PCoef",   ID_Unimplemented,
      "PRoot",   ID_Unimplemented,
      "Root",    ID_Root,
 
-     "Solve",   ID_Unimplemented,
-     "TVMRoot", ID_Unimplemented,
+     "Solve",   ID_Root,
+     "TVMRoot", ID_TVMRoot,
      "XRoot",   ID_xroot,
      "Zeros",   ID_Unimplemented,
      "FCoef",   ID_Unimplemented);
@@ -651,12 +671,12 @@ MENU(CircularMenu,
 
      ID_sin,    ID_cos,         ID_tan,
      ID_asin,   ID_acos,        ID_atan,
-     "sec",     ID_Unimplemented,
-     "csc",     ID_Unimplemented,
-     "cot",     ID_Unimplemented,
-     "sec⁻¹",   ID_Unimplemented,
-     "csc⁻¹",   ID_Unimplemented,
-     "cot⁻¹",   ID_Unimplemented);
+     "sec",     ID_sec,
+     "csc",     ID_csc,
+     "cot",     ID_cot,
+     "sec⁻¹",   ID_asec,
+     "csc⁻¹",   ID_acsc,
+     "cot⁻¹",   ID_acot);
 
 MENU(BasesMenu,
 // ----------------------------------------------------------------------------
@@ -844,7 +864,7 @@ MENU(AlgebraMenu,
      "∑",               ID_Sum,
      "∏",               ID_Product,
      "∆",               ID_Unimplemented,
-     "→Qπ",             ID_Unimplemented,
+     "→Qπ",             ID_ToQuotient,
 
      "Ⓓ",               ID_AlgebraConfiguration,
      "ⓧ",               ID_AlgebraVariable,
@@ -864,8 +884,8 @@ MENU(ArithmeticMenu,
      "∆",               ID_Unimplemented,
      "Taylor",          ID_Unimplemented,
 
-     "Show",            ID_Unimplemented,
-     "Quote",           ID_Unimplemented,
+     "Show",            ID_Show,
+     "Quote",           ID_Quote,
      "|",               ID_Where,
      "=",               ID_SelfInsert,
      "Rules",           ID_Unimplemented,
@@ -877,7 +897,7 @@ MENU(CalculationMenu,
 // ----------------------------------------------------------------------------
      "LName",           ID_LName,
      "XVars",           ID_XVars,
-     "Deriv",           ID_Unimplemented,
+     "Deriv",           ID_Derivative,
      "DerivX",          ID_Unimplemented,
      "IBF",             ID_Unimplemented,
      "IntVX",           ID_Unimplemented,
@@ -1266,7 +1286,7 @@ MENU(NumericalSolverMenu,
 // ----------------------------------------------------------------------------
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
-     "Root",    ID_Unimplemented,
+     "Root",    ID_Root,
 
      ID_SolverMenu);
 
@@ -1276,7 +1296,7 @@ MENU(DifferentialSolverMenu,
 // ----------------------------------------------------------------------------
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
-     "Root",    ID_Unimplemented,
+     "Root",    ID_Root,
 
      ID_SolverMenu);
 
@@ -1287,7 +1307,7 @@ MENU(SymbolicSolverMenu,
 // ----------------------------------------------------------------------------
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
-     "Root",    ID_Unimplemented,
+     "Root",    ID_Root,
      "Isolate", ID_Isolate,
 
      ID_SolverMenu);
@@ -1298,7 +1318,7 @@ MENU(PolynomialSolverMenu,
 // ----------------------------------------------------------------------------
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
-     "Root",    ID_Unimplemented,
+     "Root",    ID_Root,
 
      ID_SolverMenu);
 
@@ -1308,7 +1328,7 @@ MENU(LinearSolverMenu,
 // ----------------------------------------------------------------------------
      "Eq",      ID_Equation,
      "Indep",   ID_Unimplemented,
-     "Root",    ID_Unimplemented,
+     "Root",    ID_Root,
 
      ID_SolverMenu);
 
@@ -1318,7 +1338,7 @@ MENU(MultiSolverMenu,
 // ----------------------------------------------------------------------------
      "Eqs",     ID_Unimplemented,
      "Indeps",  ID_Unimplemented,
-     "MRoot",   ID_Unimplemented,
+     "MRoot",   ID_MultipleEquationsSolver,
 
      ID_SolverMenu);
 
@@ -1335,9 +1355,9 @@ MENU(PowersMenu,
      ID_cubed,  ID_cbrt,
 
      ID_pow, ID_xroot,
-     "FstSet",  ID_Unimplemented,
-     "LstSet",  ID_Unimplemented,
-     "popcnt",  ID_Unimplemented,
+     "FstSet",  ID_FirstBitSet,
+     "LstSet",  ID_LastBitSet,
+     "popcnt",  ID_CountBits,
      "Hyper",   ID_HyperbolicMenu);
 
 MENU(FractionsMenu,
@@ -1403,7 +1423,7 @@ MENU(ClearThingsMenu,
      "Stack",   ID_ClearStack,
      "Purge",   ID_Purge,
      "Stats",   ID_ClearData,
-     "Mem",     ID_Unimplemented,
+     "Mem",     ID_Mem,
      "Error",   ID_err0,
      "LCD",     ID_ClLCD);
 
@@ -1585,7 +1605,7 @@ MENU(PrintingMenu,
 //   Printing operations
 // ----------------------------------------------------------------------------
      "Print",   ID_Unimplemented,
-     "Screen",  ID_Unimplemented,
+     "Screen",  ID_ScreenCapture,
      "Disk",    ID_Unimplemented,
      "IR",      ID_Unimplemented);
 
@@ -1593,13 +1613,13 @@ MENU(IOMenu,
 // ----------------------------------------------------------------------------
 //   I/O operations
 // ----------------------------------------------------------------------------
-     "Save",                            ID_Unimplemented,
+     "Save",                            ID_SaveState,
      "Load",                            ID_Unimplemented,
      "Print",                           ID_Unimplemented,
      "Voltage",                         ID_BatteryVoltage,
      "USB?",                            ID_USBPowered,
      "Low?",                            ID_LowBattery,
-     "Save",                            ID_Unimplemented,
+     "Save",                            ID_SaveState,
      MinimumBatteryVoltage::label,      ID_MinimumBatteryVoltage);
 
 MENU(FilesMenu,
@@ -1684,7 +1704,7 @@ MENU(GraphicsMenu,
      "→Bitmap", ID_ToBitmap,
      "→HPGrob", ID_ToHPGrob,
 #ifdef CONFIG_COLOR
-     "→Pixmap", ID_ToBitmap,
+     "→Pixmap", ID_ToPixmap,
 #else
      "→Pixmap", ID_Unimplemented,
 #endif // CONFIG_COLOR
@@ -1694,7 +1714,7 @@ MENU(GraphicsMenu,
      "BlBitmap",ID_BlankBitmap,
      "BlGrob",  ID_BlankGrob,
 #ifdef CONFIG_COLOR
-     "BlPixmap",ID_BlankBitmap,
+     "BlPixmap", ID_BlankPixmap,
 #else
      "BlPixmap", ID_Unimplemented,
 #endif // CONFIG_COLOR

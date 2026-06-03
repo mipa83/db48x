@@ -209,7 +209,7 @@ struct runtime
     //   Clone an object into the temporaries area
     // ------------------------------------------------------------------------
 
-    object_p clone_global(object_p source, size_t sz);
+    bool clone_global(object_p source, size_t sz);
     // ------------------------------------------------------------------------
     //   Clone values in the stack that point to a global we will change
     // ------------------------------------------------------------------------
@@ -286,7 +286,7 @@ struct runtime
     // ------------------------------------------------------------------------
 
 
-    text_p close_editor(bool convert = false, bool trailing_zero = true);
+    text_p close_editor(bool trailing_zero = true);
     // ------------------------------------------------------------------------
     //   Close the editor and encapsulate its content in a temporary string
     // ------------------------------------------------------------------------

@@ -768,7 +768,7 @@ size_t runtime::remove(size_t offset, size_t len)
 }
 
 
-text_p runtime::close_editor(bool convert, bool trailing_zero)
+text_p runtime::close_editor(bool trailing_zero)
 // ----------------------------------------------------------------------------
 //   Close the editor and encapsulate its content into a string
 // ----------------------------------------------------------------------------
@@ -802,10 +802,6 @@ text_p runtime::close_editor(bool convert, bool trailing_zero)
 
     // We are no longer editing
     Editing = 0;
-
-    // Import special characters if necessary (importing text file)
-    if (convert)
-        obj = obj->import();
 
     // Return a pointer to a valid C string safely wrapped in a RPL string
     return obj;
@@ -979,7 +975,7 @@ object_p runtime::clone(object_p source)
 }
 
 
-object_p runtime::clone_global(object_p global, size_t sz)
+bool runtime::clone_global(object_p global, size_t sz)
 // ----------------------------------------------------------------------------
 //   Check if any entry in the stack points to a given global, if so clone it
 // ----------------------------------------------------------------------------
@@ -997,11 +993,15 @@ object_p runtime::clone_global(object_p global, size_t sz)
         if (*s >= global && *s < global + sz)
         {
             if (!cloned)
+            {
                 cloned = clone(global);
+                if (!cloned)
+                    return false;
+            }
             *s = cloned + (*s - global);
         }
     }
-    return cloned;
+    return true;
 }
 
 

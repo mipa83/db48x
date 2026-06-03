@@ -23,14 +23,14 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.1'
+        version: '6.8.3'
         host: 'mac'
         target: 'desktop'
         arch: 'clang_64'
@@ -79,7 +79,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -91,7 +91,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.3'
+        version: '6.8.3'
         host: 'linux'
         target: 'desktop'
         modules: 'qtmultimedia'
@@ -117,7 +117,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -133,18 +133,18 @@ jobs:
           mingw-w64-x86_64-make
           mingw-w64-x86_64-freetype
           mingw-w64-x86_64-pkg-config
-          mingw-w64-x86_64-libgnurx
+          mingw-w64-x86_64-libsystre
           mingw-w64-x86_64-qt6-base
           mingw-w64-x86_64-qt6-declarative
           mingw-w64-x86_64-qt6-multimedia
           mingw-w64-x86_64-qt6-translations
           mingw-w64-x86_64-qt6-tools
 
-    - name: Build simulator
+    - name: Build debug simulator
       shell: msys2 {0}
       run: |
         echo "${{ github.run_number }}" > .build_id
-        mingw32-make sim
+        mingw32-make debug-sim
 
     - name: Deploy Qt dependencies
       shell: msys2 {0}
@@ -154,7 +154,8 @@ jobs:
         cp /mingw64/bin/libgcc_s_seh-1.dll .
         cp /mingw64/bin/libstdc++-6.dll .
         cp /mingw64/bin/libwinpthread-1.dll .
-        cp /mingw64/bin/libgnurx-0.dll .
+        cp /mingw64/bin/libsystre-0.dll .
+        cp /mingw64/bin/libtre-5.dll .
         cp /mingw64/bin/libintl-8.dll .
         cp /mingw64/bin/libiconv-2.dll .
         # Copy all Qt dependency DLLs
@@ -181,7 +182,7 @@ jobs:
       if: ${{ env.WINDOWS_CERT_DATA != '' }}
       uses: lando/code-sign-action@v3
       with:
-        file: debug/db48x.exe
+        file: db48x.exe
         certificate-data: ${{ secrets.WINDOWS_CERT_DATA }}
         certificate-password: ${{ secrets.WINDOWS_CERT_PASSWORD }}
 
@@ -206,14 +207,14 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.1'
+        version: '6.8.3'
         host: 'mac'
         target: 'desktop'
         arch: 'clang_64'
@@ -262,7 +263,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -274,7 +275,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.5.3'
+        version: '6.8.3'
         host: 'linux'
         target: 'desktop'
         modules: 'qtmultimedia'
@@ -300,7 +301,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -316,18 +317,18 @@ jobs:
           mingw-w64-x86_64-make
           mingw-w64-x86_64-freetype
           mingw-w64-x86_64-pkg-config
-          mingw-w64-x86_64-libgnurx
+          mingw-w64-x86_64-libsystre
           mingw-w64-x86_64-qt6-base
           mingw-w64-x86_64-qt6-declarative
           mingw-w64-x86_64-qt6-multimedia
           mingw-w64-x86_64-qt6-translations
           mingw-w64-x86_64-qt6-tools
 
-    - name: Build color DM32 simulator
+    - name: Build debug color DM32 simulator
       shell: msys2 {0}
       run: |
         echo "${{ github.run_number }}" > .build_id
-        mingw32-make color-dm32-sim
+        mingw32-make debug-color-dm32-sim
 
     - name: Deploy Qt dependencies
       shell: msys2 {0}
@@ -337,7 +338,8 @@ jobs:
         cp /mingw64/bin/libgcc_s_seh-1.dll .
         cp /mingw64/bin/libstdc++-6.dll .
         cp /mingw64/bin/libwinpthread-1.dll .
-        cp /mingw64/bin/libgnurx-0.dll .
+        cp /mingw64/bin/libsystre-0.dll .
+        cp /mingw64/bin/libtre-5.dll .
         cp /mingw64/bin/libintl-8.dll .
         cp /mingw64/bin/libiconv-2.dll .
         # Copy all Qt dependency DLLs
@@ -364,7 +366,7 @@ jobs:
       if: ${{ env.WINDOWS_CERT_DATA != '' }}
       uses: lando/code-sign-action@v3
       with:
-        file: debug/db50x.exe
+        file: db50x.exe
         certificate-data: ${{ secrets.WINDOWS_CERT_DATA }}
         certificate-password: ${{ secrets.WINDOWS_CERT_PASSWORD }}
 
@@ -373,24 +375,21 @@ jobs:
       with:
         name: db50x-color-simulator-windows
         path: |
-          debug/db50x.exe
-          debug/*.dll
-          debug/platforms/
-          debug/imageformats/
-          debug/tls/
-          debug/translations/
+          db50x.exe
+          *.dll
+          platforms/
+          imageformats/
+          tls/
+          translations/
           help/
 
   build-wasm:
     name: Build WebAssembly
     runs-on: ubuntu-latest
-    # setup-emsdk@v14 still declares node20; opt into Node 24 until a new release.
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -399,8 +398,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y libfreetype6-dev pkg-config
 
+    - name: Generate recorder config header
+      run: |
+        make -C recorder TARGET=opt BUILDENV=auto RECURSE=.config .config
+        cp recorder/.build/linux/opt/config.h recorder/config.h
+
     - name: Setup Emscripten
-      uses: mymindstorm/setup-emsdk@v14
+      uses: mymindstorm/setup-emsdk@v16
       with:
         version: 'latest'
 
@@ -432,12 +436,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -445,14 +449,14 @@ jobs:
     - name: Install Qt for Android
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.1'
+        version: '6.8.3'
         host: 'linux'
         target: 'android'
         arch: 'android_arm64_v8a'
         modules: 'qtmultimedia'
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v4
 
     - name: Install Android NDK
       run: |
@@ -479,14 +483,19 @@ jobs:
 
     - name: List generated AAB files
       run: |
-        echo "Looking for AAB files in android directory:"
-        find android -name "*.aab" -type f 2>/dev/null || echo "No AAB files found"
+        echo "Looking for AAB files in workspace:"
+        find . -name "*.aab" -type f 2>/dev/null || echo "No AAB files found"
+
+    - name: Verify generated AAB
+      run: test -f android/db48x.aab
 
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v7
       with:
         name: db48x-android
+        if-no-files-found: error
         path: |
+          android/*.aab
           android/**/*.aab
           help/
 
@@ -498,12 +507,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -511,14 +520,14 @@ jobs:
     - name: Install Qt for Android
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.1'
+        version: '6.8.3'
         host: 'linux'
         target: 'android'
         arch: 'android_arm64_v8a'
         modules: 'qtmultimedia'
 
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v4
 
     - name: Install Android NDK
       run: |
@@ -545,14 +554,19 @@ jobs:
 
     - name: List generated AAB files
       run: |
-        echo "Looking for AAB files in android directory:"
-        find android -name "*.aab" -type f 2>/dev/null || echo "No AAB files found"
+        echo "Looking for AAB files in workspace:"
+        find . -name "*.aab" -type f 2>/dev/null || echo "No AAB files found"
+
+    - name: Verify generated AAB
+      run: test -f android/db50x.aab
 
     - name: Upload Android artifacts
       uses: actions/upload-artifact@v7
       with:
         name: db50x-android
+        if-no-files-found: error
         path: |
+          android/*.aab
           android/**/*.aab
           help/
 
@@ -562,7 +576,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -589,7 +603,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -616,7 +630,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -717,7 +731,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Fetch full history for tag access
 
@@ -752,10 +766,12 @@ jobs:
         mv artifacts/db50x-dm32-*.tar.gz releases/db50x-dm32.tar.gz
         mv artifacts/db50x-dm42n-*.tar.gz releases/db50x-dm42n.tar.gz
 
-    - name: Move Android artifacts
+    - name: Package Android artifacts
       run: |
-        mv artifacts/db48x-android-*.tar.gz releases/db48x-android.tar.gz
-        mv artifacts/db50x-android-*.tar.gz releases/db50x-android.tar.gz
+        cd artifacts/db48x-android
+        tar czf ../../releases/db48x-android.tar.gz *
+        cd ../db50x-android
+        tar czf ../../releases/db50x-android.tar.gz *
 
     - name: Extract tag message for release body
       run: |
@@ -763,7 +779,7 @@ jobs:
         git tag -l --format='%(contents)' "${{ github.ref_name }}" > release_notes.md
 
     - name: Create Release and Upload Assets
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         tag_name: ${{ github.ref_name }}
         name: ${{ github.ref_name }}

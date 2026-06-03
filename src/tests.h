@@ -53,11 +53,12 @@ struct tests
     tests()
         : file(), line(), tstart(),
           tname(), sname(), tindex(), sindex(), cindex(), count(),
-          ok(), longpress(), failures(), explanation()
+          ok(), testSelection(),
+          longpress(), failures(), explanation()
     { }
 
-    // Run all tests
-    void run(uint onlyCurrent);
+    // Run all tests; return 0 if all passed, 1 if any failed
+    int run(uint onlyCurrent);
 
     // Individual test categories
     void reset_settings();
@@ -84,6 +85,7 @@ struct tests
     void high_precision_numerical_functions();
     void exact_trig_cases();
     void trig_units();
+    void sec_csc_cot();
     void fraction_decimal_conversions();
     void cfraction();
     void rounding_and_truncating();
@@ -490,6 +492,7 @@ public:
     uint                 refresh_count;
     int                  last_key;
     int                  ok;
+    uint                 testSelection;
     bool                 longpress;
     std::vector<failure> failures;
     std::string          explanation;

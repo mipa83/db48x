@@ -253,7 +253,49 @@ object_p directory::store(object_g name, object_g value)
     case ID_symbol:
         break;
 
-#define ID(n)
+    case ID_list:
+    case ID_array:
+    {
+        directory_g dir = this;
+        object_g subname = nullptr;
+        for (object_p obj : *list_p(+name))
+        {
+            if (obj->type() == ID_Home)
+            {
+                dir = (directory_p) rt.homedir();
+                subname = nullptr;
+            }
+            else
+            {
+                if (subname)
+                {
+                    bool found = false;
+                    if (object_p named = dir->recall(subname))
+                    {
+                        if (directory_p subdir = named->as<directory>())
+                        {
+                            dir = subdir;
+                            found = true;
+                        }
+                    }
+                    if (!found)
+                    {
+                        rt.directory_path_error();
+                        return nullptr;
+                    }
+                }
+                subname = obj;
+            }
+        }
+        if (!subname)
+        {
+            rt.undefined_name_error();
+            return nullptr;
+        }
+        return ((directory *) +dir)->store(subname, value);
+    }
+
+        #define ID(n)
 #define SETTING(Name, Low, High, Init)          \
     case ID_##Name:
 #define FLAG(Enable, Disable)                   \
@@ -285,8 +327,20 @@ object_p directory::store(object_g name, object_g value)
                 return nullptr;           // Out of memory
         }
 
+        // Compute change in size for directories
+        delta = vs - es;
+
         // Clone any value in the stack that points to the existing value
-        rt.clone_global(evalue, es);
+        if (!rt.clone_global(evalue, es))
+            return nullptr;     // Out of memory, bail out
+
+        // Clone input value if it is within object being replaced
+        if (+value >= +evalue && +value < +evalue + es)
+        {
+            value = rt.clone(value);
+            if (!value)
+                return nullptr;
+        }
 
         // Move memory above storage if necessary
         if (vs != es)
@@ -295,9 +349,6 @@ object_p directory::store(object_g name, object_g value)
         // Copy new value into storage location
         memmove((byte *) evalue, (byte *) value, vs);
         value = evalue;
-
-        // Compute change in size for directories
-        delta = vs - es;
     }
     else
     {
@@ -495,6 +546,37 @@ object_p directory::recall(object_p name) const
         break;
     }
 
+    case ID_list:
+    case ID_array:
+    {
+        directory_g dir = this;
+        object_g result = nullptr;
+        for (object_p obj : *list_p(name))
+        {
+            if (obj->type() == ID_Home)
+            {
+                dir = (directory_p) rt.homedir();
+            }
+            else if (object_p named = dir->recall(obj))
+            {
+                if (result)
+                {
+                    rt.directory_path_error();
+                    return nullptr;
+                }
+                if (directory_p subdir = named->as<directory>())
+                    dir = subdir;
+                else
+                    result = named;
+            }
+        }
+        if (!result)
+            result = +dir;
+        if (!result)
+            rt.undefined_name_error();
+        return result;
+    }
+
 #define ID(n)
 #define SETTING(Name, Low, High, Init)          \
     case ID_##Name:
@@ -639,7 +721,8 @@ size_t directory::purge(object_p name)
         object_p body   = header;
         size_t   old    = leb128<size_t>(body); // Old size of directory
 
-        rt.clone_global(value, vs);
+        if (!rt.clone_global(value, vs))
+            return 0;           // Out of memory, bail out
         rt.move_globals(name, name + purged);
 
         if (old < purged)

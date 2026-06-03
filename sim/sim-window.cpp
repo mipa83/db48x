@@ -31,6 +31,7 @@
 
 #include "dmcp.h"
 #include "main.h"
+#include "sim-eval.h"
 #include "recorder.h"
 #include "sim-dmcp.h"
 #include "symbol.h"
@@ -68,7 +69,6 @@
 #include <QDir>
 #include <QSettings>
 #include <atomic>
-#include "version.h"
 
 void extract_android_assets();
 
@@ -89,7 +89,7 @@ extern bool alt_held;
 MainWindow *MainWindow::mainWindow = nullptr;
 qreal MainWindow::userScaling = 1.0;
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent, bool console)
 // ----------------------------------------------------------------------------
 //    The main window of the simulator
 // ----------------------------------------------------------------------------
@@ -105,6 +105,16 @@ MainWindow::MainWindow(QWidget *parent)
 
     QCoreApplication::setOrganizationName("DB48X");
     QCoreApplication::setApplicationName(PROGRAM_NAME);
+
+    // Default the persisted state file path on first run, so that the RPL
+    // engine's EXIT_PGM handler in main.cc actually writes a state file
+    // (it's a no-op when no path has been configured). The file lives
+    // under the app data dir; QDir::setCurrent() is already pointed there.
+    if (ui_read_setting("state", nullptr, 0) == 0)
+    {
+        QString defaultPath = QString("state/") + PROGRAM_NAME + ".48S";
+        ui_save_setting("state", defaultPath.toUtf8().constData());
+    }
 
     ui.setupUi(this);
 
@@ -177,10 +187,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     setlocale(LC_ALL, "C");
 
-    // Set initial geometry manually since we disabled layout management
-    QResizeEvent initialResize(size(), size());
-    resizeEvent(&initialResize);
+    if (!console)
+    {
+#ifndef ANDROID
+        // Restore last window geometry if we have one (must come before the
+        // manual layout pass below, since we disabled automatic layout)
+        QSettings settings;
+        QByteArray savedGeometry =
+            settings.value("MainWindow/geometry").toByteArray();
+        if (!savedGeometry.isEmpty())
+            restoreGeometry(savedGeometry);
+#endif
 
+        // Set initial geometry manually since we disabled layout management
+        QResizeEvent initialResize(size(), size());
+        resizeEvent(&initialResize);
+    }
 #ifdef ANDROID
     extract_android_assets();
 
@@ -189,11 +211,14 @@ MainWindow::MainWindow(QWidget *parent)
 #endif
 
     rpl.start();
+    connect(&rpl, &QThread::finished, this, &MainWindow::onRplFinished);
     if (run_tests)
     {
+        connect(&tests, &QThread::finished, this, &MainWindow::onTestsFinished);
         ui_ms_sleep(1000);      // In case we are loading a file
         tests.start();
     }
+
 }
 
 
@@ -202,8 +227,61 @@ MainWindow::~MainWindow()
 //  Destroy the main window
 // ----------------------------------------------------------------------------
 {
-    key_push(tests::EXIT_PGM);
+    if (tests.isRunning())
+        tests.wait();
+    if (rpl.isRunning())
+    {
+        key_push(tests::EXIT_PGM);
+        rpl.wait();
+    }
     record(sim_audio, "Deleting audio");
+}
+
+
+void MainWindow::onTestsFinished()
+// ----------------------------------------------------------------------------
+//   Tests completed: stop RPL and exit with pass/fail status
+// ----------------------------------------------------------------------------
+{
+    pendingExitCode = tests.exitCode;
+    requestShutdown();
+}
+
+
+void MainWindow::onRplFinished()
+// ----------------------------------------------------------------------------
+//   RPL thread ended: quit the Qt event loop
+// ----------------------------------------------------------------------------
+{
+    QCoreApplication::exit(pendingExitCode);
+}
+
+
+void MainWindow::requestShutdown()
+// ----------------------------------------------------------------------------
+//   Ask the RPL thread to exit; quit immediately if it already stopped
+// ----------------------------------------------------------------------------
+{
+    if (shutdownRequested)
+        return;
+    shutdownRequested = true;
+    if (rpl.isRunning())
+        key_push(tests::EXIT_PGM);
+    else
+        QCoreApplication::exit(pendingExitCode);
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+// ----------------------------------------------------------------------------
+//  Persist window geometry across runs
+// ----------------------------------------------------------------------------
+{
+#ifndef ANDROID
+    QSettings settings;
+    settings.setValue("MainWindow/geometry", saveGeometry());
+#endif
+    QMainWindow::closeEvent(event);
 }
 
 
@@ -887,7 +965,7 @@ bool MainWindow::eventFilter(QObject * obj, QEvent * ev)
 }
 
 
-void MainWindow::screenshot(cstring basename, int x, int y, int w, int h)
+bool MainWindow::screenshot(cstring basename, int x, int y, int w, int h)
 // ----------------------------------------------------------------------------
 //   Save a simulator screenshot under the "SCREEN" directory
 // ----------------------------------------------------------------------------
@@ -896,13 +974,23 @@ void MainWindow::screenshot(cstring basename, int x, int y, int w, int h)
     QDateTime today = QDateTime::currentDateTime();
     name += today.toString("yyyyMMdd-hhmmss");
     name += ".png";
+    return screensave(name.toUtf8().constData(), x, y, w, h);
+}
 
+
+bool MainWindow::screensave(cstring filename, int x, int y, int w, int h)
+// ----------------------------------------------------------------------------
+//   Save a simulator screenshot under the "SCREEN" directory
+// ----------------------------------------------------------------------------
+{
     QPixmap &screen = MainWindow::theScreen();
     QPixmap img = screen.copy(x, y, w, h);
-    bool ok = img.save(name, "PNG");
-    record(sim_window, "Screen capture %+s for %s",
+    bool ok = img.save(filename, "PNG");
+    record(sim_window,
+           "Screen capture %+s for %s",
            ok ? "succeeded" : "failed",
-           name.toUtf8().constData());
+           filename);
+    return ok;
 }
 
 
@@ -1196,11 +1284,17 @@ void ui_refresh()
 //   Request a refresh of the LCD
 // ----------------------------------------------------------------------------
 {
-    static uint done = true;
-    while (!done) sys_delay(1);
-    done = false;
+    static std::atomic<uint> refreshing = 0;
+    uint count = 0;
+    while (refreshing)
+    {
+        if (count++ > 1000)
+            refreshing--;
+        sys_delay(1);
+    }
+    refreshing++;
     SimScreen::update_pixmap();
-    postToThread([&] { SimScreen::refresh_lcd(); done = true; });
+    postToThread([&] { SimScreen::refresh_lcd(); refreshing--; });
 }
 
 

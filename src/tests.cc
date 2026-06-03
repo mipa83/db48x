@@ -27,17 +27,19 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // ****************************************************************************
 
-#include "tests.h"
-
 #include "dmcp.h"
 #include "equations.h"
 #include "list.h"
+#include "object.h"
 #include "recorder.h"
 #include "settings.h"
 #include "sim-dmcp.h"
+#include "sim-eval.h"
 #include "stack.h"
 #include "types.h"
 #include "user_interface.h"
+
+#include "tests.h"
 
 #include <regex.h>
 #include <stdio.h>
@@ -49,7 +51,6 @@ inline void srand48(long seed) { srand((unsigned int)seed); }
 inline long lrand48() { return ((long)rand() << 16) | rand(); }
 #endif
 
-extern bool run_tests;
 volatile uint test_command = 0;
 
 RECORDER(tests, 256, "Information about tests");
@@ -98,6 +99,7 @@ TESTS(types,            "Data types");
 TESTS(editor,           "Editor operations");
 TESTS(istack,           "Interactive stack operations");
 TESTS(stack,            "Stack operations");
+TESTS(sim_eval,         "Simulator -e command line evaluation");
 TESTS(arithmetic,       "Arithmetic operations");
 TESTS(globals,          "Global variables");
 TESTS(locals,           "Local variables");
@@ -116,6 +118,7 @@ TESTS(double,           "Hardware-accelerated 16-digit (double)")
 TESTS(highp,            "High-precision computations (60 digits)")
 TESTS(trigoptim,        "Special trigonometry optimzations");
 TESTS(trigunits,        "Trigonometric units");
+TESTS(sectrig,          "Secant, cosecant, cotangent");
 TESTS(dfrac,            "Simple conversion to decimal and back");
 TESTS(round,            "Rounding and truncating");
 TESTS(ctypes,           "Complex types");
@@ -180,12 +183,14 @@ EXTRA(settings,         "Recall and activate every RPL setting");
 EXTRA(commands,         "Parse every single RPL command");
 
 
-void tests::run(uint onlyCurrent)
+int tests::run(uint onlyCurrent)
 // ----------------------------------------------------------------------------
 //   Run all test categories
 // ----------------------------------------------------------------------------
 {
     save<bool> markRunning(running, true);
+    save<uint> markTestSelection(testSelection, onlyCurrent);
+
     rpl_command(START_TEST);
 
     tindex = sindex = cindex = count = 0;
@@ -201,7 +206,8 @@ void tests::run(uint onlyCurrent)
         here().begin("Current");
         if (onlyCurrent & 1)
         {
-            range_types();
+            local_variables();
+            symbolic_operations();
         }
 
 #if 0
@@ -239,6 +245,7 @@ void tests::run(uint onlyCurrent)
         high_precision_numerical_functions();
         exact_trig_cases();
         trig_units();
+        sec_csc_cot();
         fraction_decimal_conversions();
         rounding_and_truncating();
         complex_types();
@@ -307,8 +314,7 @@ void tests::run(uint onlyCurrent)
 
     RECORDER_TRACE(errors) = tracing;
 
-    if (run_tests)
-        exit(failures.size() ? 1 : 0);
+    return failures.empty() ? 0 : 1;
 }
 
 
@@ -395,9 +401,9 @@ void tests::demo_ui()
               RSHIFT, ENTER,
               "             Equations and constants", ENTER, "D", ENTER,
               WLABEL, ENTER, KDELAY(25),
-              LSHIFT, I, F2, F1, F2, MUL, WSHOW,
+              ID_ConstantsMenu, F2, F1, F2, MUL, WSHOW,
               LSHIFT, F1, LSHIFT, F2, WSHOW,
-              LSHIFT, I, F3, F1, LSHIFT, F1, WSHOW,
+              ID_ConstantsMenu, F3, F1, LSHIFT, F1, WSHOW,
               CLEAR,
               ID_EquationsMenu, F2, RSHIFT, F2, RSHIFT, F1, WSHOW,
               LSHIFT, F1, RSHIFT, F1, WSHOW);
@@ -1138,7 +1144,12 @@ void tests::editor_operations()
     step("History level 2")
         .test(RSHIFT, UP).editor("1 2 3 4");
     step("Exiting old history")
-        .test(EXIT).editor("");
+        .image_menus("editor-menu", 3)
+        .test(EXIT)
+        .editor("1 2 3 4")
+        .image_menus("editor-menu-cleared", 3)
+        .test(EXIT)
+        .editor("");
     step("Check 8-level history")
         .test("A", ENTER, "B", ENTER, "C", ENTER, "D", ENTER,
               "E", ENTER, "F", ENTER, "G", ENTER, "H", ENTER,
@@ -1153,6 +1164,7 @@ void tests::editor_operations()
         .test(RSHIFT, UP).editor("H");
     step("EXIT key still saves editor contents")
         .test(CLEAR, "ABCD").editor("ABCD")
+        .test(EXIT).editor("ABCD")
         .test(EXIT).editor("").noerror()
         .test(RSHIFT, UP).editor("ABCD");
     step("End of editor")
@@ -1286,6 +1298,12 @@ void tests::editor_operations()
         .test(CLEAR, F, KEY1, KEY0, KEY0, KEY0, O, N, KEY1)
         .editor("'1 000⁳-1'");
 
+    step("Check that CHS changes the sign correctly (#1691)")
+        .test(CLEAR, F, KEY3, SUB, KEY5, CHS)
+        .editor("'3+5'")
+        .test(CHS)
+        .editor("'3-5'");
+
     step("Editing unit in program (bug #1192)")
         .test(CLEAR, LSHIFT, RUNSTOP, "25.4", ENTER)
         .want("« 25.4 »")
@@ -1295,6 +1313,35 @@ void tests::editor_operations()
         .error("Syntax error")
         .test(DOWN, DOWN, RUNSTOP, KEY3, ENTER)
         .want("« 123 ft 3 yd 25.4 »");
+
+    step("EEX advanced behaviour (#1691)")
+        .test(CLEAR, "1", EEX)
+        .editor("1⁳")
+        .test("2")
+        .editor("1⁳2")
+        .test("3")
+        .editor("1⁳23")
+        .test(EEX)
+        .editor("1⁳23")
+        .test("4")
+        .editor("1⁳423")
+        .test("5")
+        .editor("1⁳4523")
+        .test(EEX, "6")
+        .editor("1⁳64523")
+        .test(CHS)
+        .editor("1⁳-64523")
+        .test(SHIFT, DOWN)
+        .editor("1⁳-64523")
+        .test(" ")
+        .editor("1⁳-64523 ")
+        .test(EEX, "23")
+        .editor("1⁳-64523 1⁳23")
+        .test(UP, UP, UP, UP, "43")
+        .editor("1⁳-64523 431⁳23")
+        .test(EEX, "2", EEX, "3")
+        .editor("1⁳-64523 431⁳3223")
+        .test(ENTER).noerror();
 
     step("Using regular unit cycle for meters")
         .test(CLEAR, "1_m", NOSHIFT).editor("1_m")
@@ -2217,6 +2264,16 @@ void tests::global_variables()
         .test(CLEAR, "242 'Foo' STO", ENTER).noerror();
     step("Recall from subdirectory")
         .test(CLEAR, "Foo", ENTER).expect("242");
+    step("Recall with relative path")
+        .test(CLEAR, "{ Foo } RCL", ENTER).expect("242");
+    step("Recall with absolute path")
+        .test(CLEAR, "{ Home DirTest Foo } RCL", ENTER).expect("242");
+    step("Store with relative path")
+        .test(CLEAR, "342 { Foo } STO", ENTER).got()
+        .test(CLEAR, "{ Home DirTest Foo } RCL", ENTER).expect("342");
+    step("Store with absolute path")
+        .test(CLEAR, "442 { Home DirTest Foo } STO", ENTER).got()
+        .test(CLEAR, "{ Foo } RCL", ENTER).expect("442");
     step("Store another variable in subdirectory")
         .test(CLEAR, "\"Glop\" 'Baz' STO", ENTER).noerror();
     step("List variables in subdirectory")
@@ -2254,13 +2311,13 @@ void tests::global_variables()
         .error("Cannot purge active directory");
 
     step("Find variable from level above")
-        .test(CLEAR, "Foo", ENTER).expect("242");
+        .test(CLEAR, "Foo", ENTER).expect("442");
     step("Create local variable")
         .test(CLEAR, "\"Hello\" 'Foo' sto", ENTER).noerror();
     step("Local variable hides variable above")
         .test(CLEAR, "Foo", ENTER).expect("\"Hello\"");
     step("Updir shows shadowed variable again")
-        .test(CLEAR, "Updir Foo", ENTER).expect("242");
+        .test(CLEAR, "Updir Foo", ENTER).expect("442");
     step("Two independent variables with the same name")
         .test(CLEAR, "DirTest2 Foo", ENTER).expect("\"Hello\"");
     step("Cleanup")
@@ -2318,24 +2375,67 @@ void tests::local_variables()
 {
     BEGIN(locals);
 
-    step("Creating a local block");
     cstring source = "« → A B C « A B + A B - × B C + B C - × ÷ » »";
-    test(CLEAR, source, ENTER).type(ID_program).want(source);
-    test(XEQ, "LocTest", ENTER, STO).noerror();
+    step("Creating a local block")
+        .test(CLEAR, source, ENTER).type(ID_program).want(source)
+        .test(XEQ, "LocTest", ENTER, STO).noerror();
 
-    step("Calling a local block with numerical values");
-    test(CLEAR, 1, ENTER, 2, ENTER, 3, ENTER, "LocTest", ENTER).expect("³/₅");
+    step("Calling a local block with numerical values")
+        .test(CLEAR, 1, ENTER, 2, ENTER, 3, ENTER, "LocTest", ENTER)
+        .expect("³/₅");
 
-    step("Calling a local block with symbolic values");
-    test(CLEAR,
-         XEQ, "X", ENTER,
-         XEQ, "Y", ENTER,
-         XEQ, "Z", ENTER,
-         "LocTest", ENTER)
+    step("Calling a local block with symbolic values")
+        .test(CLEAR,
+              XEQ, "X", ENTER,
+              XEQ, "Y", ENTER,
+              XEQ, "Z", ENTER,
+              "LocTest", ENTER)
         .expect("'(X+Y)·(X-Y)÷((Y+Z)·(Y-Z))'");
 
+    step("Defer local argument evaluation for symbolic args")
+        .test(CLEAR, "3 'X' STO "
+              "'X' 'Y' 'Z' LocTest", ENTER)
+        .expect("'(X+Y)·(X-Y)÷((Y+Z)·(Y-Z))'");
+    step("defer local argument evaluation for names in algebraic form")
+        .test(CLEAR, "'LocTest(X,Y,Z)'", ENTER)
+        .expect("'LocTest(X;Y;Z)'")
+        .test(ID_Run)
+        .expect("'(3+Y)·(3-Y)÷((Y+Z)·(Y-Z))'");
+    step("Defer local argument evaluation for symbolic expressions")
+        .test(CLEAR, "'X+1' 'Y' 'Z' LocTest", ENTER)
+        .expect("'(X+1+Y)·(X+1-Y)÷((Y+Z)·(Y-Z))'");
+    step("Defer local argument evaluation for symbolic expressions in algbraic")
+        .test(CLEAR, "'LocTest(X+1;Y;Z)'", ENTER)
+        .expect("'LocTest(X+1;Y;Z)'")
+        .test(ID_Run)
+        .expect("'(4+Y)·(4-Y)÷((Y+Z)·(Y-Z))'");
+    step("Do not defer local argument evaluation for programs")
+        .test(CLEAR, "« X 1 + » 'Y' 'Z' LocTest", ENTER)
+        .expect("'(4+Y)·(4-Y)÷((Y+Z)·(Y-Z))'");
+    step("Do not defer local argument evaluation for programs in algebraic")
+        .test(CLEAR, "'LocTest(X,Y+1,Z)'", ENTER)
+        .expect("'LocTest(X;Y+1;Z)'")
+        .test(ID_Run)
+        .expect("'(3+(Y+1))·(3-(Y+1))÷((Y+1+Z)·(Y+1-Z))'");
+    step("Quote in algebraic")
+        .test(CLEAR, "'LocTest(Quote(X+1),Y,Z)'", ENTER)
+        .expect("'LocTest(Quote X+1;Y;Z)'")
+        .test(ID_Run)
+        .expect("'(X+1+Y)·(X+1-Y)÷((Y+Z)·(Y-Z))'");
+
+    step("Argument count mismatch")
+        .test(CLEAR, "0 'LocTest(Quote(X+1),Y)'", ENTER)
+        .expect("'LocTest(Quote X+1;Y)'")
+        .test(ID_Run)
+        .error("Wrong argument count");
+    step("Argument count mismatch")
+        .test(CLEAR, "'LocTest(Quote(X+1);Y;Z;T)'", ENTER)
+        .expect("'LocTest(Quote X+1;Y;Z;T)'")
+        .test(ID_Run)
+        .error("Wrong argument count");
+
     step("Cleanup");
-    test(CLEAR, XEQ, "LocTest", ENTER, "PurgeAll", ENTER).noerror();
+    test(CLEAR, "{ LocTest X } PurgeAll", ENTER).noerror();
 }
 
 
@@ -2998,20 +3098,23 @@ void tests::integer_display_formats()
     step("Entering numbers with spacing");
     test(CLEAR, "FancyExponent", ENTER).noerror();
 
-    test(CLEAR, "1").editor("1");
-    test(CHS).editor("-1");
-    test(CHS).editor("1");
-    test("2").editor("12");
-    test("3").editor("123");
-    test("4").editor("1 234");
-    test("5").editor("12 345");
-    test(CHS).editor("-12 345");
-    test(EEX).editor("-12 345⁳");
-    test("34").editor("-12 345⁳34");
-    test(CHS).editor("-12 345⁳-34");
-    test(" ").editor("-12 345⁳-34 ");
-    test("12345.45678901234").editor("-12 345⁳-34 12 345.45678 90123 4");
-    test(ENTER).noerror();
+    test(CLEAR, "1").editor("1")
+        .test(CHS).editor("-1")
+        .test(CHS).editor("+1")
+        .test("2").editor("+12")
+        .test("3").editor("+123")
+        .test("4").editor("+1 234")
+        .test("5").editor("+12 345")
+        .test(CHS).editor("-12 345")
+        .test(EEX).editor("-12 345⁳")
+        .test("34").editor("-12 345⁳34")
+        .test(CHS).editor("-12 345⁳-34")
+        .test(CHS).editor("-12 345⁳+34")
+        .test(CHS).editor("-12 345⁳-34")
+        .test(" ").editor("-12 345⁳-34 ")
+        .test("12345.45678901234").editor("-12 345⁳-34 12 345.45678 90123 4")
+        .test(ENTER).noerror()
+        .got("12 345.45678 9", "-1.2345⁳⁻³⁰");
 
     step("Based number rendering");
     test(CLEAR, "#1234ABCDEFh", ENTER)
@@ -3819,7 +3922,7 @@ void tests::float_numerical_functions()
         .expect("10 ¹/₄");
 
     step("Restore default 24-digit precision");
-    test(CLEAR, "24 PRECISION 12 SIG SoftFP", ENTER).noerror();
+    test(CLEAR, "'PRECISION' PURGE STD SoftFP", ENTER).noerror();
 }
 
 
@@ -4006,7 +4109,7 @@ void tests::double_numerical_functions()
         .expect("10 ¹/₄");
 
     step("Restore default 24-digit precision");
-    test(CLEAR, "24 PRECISION 12 SIG SoftFP", ENTER).noerror();
+    test(CLEAR, "'PRECISION' PURGE STD SoftFP", ENTER).noerror();
 }
 
 
@@ -4170,7 +4273,7 @@ void tests::high_precision_numerical_functions()
         .expect("-1.93671 70284 36984 00445 39742 77784 19614 09228 14972 69013 57207 96225 22144 30998 44778 15307 33025 32493 05294 47540 14534 16384 29680 297 r");
 
     step("Restore default 24-digit precision");
-    test(CLEAR, "24 PRECISION 12 SIG", ENTER).noerror();
+    test(CLEAR, "'PRECISION' PURGE STD", ENTER).noerror();
 }
 
 
@@ -4406,6 +4509,16 @@ void tests::fraction_decimal_conversions()
     test(CLEAR, "0.25 →Frac", ENTER).expect("1/4");
     test(CLEAR, "0.2 ToFraction", ENTER).expect("1/5");
 
+    step("Decimal and fraction conversions on arrays, lists and expressions")
+        .test(CLEAR, "[ X 1.5 2.3 ]", ID_ToFraction)
+        .want("[ 'X' 3/2 23/10 ]")
+        .test(ID_ToDecimal)
+        .want("[ 'X' 1.5 2.3 ]")
+        .test(CLEAR, "{ -2.7 9.5 'A+2.5*B' }", ID_ToFraction)
+        .want("{ -27/10 19/2 'A+5/2·B' }")
+        .test(ID_ToDecimal)
+        .want("{ -2.7 9.5 'A+2.5·B' }");
+
     step("Integer conversions");
     test(CLEAR, "3. R→I", ENTER).expect("3");
     test(CLEAR, "-3. R→I", ENTER).expect("-3");
@@ -4445,7 +4558,7 @@ void tests::fraction_decimal_conversions()
 
     step("Expressions");
     test(CLEAR, "355 113 /",
-         LSHIFT, I, F2, F1, "-", ENTER) .expect("'355/113-π'");
+         ID_ConstantsMenu, F2, F1, "-", ENTER) .expect("'355/113-π'");
     test("→Num", ENTER).expect("0.00000 02667 64");
 
     step("→Q with algebraic expression");
@@ -4455,6 +4568,9 @@ void tests::fraction_decimal_conversions()
     test(CLEAR, "'2.5*X^(exp(2))-sqrt(3)+Y*ln(2)'", ENTER).noerror()
         .test("→Q", ENTER)
         .expect("'5/2·X↑exp 2-√ 3+Y·ln 2'");
+    test(CLEAR, "[ X 3.2 -5.5 ]", ENTER).noerror()
+        .test("→Q", ENTER)
+        .want("[ 'X' 16/5 -11/2 ]");
 
     // HP50G limits fraction precision to FIX mode.
     step("ToFraction respects DisplayDigits (STD, FIX 8, 6, 4, 2)")
@@ -4468,6 +4584,7 @@ void tests::fraction_decimal_conversions()
         .test("pi →Num ToFraction", ENTER).expect("355/113")
         .test(CLEAR, "2 FIX", ENTER).noerror()
         .test("pi →Num ToFraction", ENTER).expect("333/106");
+
 
     step("Restoring small fraction mode")
         .test(CLEAR, "SmallFractions MixedFractions Std", ENTER).noerror();
@@ -4612,7 +4729,7 @@ void tests::cfraction()
               " « DUP SIZE SWAP ROT ROT OVER SIZE DUP ROT - 1 + SWAP SUB == » EVAL",
               ENTER).expect("True");
     step("Restore default precision")
-        .test(CLEAR, "24 Precision", ENTER).noerror();
+        .test(CLEAR, "'PRECISION' PURGE", ENTER).noerror();
 }
 
 
@@ -4753,6 +4870,41 @@ void tests::trig_units()
         .test(LSHIFT, F2).expect("0.00872 66462 6 r");
     step("Converting to degrees")
         .test(LSHIFT, F1).expect("0.5 °");
+}
+
+
+void tests::sec_csc_cot()
+// ----------------------------------------------------------------------------
+//   Secant, cosecant, cotangent and inverses
+// ----------------------------------------------------------------------------
+{
+    BEGIN(sectrig);
+
+    step("Degrees mode")
+        .test(CLEAR, "Deg", ENTER).noerror();
+    step("Dimensionless trig results")
+        .test("NoAngleUnits", ENTER).noerror();
+    step("sec(0) = 1")
+        .test(CLEAR, "0", ENTER, ID_sec).expect("1.");
+    step("sec(45°)")
+        .test(CLEAR, "45", ENTER, ID_sec)
+        .expect("1.41421 35623 7");
+    step("csc(90°) = 1")
+        .test(CLEAR, "90", ENTER, ID_csc).expect("1.");
+    step("cot(45°) = 1")
+        .test(CLEAR, "45", ENTER, ID_cot).expect("1.");
+    step("cot⁻¹(1) = 45°")
+        .test(CLEAR, "1", ENTER, ID_acot).expect("45.");
+    step("sec⁻¹(2) = 60°")
+        .test(CLEAR, "2", ENTER, ID_asec).expect("60.");
+    step("csc⁻¹(2) = 30°")
+        .test(CLEAR, "2", ENTER, ID_acsc).expect("30.");
+    step("sec⁻¹ out of domain")
+        .test(CLEAR, "0.5", ENTER, ID_asec).error("Argument outside domain");
+    step("Symbolic sec")
+        .test(CLEAR, "'X'", ENTER, ID_sec).expect("'sec X'");
+    step("Restore angle units for later tests")
+        .test("SetAngleUnits", ENTER).noerror();
 }
 
 
@@ -5010,6 +5162,16 @@ void tests::complex_types()
         .type(ID_rectangular).expect("6+7ⅈ");
     test(CLEAR, "7-8ⅈ", ENTER)
         .type(ID_rectangular).expect("7-8ⅈ");
+    test(CLEAR, "1", ID_ComplexMenu, F1, CHS, "2")
+        .editor("1-ⅈ2")
+        .test(CHS)
+        .editor("1+ⅈ2")
+        .test(" 3", CHS)
+        .editor("1+ⅈ2 -3")
+        .test(F2, "4", CHS, CHS)
+        .editor("1+ⅈ2 -3∡+4")
+        .test(ENTER).noerror()
+        .got("3∡-176°", "1+2ⅈ");
 
     step("Integer polar form");
     test(CLEAR, "0∡0", ENTER)
@@ -5296,7 +5458,7 @@ void tests::complex_arithmetic()
         .expect("'(2+3ⅈ)+A'");
 
     step("Complex expression involving constants")
-        .test(CLEAR, LSHIFT, I, F2, F2, F3, F1, MUL, ID_pow)
+        .test(CLEAR, ID_ConstantsMenu, F2, F2, F3, F1, MUL, ID_pow)
         .expect("'e↑(ⅈ·π)'")
         .test(LSHIFT, KEY1)
         .expect("-1.");
@@ -5574,7 +5736,7 @@ void tests::complex_functions()
     test(CLEAR, "-31.234 arg", ENTER).expect("180 °");
 
     step("Restore default 24-digit precision");
-    test(CLEAR, "24 PRECISION 12 SIG", ENTER).noerror();
+    test(CLEAR, "'PRECISION' PURGE STD", ENTER).noerror();
 
     step("Re with list of polar units")
         .test(CLEAR, "{ 230∡0° V 230∡120° V 230∡-120° V } re", ENTER)
@@ -6643,7 +6805,7 @@ void tests::list_functions()
     step("List index, too many items")
         .test(CLEAR, "{ A B C }", ENTER, "{2 3} GET", ENTER)
         .error("Bad argument type");
-    step("Character from array")
+    step("Character from text")
         .test(CLEAR, "\"Hello World\"", ENTER, "2 GET", ENTER)
         .expect("\"e\"");
     step("Deep nesting");
@@ -6685,7 +6847,7 @@ void tests::list_functions()
     step("List index, too many items for GETI")
         .test(CLEAR, "{ A B C }", ENTER, "{2 3} GETI", ENTER)
         .error("Bad argument type");
-    step("Character from array using GETI")
+    step("Character from text using GETI")
         .test(CLEAR, "\"Hello\"", ENTER, "2 ")
         .test("GETI", ENTER).expect("\"e\"").test(BSP).expect("3")
         .test("GETI", ENTER).expect("\"l\"").test(BSP).expect("4")
@@ -6702,6 +6864,16 @@ void tests::list_functions()
     test(CLEAR, "[ A [ D E [ 1 2 \"Hello World\" ] F ] 2 3 ]", ENTER,
          "[ 2 3 3 5 ] GET", ENTER)
         .expect("\"o\"");
+
+    step("Index tagged array")
+        .test(CLEAR, ":mytag:[11 222 3333] 2 GET", ENTER)
+        .expect("222")
+        .test(CLEAR, ":mytag:[11 222 3333] 2 GETI", ENTER)
+        .got("222", "3", "mytag:[ 11 222 3 333 ]")
+        .test(CLEAR, ":mytag:[11 222 3333] :I:2 GET", ENTER)
+        .expect("222")
+        .test(CLEAR, ":mytag:[11 222 3333] :idx:2 GETI", ENTER)
+        .got("222", "3", "mytag:[ 11 222 3 333 ]");
 
     step("List indexing in equation L(1)")
         .test(CLEAR, "{ X Y Z } 'L' STO", ENTER).noerror()
@@ -6767,6 +6939,13 @@ void tests::list_functions()
     step("Index error when putting out of range with PUTI")
         .test(CLEAR, "{ 11 22 33 } 5 55 PUTI", ENTER)
         .error("Index out of range");
+    step("Put stuff in a tagged array")
+        .test(CLEAR, ":tag:{ 11 22 33 } 1 55 PUT", ENTER)
+        .expect("{ 55 22 33 }")
+        .test(CLEAR, ":A:{ 11 22 33 } :B:1 :C:55 PUT", ENTER)
+        .expect("{ C:55 22 33 }")
+        .test(CLEAR, ":A:{ 11 22 33 } :B:2 :C:55 PUTI", ENTER)
+        .got("3", "{ 11 C:55 33 }");
 
     step("Concatenation of lists");
     test(CLEAR, "{ A B C D } { F G H I } +", ENTER)
@@ -7865,7 +8044,6 @@ void tests::solver_testing()
         .test(CLEAR, "'tan(x)=224' 'x' 0 ROOT", ENTER)
         .expect("x=89.74421 69693");
 
-
     step("Solving menu")
         .test(CLEAR, "'A²+B²=C²'", ENTER)
         .test(LSHIFT, KEY7, LSHIFT, F1, F6)
@@ -7873,7 +8051,7 @@ void tests::solver_testing()
         .expect("C=5.");
     step("Evaluate equation case Left=Right")
         .test(F1)
-        .expect("'25=25.+2.11075 8519⁳⁻¹²'");
+        .expect("'25=25.-7.8⁳⁻²¹'");
 
     step("Verify that we display the equation after entering value")
         .test(CLEAR, "42", F4)
@@ -8019,6 +8197,25 @@ void tests::solver_testing()
               LSHIFT, F3)
         .expect("m=9.10938 37139⁳⁻³¹ kg");
 
+    step("Solver with high precision in FIX vs STD mode")
+        .test(CLEAR, "128 PREC", ENTER).noerror()
+        .test(CLEAR, "5 FIX 'cos X-X' 'X' 0.7 Root", ENTER)
+        .expect("X=0.99985")
+        .test(CLEAR, "STD 'cos X-X' 'X' 0.7 Root", ENTER)
+        .expect("X=0.99984 77415 31")
+        .test("0.99984 77415 31088 11295 98107 68679 79979 91818 72586 15277 58837 54669 86114 29538 53312 16363 55789 58826 89799 31748 89494 44923 91316 88906 86648 2741", ID_subtract)
+        .expect("0");
+
+    step("Solver with regular precision in FIX vs STD mode")
+        .test(CLEAR, "{PREC} PURGE", ENTER)
+        .noerror()
+        .test(CLEAR, "5 FIX 'cos X-X' 'X' 0.7 Root", ENTER)
+        .expect("X=0.99985")
+        .test(CLEAR, "STD 'cos X-X' 'X' 0.7 Root", ENTER)
+        .expect("X=0.99984 77415 31")
+        .test("0.99984 77415 31088 11295 98107 68679 79979 91818 72586 15277 58837 54669 86114 29538 53312 16363 55789 58826 89799 31748 89494 44923 91316 88906 86648 2741", ID_subtract)
+        .expect("-1.14803⁳⁻¹⁹");
+
     step("Exit: Clear variables")
         .test(CLEAR, "UPDIR 'SLVTST' PURGE", ENTER);
 }
@@ -8041,14 +8238,15 @@ void tests::constants_parsing()
             istep(cst[i]);
             test(CLEAR, (cst[i+1]), ENTER).noerror();
             test(("if dup typename \"array\" = "
-                        "then →Num else Run end"), ENTER).noerror();
+                  "then →Num else Run end"), ENTER).noerror();
         }
         else
         {
             begin(cst[i], true);
         }
-        if (!ok)
+        if (!ok && (testSelection & 1))
         {
+            // In interactive mode, stop with the test on the command line
             test(cst[i+1]);
             break;
         }
@@ -8077,8 +8275,9 @@ void tests::eqnlib_parsing()
         {
             begin(eq[i], true);
         }
-        if (!ok)
+        if (!ok && (testSelection & 1))
         {
+            // In interactive mode, stop with the test on the command line
             test(eq[i+1]);
             break;
         }
@@ -8354,7 +8553,7 @@ void tests::numerical_integration()
     step("Integrate with expression")
         .test(CLEAR, "1 2 '1/X' 'X' INTEGRATE", ENTER)
         .noerror().expect("0.69314 71805 6")
-        .test(KEY2, ID_ln, ID_subtract).expect("1.55318 8⁳⁻¹⁸");
+        .test(KEY2, ID_ln, ID_subtract).expect("-3.07⁳⁻²²");
     step("Integration through menu")
         .test(CLEAR, 2, ENTER).expect("2")
         .test(3, ENTER).expect("3")
@@ -8391,7 +8590,7 @@ void tests::numerical_integration()
               ENTER).noerror()
         .test("1 2 '1/X' 'X' ∫", ENTER)
         .noerror().expect("0.69314 71805 6")
-        .test(KEY2, ID_ln, ID_subtract).expect("1.55318 8⁳⁻¹⁸");
+        .test(KEY2, ID_ln, ID_subtract).expect("-3.07⁳⁻²²");
 
     step("Integrate with display-induced imprecision")
         .test(CLEAR, "3 FIX", ENTER).noerror()
@@ -8658,7 +8857,7 @@ void tests::auto_simplification()
     test(CLEAR, "ⅈ", ENTER, ENTER, MUL).expect("-1");
 
     step("i*i == -1 (symbolic constant)");
-    test(CLEAR, LSHIFT, I, F2, F3, ENTER, MUL).expect("-1");
+    test(CLEAR, ID_ConstantsMenu, F2, F3, ENTER, MUL).expect("-1");
 
     step("Simplification of rectangular real-only results");
     test(CLEAR, "0ⅈ3 0ⅈ5", ENTER, MUL).expect("-15");
@@ -9268,6 +9467,31 @@ void tests::symbolic_operations()
     step("TrigSin: cos without square passes through");
     test(CLEAR, "'cos(X)+1' TrigSin", ENTER)
         .expect("'cos X+1'");
+
+    step("Quote: integer becomes quoted expression")
+        .test(CLEAR, ID_ArithmeticMenu).noerror()
+        .test(CLEAR, "5", ENTER, ID_Quote).expect("'5'");
+    step("Quote: expression is unchanged")
+        .test(CLEAR, "'A+B'", ENTER, ID_Quote).expect("'A+B'");
+    step("Quote: quoted name is unchanged")
+        .test(CLEAR, "'X'", ENTER, ID_Quote).expect("'X'");
+    step("Quote: equation is unchanged")
+        .test(CLEAR, "'A=B'", ENTER, ID_Quote).expect("'A=B'");
+    step("Quote: quoted result can be evaluated")
+        .test(CLEAR, "7", ENTER, ID_Quote, ID_Eval).expect("7");
+    step("Quote in expression (example from HP50G advanced reference manual)")
+        .test(CLEAR,
+              "« → arcstart arcend arcexpr arcvar "
+              "« arcstart arcend arcexpr arcvar ∂ SQ 1 + SQRT arcvar ∫ » "
+              "» 'ArcLen' STO", ENTER).noerror()
+        .test("'ArcLen(0;π;QUOTE(SIN(X));QUOTE(X))'", ENTER)
+        .expect("'ArcLen(0;π;Quote sin X;Quote X)'")
+        .test(ID_Run)
+        .expect("'∫(0;π;√((cos X)²+1);X)'")
+        .test(ID_ModesMenu, ID_Rad, ID_ToDecimal)
+        .expect("3.82019 77890 3")
+        .test(ID_Deg, "'ArcLen'", ID_Purge)
+        .noerror();
 }
 
 
@@ -9323,6 +9547,14 @@ void tests::symbolic_differentiation()
         .test(CLEAR, "'asin(A*X^2)+acos(X*B)+atan(C*X^6)' 'X'",
               LENGTHY(3000), ID_Derivative)
         .expect("'2·A·X÷√(1-(A·X²)²)+(-B)÷√(1-(X·B)²)+6·C·X↑5÷((C·X↑6)²+1)'");
+    step("Derivative of secant, cosecant, cotangent")
+        .test(CLEAR, "'sec(A*X^2)+csc(X*B)+cot(C*X)' 'X'",
+              LENGTHY(3000), ID_Derivative)
+        .expect("'2·A·X·sec(A·X²)·tan(A·X²)+(-B)·csc(X·B)·cot(X·B)+(-C)·(csc(C·X))²'");
+    step("Derivative of arc-secant, arc-cosecant, arc-cotangent")
+        .test(CLEAR, "'asec(A*X^2)+acsc(X*B)+acot(C*X^6)' 'X'",
+              LENGTHY(3000), ID_Derivative)
+        .expect("'2·A·X÷(A·X²·√((A·X²)²-1))+(-B)÷(X·B·√((X·B)²-1))+(-(6·C·X↑5))÷((C·X↑6)²+1)'");
     step("Derivative of inverse hyperbolic sine, cosine, tangent")
         .test(CLEAR, "'asinh(A*X)+acosh(X*B)+atanh(C+X)' 'X'",
               LENGTHY(3000), ID_Derivative)
@@ -9437,6 +9669,14 @@ void tests::symbolic_integration()
         .test(CLEAR, "'asin(A*X+B)+acos(X*B+A*(X+1))+atan(C*(X-6))' 'X'",
               LENGTHY(20000), ID_Primitive)
         .expect("'((A·X+B)·sin⁻¹(A·X+B)+√(1-(A·X+B)²))÷A+((X·B+A·(X+1))·cos⁻¹(X·B+A·(X+1))-√(1-(X·B+A·(X+1))²))÷(B+A)+(C·(X-6)·tan⁻¹(C·(X-6))-ln((C·(X-6))²+1)÷2)÷C'");
+    step("Primitive of secant, cosecant, cotangent")
+        .test(CLEAR, "'sec(A*X+3)+csc(X*B-5)+cot(Z-C*X)' 'X'",
+              LENGTHY(10000), ID_Primitive)
+        .expect("'ln (abs(sec(A·X+3)+tan(A·X+3)))÷A+ln (abs (tan((X·B-5)÷2)))÷B+ln (abs (sin(Z-C·X)))÷C'");
+    step("Primitive of arc-secant, arc-cosecant, arc-cotangent")
+        .test(CLEAR, "'asec(A*X+B)+acsc(X*B+A*(X+1))+acot(C*(X-6))' 'X'",
+              LENGTHY(20000), ID_Primitive)
+        .expect("'((A·X+B)·sec⁻¹(A·X+B)-√((A·X+B)²-1))÷A+((X·B+A·(X+1))·csc⁻¹(X·B+A·(X+1))+√((X·B+A·(X+1))²-1))÷(B+A)+(C·(X-6)·cot⁻¹(C·(X-6))+ln((C·(X-6))²+1)÷2)÷C'");
     step("Primitive of inverse hyperbolic sine, cosine, tangent")
         .test(CLEAR, "'asinh(1-2*X)+acosh(1+3*X)+atanh(4*X-1)' 'X'",
               LENGTHY(20000), ID_Primitive)
@@ -11202,8 +11442,8 @@ void tests::graphic_stack_rendering()
         .image_noheader("reduced");
 
     step("Constants")
-        .test(CLEAR, LSHIFT, I, F2, F1, F2, F3)
-        .image_noheader("constants", 2);
+        .test(CLEAR, ID_ConstantsMenu, F2, F1, F2, F3)
+        .image_noheader("constants", 3);
 
     step("Vector")
         .test(CLEAR, LSHIFT, KEY9, "1 2 3", ENTER, EXIT)
@@ -11295,57 +11535,66 @@ void tests::insertion_of_variables_constants_and_units()
     BEGIN(insert);
 
     step("Select constant menu")
-        .test(CLEAR, LSHIFT, I, F2).image_menus("constants-menu", 1);
+        .test(CLEAR, ID_ConstantsMenu, F2).image_menus("constants-menu", 1);
     step("Insert pi")
-        .test(CLEAR, F1).expect("π");
+        .test(NOSHIFT, F1).expect("π");
     step("Insert e")
-        .test(CLEAR, F2).expect("e");
+        .test(NOSHIFT, F2).expect("e");
     step("Insert i")
-        .test(CLEAR, F3).expect("ⅈ");
+        .test(NOSHIFT, F3).expect("ⅈ");
     step("Insert Infinity")
-        .test(CLEAR, F4).expect("∞");
+        .test(NOSHIFT, F4).expect("∞");
     step("Insert Undefined")
-        .test(CLEAR, F5).expect("?");
+        .test(NOSHIFT, F5).expect("?");
     step("Insert j")
-        .test(CLEAR, F6, F1).expect("ⅉ");
+        .test(NOSHIFT, F6, NOSHIFT, F1).expect("ⅉ");
     step("Insert rad")
-        .test(CLEAR, F2).expect("rad");
+        .test(NOSHIFT, F2).expect("rad");
     step("Insert two pi")
-        .test(CLEAR, F3).expect("twoπ");
+        .test(NOSHIFT, F3).expect("twoπ");
     step("Insert angl")
-        .test(CLEAR, F4, F6).expect("angl");
+        .test(NOSHIFT, F4).expect("angl");
 
     step("Insert pi value")
-        .test(CLEAR, LSHIFT, F1).expect("3.14159 26535 9");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F1, LSHIFT, F1)
+        .expect("3.14159 26535 9");
     step("Insert e value")
-        .test(CLEAR, LSHIFT, F2).expect("2.71828 18284 6");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F2, LSHIFT, F2)
+        .expect("2.71828 18284 6");
     step("Insert i value")
-        .test(CLEAR, LSHIFT, F3).expect("0+1ⅈ");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F3, LSHIFT, F3)
+        .expect("0+1ⅈ");
     step("Insert infinity value")
-        .test(CLEAR, LSHIFT, F4).expect("9.99999⁳⁹⁹⁹⁹⁹⁹");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F4, LSHIFT, F4)
+        .expect("9.99999⁳⁹⁹⁹⁹⁹⁹");
     step("Insert undefined value")
-        .test(CLEAR, LSHIFT, F5).expect("Undefined");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F5, LSHIFT, F5)
+        .expect("'Undefined'");
     step("Insert j value")
-        .test(CLEAR, F6, LSHIFT, F1).expect("0+1ⅈ");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F6, NOSHIFT, F1, LSHIFT, F1)
+        .expect("0+1ⅈ");
     step("Insert rad value")
-        .test(CLEAR, LSHIFT, F2).expect("1 r");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F6, NOSHIFT, F2, LSHIFT, F2)
+        .expect("1 r");
     step("Insert two pi value")
-        .test(CLEAR, LSHIFT, F3).expect("6.28318 53071 8 r");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F6, NOSHIFT, F3, LSHIFT, F3)
+        .expect("6.28318 53071 8 r");
     step("Insert angl value")
-        .test(CLEAR, LSHIFT, F4, F6).expect("180 °");
+        .test(CLEAR, ID_ConstantsMenu, F2, NOSHIFT, F6, NOSHIFT, F4, LSHIFT, F4)
+        .expect("180 °");
 
     step("Begin program")
         .test(CLEAR, LSHIFT, RUNSTOP).editor("«»");
     step("Insert pi")
-        .test(F1).editor("« Ⓒπ »");
+        .test(ID_ConstantsMenu, F2, NOSHIFT, F1).editor("« Ⓒπ »");
     step("Insert e")
-        .test(F2).editor("« Ⓒπ  Ⓒe »");
+        .test(ID_ConstantsMenu, F2, NOSHIFT, F2).editor("« Ⓒπ  Ⓒe »");
     step("Insert i")
-        .test(F3).editor("« Ⓒπ  Ⓒe  Ⓒⅈ »");
+        .test(ID_ConstantsMenu, F2, NOSHIFT, F3).editor("« Ⓒπ  Ⓒe  Ⓒⅈ »");
     step("Insert infinity")
-        .test(F4).editor("« Ⓒπ  Ⓒe  Ⓒⅈ  Ⓒ∞ »");
+        .test(LSHIFT, I, F2, NOSHIFT, F4).editor("« Ⓒπ  Ⓒe  Ⓒⅈ  Ⓒ∞ »");
     step("Insert undefined")
-        .test(F5).editor("« Ⓒπ  Ⓒe  Ⓒⅈ  Ⓒ∞  Ⓒ? »");
+        .test(LSHIFT, I, F2, NOSHIFT, F5).editor("« Ⓒπ  Ⓒe  Ⓒⅈ  Ⓒ∞  Ⓒ? »");
 
     step("Insert pi value")
         .test(LSHIFT, F1).editor("« Ⓒπ  Ⓒe  Ⓒⅈ  Ⓒ∞  Ⓒ?  "
@@ -11371,13 +11620,13 @@ void tests::insertion_of_variables_constants_and_units()
                                  "2.71828 18284 59045 23536 029  "
                                  "0+ⅈ1  "
                                  "9.99999⁳999999  "
-                                 "Undefined »");
+                                 "'Undefined' »");
 
     step("Test that constants parse")
         .test(ENTER)
         .want("« π e ⅈ ∞ ? "
               "3.14159 26535 9 2.71828 18284 6 0+1ⅈ 9.99999⁳⁹⁹⁹⁹⁹⁹ "
-              "Undefined »", 300);
+              "'Undefined' »", 300);
 
     step("Select library menu")
         .test(CLEAR, RSHIFT, H).noerror();
@@ -11563,6 +11812,9 @@ void tests::constants_menu()
     step("Check constant value from command line")
         .test(CLEAR, "Ⓒc CONSTANTVALUE", ENTER)
         .expect("299 792 458 m/s");
+    step("Check constant value from command line")
+        .test(CLEAR, "Ⓒc CONSTANTRANGE", ENTER)
+        .expect("299 792 458±0 m/s");
     step("Check constant name from menu")
         .test(CLEAR, "Ⓒc", ENTER)
         .expect("c")
@@ -11573,14 +11825,29 @@ void tests::constants_menu()
         .expect("c")
         .test(ID_PartsMenu, F6, ID_ConstantValue)
         .expect("299 792 458 m/s");
-    step("Check constant value from command line")
-        .test(CLEAR, "Ⓒc CONSTANTVALUE", ENTER)
-        .expect("299 792 458 m/s");
+    step("Check constant range from menu")
+        .test(CLEAR, "Ⓒc", ENTER)
+        .expect("c")
+        .test(ID_PartsMenu, F6, ID_ConstantRange)
+        .expect("299 792 458±0 m/s");
+    step("Check G constant value from command line")
+        .test(CLEAR, "ⒸG CONSTANTVALUE", ENTER)
+        .expect("6.6743⁳⁻¹¹ m↑3/(s↑2·kg)");
+    step("Check G constant name from command line")
+        .test(CLEAR, "ⒸG CONSTANTNAME", ENTER)
+        .expect("\"G\"");
+    step("Check G constant range from command line")
+        .test(CLEAR, "ⒸG CONSTANTRANGE", ENTER)
+        .expect("6.6743⁳⁻¹¹±1.5⁳⁻¹⁵ m↑3/(s↑2·kg)");
     step("Insert constant from constants menu")
-        .test(CLEAR, ID_ConstantsMenu, RSHIFT, F1, "c", ENTER)
+        .test(CLEAR, ID_ConstantsMenu, F4, F2, ENTER)
         .expect("c")
         .test(ID_ToDecimal)
         .expect("299 792 458 m/s");
+    step("Astronomy constants menu hierarchy")
+        .test(CLEAR, ID_ConstantsMenu, LSHIFT, F4, NOSHIFT, F3)
+        .test(NOSHIFT, F1).expect("GM♁")
+        .test(LSHIFT, F1).expect("3.98600 4⁳¹⁴ m↑3/s↑2");
     step("Insert pi constant")
         .test(CLEAR, "pi", ENTER).type(ID_constant).expect("π")
         .test(ID_ToDecimal).expect("3.14159 26535 9")
@@ -11765,7 +12032,7 @@ void tests::constants_menu()
               ID_PartsMenu, ID_StandardRound)
         .error("Inconsistent units");
     step("Parts menu uncertainty labels")
-        .test(CLEAR, ID_PartsMenu, F6)
+        .test(CLEAR, ID_PartsMenu, F6, F6)
         .image_menus("parts-menu-labels", 2);
 
     step("Use Const command from command line")
@@ -11773,7 +12040,7 @@ void tests::constants_menu()
         .expect("299 792 458. m/s");
 
     step("Dates constants menu")
-        .test(CLEAR, LSHIFT, I, F1);
+        .test(CLEAR, ID_ConstantsMenu, F1);
     step("Bastille day")
         .test(CLEAR, NOSHIFT, F1).expect("BastilleDay")
         .test(LSHIFT, F1).expect("Tue 14/Jul/1789");
@@ -11787,7 +12054,7 @@ void tests::constants_menu()
     // ------------------------------------------------------------------------
     step("Mathematics constants menu")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, F2);
+        .test(CLEAR, ID_ConstantsMenu, F2);
     step("Pi")
         .test(CLEAR, NOSHIFT, F1).expect("π")
         .test(LSHIFT, F1).expect("3.14159 26535 9");
@@ -11802,7 +12069,7 @@ void tests::constants_menu()
         .test(LSHIFT, F4).expect("9.99999⁳⁹⁹⁹⁹⁹⁹");
     step("Undefined")
         .test(CLEAR, NOSHIFT, F5).expect("?")
-        .test(LSHIFT, F5).expect("Undefined");
+        .test(LSHIFT, F5).expect("'Undefined'");
     step("j")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("ⅉ")
@@ -11818,7 +12085,7 @@ void tests::constants_menu()
         .test(LSHIFT, F4).expect("180 °");
 
     step("Chemistry constants")
-        .test(CLEAR, LSHIFT, I, F3);
+        .test(CLEAR, ID_ConstantsMenu, F3);
     step("Avogadro constant")
         .test(CLEAR, NOSHIFT, F1).expect("NA")
         .test(LSHIFT, F1).expect("6.02214 076⁳²³ mol⁻¹");
@@ -11831,9 +12098,9 @@ void tests::constants_menu()
     step("Universal Gas constant")
         .test(CLEAR, NOSHIFT, F4).expect("R")
         .test(LSHIFT, F4).expect("8.31446 26181 5 J/(mol·K)");
-    step("Stefan-Boltzmann constant")
-        .test(CLEAR, NOSHIFT, F5).expect("σ")
-        .test(LSHIFT, F5).expect("0.00000 00567 04 W/(m↑2·K↑4)");
+    step("Faraday constant")
+        .test(CLEAR, NOSHIFT, F5).expect("F")
+        .test(LSHIFT, F5).expect("96 485.33212 33 C/mol");
     step("Standard temperature")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("StdT")
@@ -11847,16 +12114,16 @@ void tests::constants_menu()
     step("Carbon-12 mass")
         .test(CLEAR, NOSHIFT, F4).expect("MC12")
         .test(LSHIFT, F4).expect("12.00000 00126 g/mol");
-    step("Loschmidt constant")
-        .test(CLEAR, NOSHIFT, F5).expect("n0")
-        .test(LSHIFT, F5).expect("2.68678 01118⁳²⁵ (m↑3)⁻¹");
-    step("Sakur-Tetrode constant")
-        .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("SoR")
-        .test(LSHIFT, F1).expect("-1.16487 05214 9");
     step("Dalton constant")
-        .test(CLEAR, NOSHIFT, F2).expect("Da")
-        .test(LSHIFT, F2).expect("1.66053 90689 2⁳⁻²⁷ kg");
+        .test(CLEAR, NOSHIFT, F5).expect("Da")
+        .test(LSHIFT, F5).expect("1.66053 90689 2⁳⁻²⁷ kg");
+    step("Loschmidt constant")
+        .test(NOSHIFT, F6)
+        .test(CLEAR, NOSHIFT, F1).expect("n0")
+        .test(LSHIFT, F1).expect("2.68678 01118⁳²⁵ (m↑3)⁻¹");
+    step("Sakur-Tetrode constant")
+        .test(CLEAR, NOSHIFT, F2).expect("SoR")
+        .test(LSHIFT, F2).expect("-1.16487 05214 9");
     step("Boltzmann / electron mass ratio")
         .test(CLEAR, NOSHIFT, F3).expect("kq")
         .test(LSHIFT, F3).expect("0.00008 61733 33 J/(K·C)");
@@ -11864,7 +12131,7 @@ void tests::constants_menu()
     // ------------------------------------------------------------------------
     step("Physics constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, F4);
+        .test(CLEAR, ID_ConstantsMenu, F4);
     step("Imaginary unit")
         .test(CLEAR, NOSHIFT, F1).expect("ⅉ")
         .test(LSHIFT, F1).expect("0+1ⅈ");
@@ -11877,9 +12144,9 @@ void tests::constants_menu()
     step("Earth gravity")
         .test(CLEAR, NOSHIFT, F4).expect("g")
         .test(LSHIFT, F4).expect("9.80665 m/s↑2");
-    step("Acceleration of Earth gravity Earth")
-        .test(CLEAR, NOSHIFT, F5).expect("Z₀")
-        .test(LSHIFT, F5).expect("376.73031 3412 Ω");
+    step("Stefan-Boltzmann constant")
+        .test(CLEAR, NOSHIFT, F5).expect("σ")
+        .test(LSHIFT, F5).expect("0.00000 00567 04 W/(m↑2·K↑4)");
     step("Vaccuum permittivity")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("ε₀")
@@ -11890,26 +12157,39 @@ void tests::constants_menu()
     step("Coulomb constant")
         .test(CLEAR, NOSHIFT, F3).expect("ke")
         .test(LSHIFT, F3).expect("8.98755 17862⁳⁹ N·m↑2/C↑2");
+    step("Vacuum characteristic impedance")
+        .test(CLEAR, NOSHIFT, F4).expect("Z₀")
+        .test(LSHIFT, F4).expect("376.73031 3412 Ω");
+    step("ε₀q ratio")
+        .test(CLEAR, NOSHIFT, F5).expect("ε₀q")
+        .test(LSHIFT, F5).expect("55 263 493.618 F/(m·C)");
+    step("qε₀ product")
+        .test(NOSHIFT, F6)
+        .test(CLEAR, NOSHIFT, F1).expect("qε₀")
+        .test(LSHIFT, F1).expect("1.41859 72836 3⁳⁻³⁰ F·C/m");
+    step("Sound reference intensity")
+        .test(CLEAR, NOSHIFT, F2).expect("I₀")
+        .test(LSHIFT, F2).expect("1.⁳⁻¹² W/m↑2");
 
     // ------------------------------------------------------------------------
     step("Mass constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, F5);
-    step("Electron mass")
-        .test(CLEAR, NOSHIFT, F1).expect("me")
-        .test(LSHIFT, F1).expect("9.10938 37139⁳⁻³¹ kg");
-    step("Neutron mass")
-        .test(CLEAR, NOSHIFT, F2).expect("mn")
-        .test(LSHIFT, F2).expect("1.67492 75005 6⁳⁻²⁷ kg");
-    step("Proton mass")
-        .test(CLEAR, NOSHIFT, F3).expect("mp")
-        .test(LSHIFT, F3).expect("1.67262 19259 5⁳⁻²⁷ kg");
-    step("Hydrogen mass")
-        .test(CLEAR, NOSHIFT, F4).expect("mH")
-        .test(LSHIFT, F4).expect("1.00782 50322 3 u");
+        .test(CLEAR, ID_ConstantsMenu, LSHIFT, F1);
     step("Mass unit")
-        .test(CLEAR, NOSHIFT, F5).expect("u")
-        .test(LSHIFT, F5).expect("1.66053 90689 2⁳⁻²⁷ kg");
+        .test(CLEAR, NOSHIFT, F1).expect("u")
+        .test(LSHIFT, F1).expect("1.66053 90689 2⁳⁻²⁷ kg");
+    step("Electron mass")
+        .test(CLEAR, NOSHIFT, F2).expect("me")
+        .test(LSHIFT, F2).expect("9.10938 37139⁳⁻³¹ kg");
+    step("Neutron mass")
+        .test(CLEAR, NOSHIFT, F3).expect("mn")
+        .test(LSHIFT, F3).expect("1.67492 75005 6⁳⁻²⁷ kg");
+    step("Proton mass")
+        .test(CLEAR, NOSHIFT, F4).expect("mp")
+        .test(LSHIFT, F4).expect("1.67262 19259 5⁳⁻²⁷ kg");
+    step("Hydrogen mass")
+        .test(CLEAR, NOSHIFT, F5).expect("mH")
+        .test(LSHIFT, F5).expect("1.00782 50322 3 u");
     step("Deuterium mass")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("mD")
@@ -11938,7 +12218,7 @@ void tests::constants_menu()
     // ------------------------------------------------------------------------
     step("Size constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F1);
+        .test(CLEAR, ID_ConstantsMenu, LSHIFT, F2);
     step("Classical electron radius")
         .test(CLEAR, NOSHIFT, F1).expect("re")
         .test(LSHIFT, F1).expect("2.81794 03205 fm");
@@ -11948,35 +12228,35 @@ void tests::constants_menu()
     step("Bohr radius")
         .test(CLEAR, NOSHIFT, F3).expect("a0")
         .test(LSHIFT, F3).expect("0.05291 77210 54 nm");
-    step("Thomson cross-section")
-        .test(CLEAR, NOSHIFT, F4).expect("σe")
-        .test(LSHIFT, F4).expect("6.65245 87052⁳⁻²⁹ m↑2");
 
     // ------------------------------------------------------------------------
     step("Scattering constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F2);
+        .test(CLEAR, ID_ConstantsMenu, LSHIFT, F3);
+    step("Thomson cross-section")
+        .test(CLEAR, NOSHIFT, F1).expect("σe")
+        .test(LSHIFT, F1).expect("6.65245 87052⁳⁻²⁹ m↑2");
     step("Electron Compton wavelength")
-        .test(CLEAR, NOSHIFT, F1).expect("λc")
-        .test(LSHIFT, F1).expect("0.00242 63102 35 nm");
+        .test(CLEAR, NOSHIFT, F2).expect("λc")
+        .test(LSHIFT, F2).expect("0.00242 63102 35 nm");
     step("Proton Compton wavelength")
-        .test(CLEAR, NOSHIFT, F2).expect("λcp")
-        .test(LSHIFT, F2).expect("0.00000 13214 1 nm");
+        .test(CLEAR, NOSHIFT, F3).expect("λcp")
+        .test(LSHIFT, F3).expect("0.00000 13214 1 nm");
     step("Neutron Compton wavelength")
-        .test(CLEAR, NOSHIFT, F3).expect("λcn")
-        .test(LSHIFT, F3).expect("0.00000 13195 91 nm");
+        .test(CLEAR, NOSHIFT, F4).expect("λcn")
+        .test(LSHIFT, F4).expect("0.00000 13195 91 nm");
     step("Muon Compton wavelength")
-        .test(CLEAR, NOSHIFT, F4).expect("λcμ")
-        .test(LSHIFT, F4).expect("0.00001 17344 41 nm");
+        .test(CLEAR, NOSHIFT, F5).expect("λcμ")
+        .test(LSHIFT, F5).expect("0.00001 17344 41 nm");
     step("Tau Compton wavelength")
-        .test(CLEAR, NOSHIFT, F5).expect("λcτ")
-        .test(LSHIFT, F5).expect("0.00000 06977 7 nm");
+        .test(CLEAR, NOSHIFT, F6).expect("λcτ")
+        .test(LSHIFT, F6).expect("0.00000 06977 71 nm");
 
 
     // ------------------------------------------------------------------------
     step("Quantum constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F3);
+        .test(CLEAR, ID_ConstantsMenu, F6);
     step("Planck")
         .test(CLEAR, NOSHIFT, F1).expect("h")
         .test(LSHIFT, F1).expect("6.62607 015⁳⁻³⁴ J·s");
@@ -12011,15 +12291,23 @@ void tests::constants_menu()
 
     step("Hartree energy")
         .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("Eh")
-        .test(LSHIFT, F1).expect("4.35974 47222 1⁳⁻¹⁸ J");
+        .test(CLEAR, NOSHIFT, F5).expect("Eh")
+        .test(LSHIFT, F5).expect("4.35974 47222 1⁳⁻¹⁸ J");
 
 
     // ------------------------------------------------------------------------
-    step("Magnetism constants")
+    step("Electromagnetism constants")
     // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F4);
+        .test(CLEAR, ID_ConstantsMenu, F5);
+    step("Electronic charge")
+        .test(CLEAR, NOSHIFT, F1).expect("qe")
+        .test(LSHIFT, F1).expect("1.60217 6634⁳⁻¹⁹ C");
+    step("Rydberg")
+        .test(CLEAR, NOSHIFT, F2).expect("R∞")
+        .test(LSHIFT, F2).expect("10 973 731.5682 m⁻¹");
     step("Bohr magneton")
+        .test(NOSHIFT, F6)
+        .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("μB")
         .test(LSHIFT, F1).expect("9.27401 00657⁳⁻²⁴ J/T");
     step("Nuclear magneton")
@@ -12034,23 +12322,6 @@ void tests::constants_menu()
     step("Neutron gyromagnetic ratio")
         .test(CLEAR, NOSHIFT, F5).expect("γn")
         .test(LSHIFT, F5).expect("183 247 175. (s·T)⁻¹");
-    step("Rydberg")
-        .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("R∞")
-        .test(LSHIFT, F1).expect("10 973 731.5682 m⁻¹");
-    step("von Klitzing constant")
-        .test(CLEAR, NOSHIFT, F2).expect("Rk")
-        .test(LSHIFT, F2).expect("25 812.80745 93 Ω");
-    step("Faraday")
-        .test(CLEAR, NOSHIFT, F3).expect("F")
-        .test(LSHIFT, F3).expect("96 485.33212 33 C/mol");
-    step("Conductance quantum")
-        .test(CLEAR, NOSHIFT, F4).expect("G0")
-        .test(LSHIFT, F4).expect("0.00007 74809 17 S");
-    step("Fermi reduced coupling constant")
-        .test(CLEAR, NOSHIFT, F5).expect("G0F")
-        .test(LSHIFT, F5).expect("0.00001 16637 87 (GeV↑2)⁻¹");
-
     step("First radiation constant")
         .test(NOSHIFT, F6)
         .test(CLEAR, NOSHIFT, F1).expect("c1")
@@ -12064,61 +12335,53 @@ void tests::constants_menu()
     step("Wien's frequency constant")
         .test(CLEAR, NOSHIFT, F4).expect("c3f")
         .test(LSHIFT, F4).expect("0.05878 92575 76 THz/K");
-    step("Magnetic flux quantum")
-        .test(CLEAR, NOSHIFT, F5).expect("ø")
-        .test(LSHIFT, F5).expect("2.06783 38484 6⁳⁻¹⁵ Wb");
-    step("Josephson constant")
+    step("von Klitzing constant")
+        .test(CLEAR, NOSHIFT, F5).expect("Rk")
+        .test(LSHIFT, F5).expect("25 812.80745 93 Ω");
+    step("Conductance quantum")
         .test(NOSHIFT, F6)
-        .test(CLEAR, NOSHIFT, F1).expect("KJ")
-        .test(LSHIFT, F1).expect("4.83597 84841 7⁳¹⁴ Hz/V");
-
+        .test(CLEAR, NOSHIFT, F1).expect("G0")
+        .test(LSHIFT, F1).expect("0.00007 74809 17 S");
+    step("Fermi reduced coupling constant")
+        .test(CLEAR, NOSHIFT, F2).expect("G0F")
+        .test(LSHIFT, F2).expect("0.00001 16637 87 (GeV↑2)⁻¹");
+    step("Magnetic flux quantum")
+        .test(CLEAR, NOSHIFT, F3).expect("ø")
+        .test(LSHIFT, F3).expect("2.06783 38484 6⁳⁻¹⁵ Wb");
+    step("Josephson constant")
+        .test(CLEAR, NOSHIFT, F4).expect("KJ")
+        .test(LSHIFT, F4).expect("4.83597 84841 7⁳¹⁴ Hz/V");
     step("Quantum of circulation")
-        .test(CLEAR, NOSHIFT, F2).expect("Kc")
-        .test(LSHIFT, F2).expect("0.00036 36947 55 m↑2/s");
+        .test(CLEAR, NOSHIFT, F5).expect("Kc")
+        .test(LSHIFT, F5).expect("0.00036 36947 55 m↑2/s");
 
     // ------------------------------------------------------------------------
-    step("Material constants")
-    // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F5);
-    step(" ε₀q ratio")
-        .test(CLEAR, NOSHIFT, F1).expect("ε₀q")
-        .test(LSHIFT, F1).expect("55 263 493.618 F/(m·C)");
-    step(" qε₀ product")
-        .test(CLEAR, NOSHIFT, F2).expect("qε₀")
-        .test(LSHIFT, F2).expect("1.41859 72836 3⁳⁻³⁰ F·C/m");
-    step("Dielectric constant")
-        .test(CLEAR, NOSHIFT, F3).expect("εsi")
-        .test(LSHIFT, F3).expect("11.9");
+    step("Silicon dielectric constant")
+        .test(CLEAR, "'εsi' CONST", ENTER, ID_ToDecimal)
+        .expect("11.9");
     step("SiO2 dielectric constant")
-        .test(CLEAR, NOSHIFT, F4).expect("εox")
-        .test(LSHIFT, F4).expect("3.9");
-    step("Sound reference intensity")
-        .test(CLEAR, NOSHIFT, F5).expect("I₀")
-        .test(LSHIFT, F5).expect("1.⁳⁻¹² W/m↑2");
+        .test(CLEAR, "'εox' CONST", ENTER, ID_ToDecimal)
+        .expect("3.9");
 
 
-    // ------------------------------------------------------------------------
-    step("Computing constants")
-    // ------------------------------------------------------------------------
-        .test(CLEAR, LSHIFT, I, LSHIFT, F6);
     step("No constant")
-        .test(CLEAR, NOSHIFT, F1).expect("No")
-        .test(LSHIFT, F1).expect("False");
+        .test(CLEAR, "'No' CONST", ENTER, ID_ToDecimal)
+        .expect("False");
     step("Yes constant")
-        .test(CLEAR, NOSHIFT, F2).expect("Yes")
-        .test(LSHIFT, F2).expect("True");
+        .test(CLEAR, "'Yes' CONST", ENTER, ID_ToDecimal)
+        .expect("True");
     step("Unix epoch constant")
-        .test(CLEAR, NOSHIFT, F3).expect("UnixEpoch")
-        .test(LSHIFT, F3).expect("Thu 1/Jan/1970");
+        .test(CLEAR, "'UnixEpoch' CONST", ENTER)
+        .expect("Thu 1/Jan/1970");
     step("Sinclair ZX81 RAM size")
-        .test(CLEAR, NOSHIFT, F4).expect("SinclairZX81RAM")
-        .test(LSHIFT, F4).expect("1 KiB");
+        .test(CLEAR, "'SinclairZX81RAM' CONST", ENTER, ID_ToDecimal)
+        .expect("1. KiB");
     step("Page size")
-        .test(CLEAR, NOSHIFT, F5).expect("PageSize")
-        .test(LSHIFT, F5).expect("4 KiB");
+        .test(CLEAR, "'PageSize' CONST", ENTER, ID_ToDecimal)
+        .expect("4. KiB");
     step("Hello World constant")
-        .test(NOSHIFT, F6).expect("HelloWorld")
-        .test(LSHIFT, F6).expect("\"Hello World\"");
+        .test(CLEAR, "'HelloWorld' CONST", ENTER)
+        .expect("\"Hello World\"");
 }
 
 
@@ -13206,6 +13469,40 @@ void tests::prime_number_tests()
               "{ MaxFactorIterations } Purge Std", ENTER).noerror()
         .test("147573952589676412927", ENTER, ID_Factors)
         .expect("{ 193 707 721 1 761 838 257 287 1 }", 10000);
+
+    // GCD and LCM
+    step("GCD(48,18) = 6")
+        .test(CLEAR, "48", ENTER, "18", ENTER, ID_GCD).expect("6");
+    step("GCD(17,19) = 1")
+        .test(CLEAR, "17", ENTER, "19", ENTER, ID_GCD).expect("1");
+    step("GCD(0,0) = 0")
+        .test(CLEAR, "0", ENTER, "0", ENTER, ID_GCD).expect("0");
+    step("GCD(-48,18) = 6")
+        .test(CLEAR, "-48", ENTER, "18", ENTER, ID_GCD).expect("6");
+    step("LCM(12,18) = 36")
+        .test(CLEAR, "12", ENTER, "18", ENTER, ID_LCM).expect("36");
+    step("LCM(4,9) = 36")
+        .test(CLEAR, "4", ENTER, "9", ENTER, ID_LCM).expect("36");
+    step("LCM(0,12) = 0")
+        .test(CLEAR, "0", ENTER, "12", ENTER, ID_LCM).expect("0");
+    step("LCM(12,0) = 0")
+        .test(CLEAR, "12", ENTER, "0", ENTER, ID_LCM).expect("0");
+    step("GCD of large integers")
+        .test(CLEAR,
+              "2305843009213693951",
+              ENTER,
+              "618970019642690137449562111",
+              ENTER,
+              ID_GCD)
+        .expect("1");
+    step("LCM of coprime large integers")
+        .test(CLEAR,
+              "2147483647",
+              ENTER,
+              "9999999967",
+              ENTER,
+              ID_LCM)
+        .expect("21 474 836 399 133 039 649", 10000);
 }
 
 
@@ -13925,7 +14222,7 @@ void tests::regression_checks()
     test(CLEAR, "8 gamma", ENTER).expect("5 040.");
 
     step("Bug 168: pi no longer parses correctly");
-    test(CLEAR, LSHIFT, I, F2, F1).expect("π");
+    test(CLEAR, ID_ConstantsMenu, F2, F1).expect("π");
     test(DOWN).editor("Ⓒπ");
     test(ENTER).expect("π");
 
@@ -14025,7 +14322,7 @@ void tests::regression_checks()
     step("Bug 917: Editor works when exiting and search is active")
         .test(CLEAR, "123", ENTER, DOWN)
         .editor("123")
-        .test(NOSHIFT, A, EXIT)
+        .test(NOSHIFT, A, EXIT, EXIT)
         .expect("123")
         .test(KEY1)
         .editor("1")
@@ -14053,6 +14350,23 @@ void tests::regression_checks()
         .test(CLEAR, "'-X²'", ENTER).expect("'-X²'")
         .test(CLEAR, "'-X²-Y'", ENTER).expect("'-X²-Y'")
         .test(CLEAR, "'-X²-3*-Y'", ENTER).expect("'-X²-3·(-Y)'");
+
+    step("Nested store of subobject in custom menu (#1670)")
+        .test(CLEAR, "{ { X Y } { Z T } } 'CST' STO", ENTER).noerror()
+        .test("'CST' RCL 2 GET", ENTER).expect("{ Z T }")
+        .test("'CST' STO", ENTER).noerror()
+        .test("'CST' RCL", ENTER).expect("{ Z T }");
+    step("Nested store of subobject in normal variable (#1670)")
+        .test(CLEAR, "{ { XX YY } { ZZ TT } } 'ABC' STO", ENTER).noerror()
+        .test("'ABC' 2 GET", ENTER).expect("{ ZZ TT }")
+        .test("'ABC' STO", ENTER).noerror()
+        .test("ABC", ENTER).expect("{ ZZ TT }");
+    step("Nested store of subobject in normal variable (#1670)")
+        .test(CLEAR, "'CST' RCL 2 GET", ENTER).expect("T")
+        .test("'ABC' STO", ENTER).noerror()
+        .test("ABC", ENTER).expect("'T'");
+    step("Cleaning up #1670")
+        .test(CLEAR, "{ CST ABC } PURGE", ENTER).noerror();
 }
 
 
@@ -14319,9 +14633,15 @@ void tests::plotting_all_functions()
     FUNCTION(sin);
     FUNCTION(cos);
     FUNCTION(tan);
+    FUNCTION(sec);
+    FUNCTION(csc);
+    FUNCTION(cot);
     FUNCTION(asin);
     FUNCTION(acos);
     FUNCTION(atan);
+    FUNCTION(asec);
+    FUNCTION(acsc);
+    FUNCTION(acot);
 
     step("Select degrees");
     test(CLEAR, SHIFT, N, F1).noerror();
